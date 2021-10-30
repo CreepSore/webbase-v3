@@ -7,9 +7,8 @@
   "scripts": {
     "start": "node ./src/app.js",
     "cmd": "node ./src/app.js -c",
-    "dbinstall": "node ./src/app.js -i",
+    "dbinstall": "node ./src/app.js -is",
     "dbuninstall": "node ./src/app.js -id",
-    "dbupdate": "node ./src/app.js -iu",
     "lint": "eslint ./src ./test",
     "lintautofix": "eslint --fix ./src ./test",
     "dev": "npm run lint && npx webpack --progress --mode development && node ./src/app.js",
