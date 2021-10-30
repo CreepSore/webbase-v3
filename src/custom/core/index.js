@@ -31,7 +31,7 @@ export default class Core extends CustomerLogic {
                     return;
                 }
 
-                console.log("INFO", handler.getHelpText());
+                console.log("INFO", `Hello, I'm the help page:\n${handler.getHelpText()}`);
             }
         });
     }
