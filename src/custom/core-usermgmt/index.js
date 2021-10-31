@@ -108,15 +108,6 @@ export default class CoreUsermgmt extends CustomerLogic {
 
         params.app.post("/api/usermgmt/login", ApiLogin);
         params.app.post("/api/usermgmt/login", ApiRegister);
-
-        params.app.get("/test", ExpressRouteWrapper.create((req, res, next) => {
-            res.send("ok").end();
-        }, {
-            permissions: ["CORE.USERMGMT.LOGIN"],
-            onInvalidPermissions(req, res, next) {
-                res.send("bruh").end();
-            }
-        }));
     }
 
     /** @param {import("../../service/customer-logic/types").ExpressParams} params */
