@@ -61,21 +61,25 @@ export default class CoreUsermgmt extends CustomerLogic {
             description: "Enables userlogin"
         });
 
+        const permRegister = await Permission.create({
+            name: "CORE.USERMGMT.REGISTER",
+            description: "Enables registration"
+        });
+
         await PermissionGroup.create({
             name: "Anonymous",
             description: "Gets used if the user is not logged in"
         }).then(async group => {
             // @ts-ignore
             group.addPermission(permLogin);
+            // @ts-ignore
+            group.addPermission(permRegister);
         });
 
         await PermissionGroup.create({
             name: "Default",
             description: "Default group for logged in users"
-        }).then(async group => {
-            // @ts-ignore
-            group.addPermission(permLogin);
-        });
+        }).then(async group => {});
 
         await PermissionGroup.create({
             name: "SuperAdmin",
@@ -106,8 +110,8 @@ export default class CoreUsermgmt extends CustomerLogic {
             next();
         });
 
-        params.app.post("/api/usermgmt/login", ApiLogin);
-        params.app.post("/api/usermgmt/login", ApiRegister);
+        params.app.post("/api/usermgmt/login", ExpressRouteWrapper.create(ApiLogin, {permissions: ["CORE.USERMGMT.LOGIN"]}));
+        params.app.post("/api/usermgmt/register", ExpressRouteWrapper.create(ApiRegister, {permissions: ["CORE.USERMGMT.REGISTER"]}));
     }
 
     /** @param {import("../../service/customer-logic/types").ExpressParams} params */
