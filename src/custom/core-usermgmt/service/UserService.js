@@ -10,6 +10,15 @@ import Exception from "../../core/Exception.js";
 import TfaService from "../../../service/TfaService.js";
 
 export default class UserService {
+    /**
+     * Checks if the user has the specified permission
+     * or the 'ALL'-permission
+     * @static
+     * @param {string} uid
+     * @param {string} permission
+     * @return {Promise<boolean>}
+     * @memberof UserService
+     */
     static async hasPermission(uid, permission) {
         return Boolean(await User.findOne({
             where: {id: uid},
@@ -74,6 +83,15 @@ export default class UserService {
         return await this.getUserByEmail(email) !== null;
     }
 
+    /**
+     * Checks if the token is correct.
+     * Returns true if the user does not have TFA enabled.
+     * @static
+     * @param {string} uid
+     * @param {string} tokenIn
+     * @return {Promise<boolean>}
+     * @memberof UserService
+     */
     static async checkTfa(uid, tokenIn) {
         let user = await this.getUserByUid(uid);
         if(!user) return false;
