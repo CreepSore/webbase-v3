@@ -1,4 +1,5 @@
 import CustomerLogicHandler from "../service/customer-logic/CustomerLogicHandler.js";
+import KvpStorage from "../service/KvpStorage.js";
 import ExpressLoader from "./logic-initializer/ExpressLoader.js";
 import SequelizeLoader from "./logic-initializer/SequelizeLoader.js";
 
@@ -25,7 +26,10 @@ export default class MainApplication {
         }
 
         this.expressLoader = new ExpressLoader();
-        this.expressLoader.start();
+        await this.expressLoader.start();
+
+        console.log("INFO", `Initialized with config: ${JSON.stringify(KvpStorage.instance.wrapper.getConfig(), null, 2)}`);
+        console.log("INFO", "Main Application started up successfully ...");
     }
 
     async stop(force = false) {

@@ -57,13 +57,18 @@ export default class UserCommandHandler extends CommandHandler {
         console.log("INFO", "Users: \n" + users.join("\n"));
     }
 
-    setPermissionGroup(uid, groupName) {
-        UserService.setPermissionGroup(uid, groupName);
-        console.log("INFO", `Successfully changed perm-group of user [${uid}]`);
+    async setPermissionGroup(username, groupName) {
+        let user = await UserService.getUserByUsername(username);
+        if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
+
+        // @ts-ignore
+        await UserService.setPermissionGroup(user.id, groupName);
+        // @ts-ignore
+        console.log("INFO", `Successfully changed perm-group of user [${user.username}]`);
     }
 
-    async setActive(uid, state) {
-        let user = await User.findByPk(uid);
+    async setActive(username, state) {
+        let user = await UserService.getUserByUsername(username);
         if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
         if(!["true", "false"].includes(String(state).toLowerCase())) throw new Exception("Invalid State", {code: "CORE.INVALID_STATE"});
 
@@ -75,8 +80,8 @@ export default class UserCommandHandler extends CommandHandler {
         console.log("INFO", `User active state of user [${user.username}] set to [${state === "true"}]`);
     }
 
-    async setTfaKey(uid, key) {
-        let user = await User.findByPk(uid);
+    async setTfaKey(username, key) {
+        let user = await UserService.getUserByUsername(username);
         if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
 
         let newKey = key || uuid.v4();
@@ -89,8 +94,8 @@ export default class UserCommandHandler extends CommandHandler {
         console.log("INFO", `Updated tfa key of user [${user.username}] to [${newKey}]`);
     }
 
-    async printTfa(uid) {
-        let user = await User.findByPk(uid);
+    async printTfa(username) {
+        let user = await UserService.getUserByUsername(username);
         if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
         // @ts-ignore
         if(!user.tfaKey) throw new Exception("User has no TFAKey", {code: "CORE.USERMGMT.TFA_DISABLED"});
@@ -102,8 +107,8 @@ export default class UserCommandHandler extends CommandHandler {
         console.log(`Current TOTP Token of user [${user.username}]: ${token}`);
     }
 
-    async printTfaQr(uid) {
-        let user = await User.findByPk(uid);
+    async printTfaQr(username) {
+        let user = await UserService.getUserByUsername(username);
         if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
         // @ts-ignore
         if(!user.tfaKey) throw new Exception("User has no TFAKey", {code: "CORE.USERMGMT.TFA_DISABLED"});

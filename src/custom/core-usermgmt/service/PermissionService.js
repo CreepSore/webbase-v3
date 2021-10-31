@@ -82,11 +82,23 @@ export default class PermissionService {
         await permGroup.removePermission(perm);
     }
 
+    static async isAnonymousPermission(permName) {
+        let permission = await Permission.findOne({where: {name: permName}});
+        if(!permission) return false;
+
+        // @ts-ignore
+        return (await this.getAnonymousPermissionGroup()).hasPermission(permission);
+    }
+
     static async getDefaultPermissionGroup() {
         return PermissionGroup.findOne({where: {name: "Default"}});
     }
 
     static async getSuperAdminPermissionGroup() {
         return PermissionGroup.findOne({where: {name: "SuperAdmin"}});
+    }
+
+    static async getAnonymousPermissionGroup() {
+        return PermissionGroup.findOne({where: {name: "Anonymous"}});
     }
 }

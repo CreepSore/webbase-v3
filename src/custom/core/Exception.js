@@ -10,4 +10,8 @@ export default class Exception extends Error {
         super(message);
         this.info = info;
     }
+
+    toApiResponse() {
+        return {message: this.message, info: this.info};
+    }
 }

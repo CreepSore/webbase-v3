@@ -7,10 +7,11 @@ import User from "../models/User.js";
 import Permission from "../models/Permission.js";
 import PermissionGroup from "../models/PermissionGroup.js";
 import Exception from "../../core/Exception.js";
+import TfaService from "../../../service/TfaService.js";
 
 export default class UserService {
     static async hasPermission(uid, permission) {
-        return Boolean(User.findOne({
+        return Boolean(await User.findOne({
             where: {id: uid},
             include: {
                 model: PermissionGroup,
@@ -56,12 +57,31 @@ export default class UserService {
         return await this.getUserByUid(uid) !== null;
     }
 
+    static async getUserByCredentials(username, password) {
+        return await User.findOne({
+            where: {
+                username,
+                password: this.hashPassword(password)
+            }
+        });
+    }
+
     static async userExistsByUsername(name) {
         return await this.getUserByUsername(name) !== null;
     }
 
     static async userExistsByEmail(email) {
         return await this.getUserByEmail(email) !== null;
+    }
+
+    static async checkTfa(uid, tokenIn) {
+        let user = await this.getUserByUid(uid);
+        if(!user) return false;
+        // @ts-ignore
+        if(!user.tfaKey) return true;
+
+        // @ts-ignore
+        return TfaService.verify(user.tfaKey, tokenIn.replace(/ /g, ""));
     }
 
     /**
@@ -71,7 +91,7 @@ export default class UserService {
      * @param {string} password UNHASHED password
      * @param {string} [email=null] email
      * @param {string} [tfaKey=null] UNENCODED key
-     * @return {Promise<string>}
+     * @return {Promise<User>}
      * @memberof UserService
      */
     static async registerUser(username, password, email = null, tfaKey = null) {
@@ -94,7 +114,7 @@ export default class UserService {
             let createdUser = await User.create(options);
 
             // @ts-ignore
-            return createdUser.id;
+            return createdUser;
         }
         catch {
             throw new Exception("User creation failed", {code: "CORE.UNKNOWN"});
