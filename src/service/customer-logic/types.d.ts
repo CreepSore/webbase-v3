@@ -2,8 +2,8 @@
 
 import express from "express";
 import { Sequelize } from "sequelize/types";
-import CommandHandler from "../command-handler/CommandHandler";
-import KvpStorage from "../KvpStorage";
+import CommandHandler from "../command-handler/CommandHandler.js";
+import KvpStorage from "../KvpStorage.js";
 
 export type CustomerLogicDependencies = {
     sharedObjects: Map<string, any>,

@@ -1,5 +1,5 @@
-import Exception from "../../core/Exception";
-import UserService from "../service/UserService";
+import Exception from "../../core/Exception.js";
+import UserService from "../service/UserService.js";
 
 export default async function(req, res) {
     let {username, password, email} = req.body;
