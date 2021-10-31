@@ -7,7 +7,8 @@ import KvpStorage from "../KvpStorage.js";
 
 export type CustomerLogicDependencies = {
     sharedObjects: Map<string, any>,
-    storage: KvpStorage
+    storage: KvpStorage,
+    extensionsPath: string
 };
 
 export type StartCliApplicationParams = {

@@ -4,6 +4,7 @@
  */
 
 import KvpStorage from "../KvpStorage.js";
+import CustomerLogicFactory from "./CustomerLogicFactory.js";
 
 export default class CustomerLogicHandler {
     static #mainInstance;
@@ -21,7 +22,6 @@ export default class CustomerLogicHandler {
     constructor() {
         this.customerLogicImplementations = new Set();
         this.sharedObjects = new Map();
-        this.sharedObjects.set("KVPSTORE", KvpStorage.instance);
         // dummy object to detect non existing functions
         this.nullobj = {};
         if(!CustomerLogicHandler.#mainInstance) {
@@ -63,7 +63,9 @@ export default class CustomerLogicHandler {
      */
     async constructDependencies() {
         return {
-            sharedObjects: this.sharedObjects
+            sharedObjects: this.sharedObjects,
+            storage: KvpStorage.instance,
+            extensionsPath: CustomerLogicFactory.getCustomerLogicPath()
         };
     }
 

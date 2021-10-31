@@ -1,4 +1,7 @@
 /* eslint-disable no-unused-vars */
+import fs from "fs";
+import path from "path";
+
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import Permission from "./models/Permission.js";
 import PermissionGroup from "./models/PermissionGroup.js";
@@ -12,15 +15,13 @@ import ApiLogin from "./api/login.js";
 import ApiRegister from "./api/register.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import PermissionGroupPermissions from "./models/PermissionGroupPermissions.js";
+import Version from "../../models/Version.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
  */
 
 export default class CoreUsermgmt extends CustomerLogic {
-    /** @type {CustomerLogicDependencies} */
-    #dependencies;
-
     /** @param {import("../../service/customer-logic/types").StartCliApplicationParams} params */
     async onStartCliApplication(params) {
         params.commandHandler.registerSubHandler("user", new UserCommandHandler());
@@ -88,6 +89,11 @@ export default class CoreUsermgmt extends CustomerLogic {
             // @ts-ignore
             group.addPermission(permAll);
         });
+
+        await Version.create({
+            name: this.extensionInfo.name,
+            version: this.extensionInfo.version
+        });
     }
 
 
@@ -118,6 +124,8 @@ export default class CoreUsermgmt extends CustomerLogic {
     async expressStop(params) {}
 
     getPriority() {return 999;}
-    async onLoad() {}
+    async onLoad() {
+        this.extensionInfo = JSON.parse(String(fs.readFileSync(path.resolve(this.dependencies.extensionsPath, "core-usermgmt", "extension.json"))));
+    }
     async onUnload() {}
 }

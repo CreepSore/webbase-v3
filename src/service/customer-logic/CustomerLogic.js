@@ -6,7 +6,7 @@
 
 export default class CustomerLogic {
     /** @type {CustomerLogicDependencies} */
-    #dependencies;
+    dependencies;
 
     /** @param {import("./types").StartCliApplicationParams} params */
     async onStartCliApplication(params) {}
@@ -29,6 +29,6 @@ export default class CustomerLogic {
     async onLoad() {}
     async onUnload() {}
     async injectDependencies(dependencies) {
-        this.#dependencies = dependencies;
+        this.dependencies = dependencies;
     }
 }
