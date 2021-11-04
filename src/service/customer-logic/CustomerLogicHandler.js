@@ -160,7 +160,7 @@ export default class CustomerLogicHandler {
      */
     async loadCustomerLogic(customerLogic) {
         if(!customerLogic || customerLogic.loaded) return;
-
+        customerLogic.loading = true;
         for(let dependencyName of customerLogic.getMetadata().dependencies || []) {
             if(dependencyName === customerLogic.getMetadata().name) {
                 console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Extension tried to load itself as dependency.`);
@@ -172,12 +172,18 @@ export default class CustomerLogicHandler {
                 return;
             }
 
+            if(logic.loading) {
+                console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Circular dependency detected.`);
+                return;
+            }
+
             await this.loadCustomerLogic(logic);
         }
 
         console.log("INFO", `Extension [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}] loaded.`);
         customerLogic.onLoad?.();
         customerLogic.loaded = true;
+        customerLogic.loading = false;
     }
 
     /**
@@ -190,6 +196,10 @@ export default class CustomerLogicHandler {
         customerLogic.loaded = false;
     }
 
+    /**
+     * @param {string} name
+     * @returns {CustomerLogic}
+     */
     getCustomerLogicByName(name) {
         return [...this.customerLogicImplementations.entries()].find(customerLogic => customerLogic[0].getMetadata().name === name)[0];
     }

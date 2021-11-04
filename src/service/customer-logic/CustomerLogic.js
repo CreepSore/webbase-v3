@@ -7,6 +7,7 @@
 export default class CustomerLogic {
     /** @type {CustomerLogicDependencies} */
     dependencies;
+    loading = false;
     loaded = false;
 
     /** @param {import("./types").StartCliApplicationParams} params */
