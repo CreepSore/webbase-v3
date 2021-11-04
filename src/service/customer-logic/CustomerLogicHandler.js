@@ -201,6 +201,6 @@ export default class CustomerLogicHandler {
      * @returns {CustomerLogic}
      */
     getCustomerLogicByName(name) {
-        return [...this.customerLogicImplementations.entries()].find(customerLogic => customerLogic[0].getMetadata().name === name)[0];
+        return [...this.customerLogicImplementations.entries()].find(customerLogic => customerLogic[0].getMetadata().name === name)?.[0];
     }
 }
