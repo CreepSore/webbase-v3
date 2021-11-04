@@ -58,14 +58,16 @@ export default class CustomerLogicHandler {
     }
 
     /**
+     * @property {object} additionalDependencies
      * @return {Promise<CustomerLogicDependencies>}
      * @memberof CustomerLogicHandler
      */
-    async constructDependencies() {
+    async constructDependencies(additionalDependencies = {}) {
         return {
             sharedObjects: this.sharedObjects,
             storage: KvpStorage.instance,
-            extensionsPath: CustomerLogicFactory.getCustomerLogicPath()
+            extensionsPath: CustomerLogicFactory.getCustomerLogicPath(),
+            additionalDependencies
         };
     }
 
@@ -76,9 +78,9 @@ export default class CustomerLogicHandler {
      * @param {boolean} [load=false] If true, the customer logic instance will be loaded
      * @memberof CustomerLogicHandler
      */
-    async registerCustomerLogic(customerLogic, load = false) {
+    async registerCustomerLogic(customerLogic, load = false, additionalDependencies = {}) {
         if(!customerLogic) return;
-        await customerLogic.injectDependencies(await this.constructDependencies());
+        await customerLogic.injectDependencies(await this.constructDependencies(additionalDependencies));
         if(load) await this.loadCustomerLogic(customerLogic);
         this.customerLogicImplementations.add(customerLogic);
     }
@@ -157,7 +159,25 @@ export default class CustomerLogicHandler {
      * @memberof CustomerLogicHandler
      */
     async loadCustomerLogic(customerLogic) {
-        customerLogic?.onLoad?.();
+        if(!customerLogic || customerLogic.loaded) return;
+
+        for(let dependencyName of customerLogic.getMetadata().dependencies || []) {
+            if(dependencyName === customerLogic.getMetadata().name) {
+                console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Extension tried to load itself as dependency.`);
+                return;
+            }
+            let logic = this.getCustomerLogicByName(dependencyName);
+            if(!logic) {
+                console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Dependency ${dependencyName} not found.`);
+                return;
+            }
+
+            await this.loadCustomerLogic(logic);
+        }
+
+        console.log("INFO", `Extension [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}] loaded.`);
+        customerLogic.onLoad?.();
+        customerLogic.loaded = true;
     }
 
     /**
@@ -167,5 +187,10 @@ export default class CustomerLogicHandler {
      */
     async unloadCustomerLogic(customerLogic) {
         customerLogic?.onUnload?.();
+        customerLogic.loaded = false;
+    }
+
+    getCustomerLogicByName(name) {
+        return [...this.customerLogicImplementations.entries()].find(customerLogic => customerLogic[0].getMetadata().name === name)[0];
     }
 }

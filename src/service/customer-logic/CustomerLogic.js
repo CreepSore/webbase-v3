@@ -7,6 +7,7 @@
 export default class CustomerLogic {
     /** @type {CustomerLogicDependencies} */
     dependencies;
+    loaded = false;
 
     /** @param {import("./types").StartCliApplicationParams} params */
     async onStartCliApplication(params) {}
@@ -26,6 +27,8 @@ export default class CustomerLogic {
     async expressStop(params) {}
 
     getPriority() {return 0;}
+    getPluginDir() {return this.dependencies.additionalDependencies.pluginDir;}
+    getMetadata() {return this.dependencies.additionalDependencies.metadata;}
     async onLoad() {}
     async onUnload() {}
     async injectDependencies(dependencies) {
