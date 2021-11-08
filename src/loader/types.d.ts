@@ -7,6 +7,7 @@ export type MainApplicationStartOptions = {
 export type InstallerApplicationStartParams = {
     drop?: boolean;
     setup?: boolean;
+    
 };
 
 export type CliApplicationStartParams = {

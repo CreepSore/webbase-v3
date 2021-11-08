@@ -14,8 +14,14 @@ export default class CustomerLogicFactory {
             .filter(x => fs.statSync(path.join(resolvedLogicPath, x)).isDirectory())
             .map(async pluginDirectory => {
                 let resolvedPluginDir = path.resolve(resolvedLogicPath, pluginDirectory);
+                let metaPath = path.join(resolvedPluginDir, "extension.json");
+
+                if(!fs.existsSync(metaPath)) {
+                    return;
+                }
+
                 try {
-                    let extensionData = JSON.parse(String(fs.readFileSync(path.join(resolvedPluginDir, "extension.json"))));
+                    let extensionData = JSON.parse(String(fs.readFileSync(metaPath)));
                     let finalPath = path.join(resolvedPluginDir, extensionData.entrypoint || "index.js");
                     if(!fs.existsSync(finalPath)) {
                         throw new Error(`Entrypoint not found at [${finalPath}]`);

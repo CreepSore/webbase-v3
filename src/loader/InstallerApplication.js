@@ -1,3 +1,4 @@
+import Version from "../models/Version.js";
 import CustomerLogicHandler from "../service/customer-logic/CustomerLogicHandler.js";
 import SequelizeLoader from "./logic-initializer/SequelizeLoader.js";
 
@@ -33,8 +34,13 @@ export default class InstallerApplication {
             console.log("ERROR", `Installation failed: ${JSON.stringify(errors, null, 2)}`);
         }
 
-        console.log("INFO", "Executing first-install-hooks ...");
-        await CustomerLogicHandler.instance.runAllCustomerLogicFunction("sequelizeFirstInstall", {sequelize: loader.sequelize});
+        if(!await Version.findOne({name: "DEFAULT"})) {
+            console.log("INFO", "Executing first-install-hooks ...");
+            await CustomerLogicHandler.instance.runAllCustomerLogicFunction("sequelizeFirstInstall", {sequelize: loader.sequelize});
+        }
+        else {
+            await Version.findOrCreate({where: {name: "DEFAULT"}, defaults: {version: "3.0.0"}});
+        }
     }
 
     /**
