@@ -3,6 +3,10 @@ import * as uuid from "uuid";
 import sqlze from "sequelize";
 
 export default class Language extends sqlze.Model {
+    static getFromIdentifier(id) {
+        return this.findOne({where: {localeIdentifier: id}});
+    }
+
     static initialize(sequelize) {
         this.init({
             id: {
