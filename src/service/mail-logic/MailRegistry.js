@@ -25,10 +25,19 @@ export default class MailRegistry {
         return this.#defaultService;
     }
 
-    async sendAlertMail(subject, text, asHtml = false) {
+    /**
+     * Sends a alert mail to all configured recipients
+     * @param {string} subject
+     * @param {string} text
+     * @param {boolean} [asHtml=false]
+     * @param {boolean} [forceSend=false] - If true, the mail will be sent even if the alerts are disabled
+     * @return {Promise<void>}
+     * @memberof MailRegistry
+     */
+    async sendAlertMail(subject, text, asHtml = false, forceSend = false) {
         let mailConfig = KvpStorage.instance.wrapper.getConfig().mail;
         let defaultService = this.#defaultService;
-        if(!defaultService) {
+        if(!defaultService || (!mailConfig.alertsEnabled && !forceSend)) {
             return;
         }
 
