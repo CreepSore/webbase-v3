@@ -24,6 +24,19 @@ export default class ConfigModel {
                     database: "storage"
                 }
             };
+
+            this.mail = {
+                host: "localhost",
+                port: 25,
+                user: "",
+                password: "",
+                alerts: {
+                    enabled: false,
+                    from: "",
+                    subject: "",
+                    recipients: []
+                }
+            };
         }
     }
 

@@ -32,7 +32,7 @@ export default class MailService {
      * @param {string} to
      * @param {string} content
      * @param {boolean} [asHtml=false]
-     * @return {any}
+     * @return {Promise<import("nodemailer/lib/smtp-transport").SentMessageInfo>}
      * @memberof MailService
      */
     sendMail(from, to, content, title = "", asHtml = false) {

@@ -7,6 +7,7 @@ import expressSession from "express-session";
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import KvpStorage from "../../service/KvpStorage.js";
 import Version from "../../models/Version.js";
+import MailRegistry from "../../service/mail-logic/MailRegistry.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -30,6 +31,13 @@ export default class Core extends CustomerLogic {
                 }
 
                 console.log("INFO", `Hello, I'm the help page:\n${handler.getHelpText()}`);
+            }
+        });
+
+        params.commandHandler.registerCommand("testmail", {
+            help: "sends a test alert mail",
+            callback: async() => {
+                await MailRegistry.instance.sendAlertMail("Test Alert", "This is a test alert mail", false);
             }
         });
 

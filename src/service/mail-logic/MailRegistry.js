@@ -1,13 +1,48 @@
 import MailService from "./MailService.js";
+import KvpStorage from "../KvpStorage.js";
 
 export default class MailRegistry {
     #mailServices = new Map();
+    /** @type {MailService} */
+    #defaultService;
 
     /** @type {MailRegistry} */
     static #instance;
 
     static get instance() {
-        return this.#instance ?? (this.#instance = new this());
+        if(!this.#instance) {
+            this.#instance = new MailRegistry();
+            try {
+                let config = KvpStorage.instance.wrapper.getConfig().mail;
+                this.#instance.#defaultService = this.#instance.getOrCreateMailService(config.user, config.password, config.host, config.port);
+            }
+            catch(error) { console.log("ERROR", `Failed to initialize default mailer: ${error}`); }
+        }
+        return this.#instance;
+    }
+
+    get defaultService() {
+        return this.#defaultService;
+    }
+
+    async sendAlertMail(subject, text, asHtml = false) {
+        let mailConfig = KvpStorage.instance.wrapper.getConfig().mail;
+        let defaultService = this.#defaultService;
+        if(!defaultService) {
+            return;
+        }
+
+        await Promise.all(mailConfig.alerts.recipients.map(recipient => {
+            return defaultService.sendMail(
+                mailConfig.alerts.from,
+                recipient,
+                text,
+                `${mailConfig.alerts.subject}${subject ? ` - ${subject}` : ""}`,
+                asHtml
+            );
+        })).catch(err => {
+            console.log("ERROR", `Failed to send alert mail: ${err}`);
+        });
     }
 
     /**
