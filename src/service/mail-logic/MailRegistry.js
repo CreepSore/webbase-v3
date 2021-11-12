@@ -37,7 +37,7 @@ export default class MailRegistry {
     async sendAlertMail(subject, text, asHtml = false, forceSend = false) {
         let mailConfig = KvpStorage.instance.wrapper.getConfig().mail;
         let defaultService = this.#defaultService;
-        if(!defaultService || (!mailConfig.alertsEnabled && !forceSend)) {
+        if(!defaultService || (!mailConfig.alerts.enabled && !forceSend)) {
             return;
         }
 
