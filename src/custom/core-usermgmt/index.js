@@ -125,7 +125,7 @@ export default class CoreUsermgmt extends CustomerLogic {
 
     getPriority() {return 999;}
     async onLoad() {
-        this.extensionInfo = JSON.parse(String(fs.readFileSync(path.resolve(this.dependencies.extensionsPath, "core-usermgmt", "extension.json"))));
+        this.extensionInfo = await this.getMetadata();
     }
     async onUnload() {}
 }
