@@ -37,7 +37,7 @@ export default class Core extends CustomerLogic {
         params.commandHandler.registerCommand("testmail", {
             help: "sends a test alert mail",
             callback: async() => {
-                await MailRegistry.instance.sendAlertMail("Test Alert", "This is a test alert mail", false);
+                await MailRegistry.instance.sendAlertMail("Test Alert", "This is a test alert mail", false, true);
             }
         });
 
