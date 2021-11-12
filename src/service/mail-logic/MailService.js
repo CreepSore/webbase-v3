@@ -35,12 +35,13 @@ export default class MailService {
      * @return {any}
      * @memberof MailService
      */
-    sendMail(from, to, content, asHtml = false) {
+    sendMail(from, to, content, title = "", asHtml = false) {
         return this.#transporter.sendMail({
             from,
             to,
             text: !asHtml ? content : null,
-            html: asHtml ? content : null
+            html: asHtml ? content : null,
+            subject: title
         });
     }
 }

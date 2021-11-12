@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import os from "os";
 
 import CustomerLogicHandler from "./CustomerLogicHandler.js";
 
@@ -12,19 +13,30 @@ export default class CustomerLogicFactory {
         let toAwait = files
             .filter(x => fs.statSync(path.join(resolvedLogicPath, x)).isDirectory())
             .map(async pluginDirectory => {
-                let finalPath = path.join(resolvedLogicPath, pluginDirectory, "index.js");
-                if(!fs.existsSync(finalPath)) {
-                    console.log("WARN", `No index.js found at [${finalPath}]`);
+                let resolvedPluginDir = path.resolve(resolvedLogicPath, pluginDirectory);
+                let metaPath = path.join(resolvedPluginDir, "extension.json");
+
+                if(!fs.existsSync(metaPath)) {
                     return;
                 }
 
                 try {
-                    let LogicConstructor = (await import(finalPath)).default;
+                    let extensionData = JSON.parse(String(fs.readFileSync(metaPath)));
+                    if(extensionData.enabled === false) return;
+                    let finalPath = path.join(resolvedPluginDir, extensionData.entrypoint || "index.js");
+                    if(!fs.existsSync(finalPath)) {
+                        throw new Error(`Entrypoint not found at [${finalPath}]`);
+                    }
+
+                    let LogicConstructor = (await import(os.platform() === "win32" ? `file:///${finalPath}` : finalPath)).default;
                     let logicInstance = new LogicConstructor();
-                    await handler.registerCustomerLogic(logicInstance, false);
+                    await handler.registerCustomerLogic(logicInstance, false, {
+                        pluginDir: resolvedPluginDir,
+                        metadata: extensionData
+                    });
                 }
                 catch(error) {
-                    console.log("ERROR", `An error occured while trying to load plugin at [${finalPath}]`);
+                    console.log("ERROR", `An error occured while trying to load plugin at [${resolvedPluginDir}]`);
                     console.log("ERROR", error);
                     console.log("ERROR", error.stack);
                 }

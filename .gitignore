@@ -1,4 +1,6 @@
 ###### Base gitignore
+*.rej
+*.orig
 config.json
 config.template.json
 storage.db
