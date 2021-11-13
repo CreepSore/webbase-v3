@@ -12,7 +12,6 @@ export default class Localization extends sqlze.Model {
             },
             key: {
                 type: sqlze.TEXT,
-                unique: true,
                 allowNull: false
             },
             value: {
@@ -24,7 +23,13 @@ export default class Localization extends sqlze.Model {
         }, {
             sequelize,
             tableName: "localization",
-            freezeTableName: true
+            freezeTableName: true,
+            indexes: [
+                {
+                    fields: ["LanguageId", "key"],
+                    unique: true
+                }
+            ]
         });
     }
 }

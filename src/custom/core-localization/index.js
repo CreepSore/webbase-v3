@@ -18,7 +18,38 @@ export default class Core extends CustomerLogic {
             subHandlers: {
                 translation: {
                     commands: {
-                        
+                        get: {
+                            help: "<language> <translation_key> [replacements]; Gets a translation. replacements = json",
+                            callback: async(args) => {
+                                let replacements = {};
+                                if(args[2]) {
+                                    replacements = JSON.parse(args[2]);
+                                }
+
+                                let translation = await LocalizationService.getTranslation(args[0], args[1], replacements);
+                                console.log("INFO", translation);
+                            }
+                        },
+                        set: {
+                            help: "<language> <translation_key> <translation_value> ; Sets a translation",
+                            callback: async(args) => {
+                                await LocalizationService.setTranslation(args[0], args[1], args[2]);
+                            }
+                        },
+                        "delete": {
+                            help: "<language|all> <translation_key>",
+                            callback: async(args) => {
+                                if(args[0] !== "all") {
+                                    await LocalizationService.deleteTranslation(args[0], args[1]);
+                                    return;
+                                }
+
+                                let allLang = await LocalizationService.getAllLanguages();
+                                await Promise.all(allLang.map(language => {
+                                    return LocalizationService.deleteTranslation(language.id, args[1]);
+                                }));
+                            }
+                        }
                     }
                 },
                 language: {

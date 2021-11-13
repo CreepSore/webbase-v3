@@ -23,10 +23,10 @@ export default class CommandHandler {
         return [...this.commands]
             .map(x => `${cmdPrefix} ${x[0]}: ${x[1].help}`)
             .concat(
-                "--------------------------------------------",
+                this.commands.size > 0 ? "--------------------------------------------" : null,
                 [...this.subHandler]
                     .map(x => x[1].getHelpText(`${cmdPrefix}${cmdPrefix ? " " : ""}${x[0]}`))
-            ).join("\n");
+            ).filter(x => x !== null).join("\n");
     }
 
     /**
