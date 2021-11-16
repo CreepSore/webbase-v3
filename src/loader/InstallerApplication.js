@@ -34,7 +34,7 @@ export default class InstallerApplication {
         }
 
         console.log("INFO", "Executing first-install-hooks ...");
-        await CustomerLogicHandler.instance.runAllCustomerLogicFunction("sequelizeFirstInstall", {sequelize: loader.sequelize});
+        await CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("sequelizeFirstInstall", {sequelize: loader.sequelize});
     }
 
     /**
@@ -42,7 +42,7 @@ export default class InstallerApplication {
      */
     async start(options = {}) {
         await CustomerLogicHandler.instance.loadAllCustomerImplementations();
-        await CustomerLogicHandler.instance.runAllCustomerLogicFunction("onStartInstallerApplication");
+        await CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("onStartInstallerApplication");
 
         console.log("INFO", "Starting installer application ...");
         this.#options = options;

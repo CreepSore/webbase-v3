@@ -43,10 +43,11 @@ export default class CacheProvider {
      * @return {Promise<any>}
      * @memberof CacheProvider
      */
-    async process(name, callback, ttlMs) {
+    async process(name, callback, ttlMs, reprocessCallback = null) {
         let cacheObject = this.cache[name];
         if(cacheObject) {
-            if(Date.now() - cacheObject.lastFetch < ttlMs) return cacheObject.data;
+            let doReprocess = reprocessCallback ? await reprocessCallback() : false;
+            if(!doReprocess && Date.now() - cacheObject.lastFetch < ttlMs) return cacheObject.data;
             cacheObject.data = await cacheObject.callback();
             cacheObject.lastFetch = Date.now();
             return cacheObject.data;

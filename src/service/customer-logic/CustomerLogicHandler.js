@@ -32,6 +32,7 @@ export default class CustomerLogicHandler {
     /**
      * Returns all customer implementations sorted by highest
      * priority first
+     * @return {Array<CustomerLogic>}
      * @readonly
      * @memberof CustomerLogicHandler
      */
@@ -46,6 +47,7 @@ export default class CustomerLogicHandler {
     /**
      * Returns all customer implementations sorted by lowest
      * priority first
+     * @return {Array<CustomerLogic>}
      * @readonly
      * @memberof CustomerLogicHandler
      */
@@ -137,6 +139,32 @@ export default class CustomerLogicHandler {
         return (await Promise.all(this.sortedCustomerLogic.map(async customerLogic => {
             return await this.runCustomerLogicFunction(customerLogic, functionName, ...args);
         }))).filter(x => x !== this.nullobj);
+    }
+
+    /**
+     * Runs a function on all customer logic instances if the function does exist.
+     * Dependencies get executed first.
+     * @param {string} functionName
+     * @param {Array<any>} args
+     * @return {Promise<Array<any>>}
+     * @memberof CustomerLogicHandler
+     */
+    async runAllCustomerLogicFunctionDependencyFirst(functionName, ...args) {
+        let executed = [];
+        let results = [];
+        for(let customerLogic of this.sortedCustomerLogic) {
+            if(executed.includes(customerLogic)) return null;
+            for(let dependency of (customerLogic.getMetadata().dependencies || []).map((dep) => this.getCustomerLogicByName(dep))) {
+                if(executed.includes(dependency)) continue;
+                executed.push(dependency);
+                await this.runCustomerLogicFunction(dependency, functionName, ...args);
+            }
+
+            executed.push(customerLogic);
+            results.push(await this.runCustomerLogicFunction(customerLogic, functionName, ...args));
+        }
+
+        return results;
     }
 
     /**

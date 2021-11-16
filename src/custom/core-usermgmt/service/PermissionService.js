@@ -8,7 +8,7 @@ export default class PermissionService {
         let existing = await Permission.findOne({where: {name: permName}});
         if(existing) throw new Exception("Permission already exists", {code: "CORE.USERMGMT.PERM_EXISTS"});
 
-        await Permission.create({
+        return await Permission.create({
             name: permName,
             description
         });
@@ -90,15 +90,15 @@ export default class PermissionService {
         return (await this.getAnonymousPermissionGroup()).hasPermission(permission);
     }
 
-    static async getDefaultPermissionGroup() {
+    static getDefaultPermissionGroup() {
         return PermissionGroup.findOne({where: {name: "Default"}});
     }
 
-    static async getSuperAdminPermissionGroup() {
+    static getSuperAdminPermissionGroup() {
         return PermissionGroup.findOne({where: {name: "SuperAdmin"}});
     }
 
-    static async getAnonymousPermissionGroup() {
+    static getAnonymousPermissionGroup() {
         return PermissionGroup.findOne({where: {name: "Anonymous"}});
     }
 }

@@ -2,6 +2,7 @@
 
 import PermissionService from "../custom/core-usermgmt/service/PermissionService.js";
 import UserService from "../custom/core-usermgmt/service/UserService.js";
+import Exception from "../custom/core/Exception.js";
 
 export default class ExpressRouteWrapper {
     /**
@@ -11,7 +12,9 @@ export default class ExpressRouteWrapper {
     constructor(callback, options = {}) {
         this.options = options;
         this.options.permissions ?? [];
-        this.options.onInvalidPermissions ?? function(_, __, next) {next();};
+        this.options.onInvalidPermissions ?? function(req, res) {
+            res.json({success: false, error: new Exception("Invalid Permissions", {code: "CORE.API.INVALID_PERMISSIONS"})});
+        };
         this.wrapped = callback;
     }
 

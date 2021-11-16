@@ -17,7 +17,22 @@ export default class LocalizationService {
     }
 
     static getLanguageFromIdentifier(identifier) {
-        return Language.findOne({where: {localeIdentifier: identifier}});
+        let language = Language.findOne({where: {localeIdentifier: identifier}});
+        if(!language) throw new Exception("Language does not exist", {code: "CORE.LOCALIZATION.INVALID_LANGUAGE"});
+
+        return language;
+    }
+
+    static createLanguage(name, languageId) {
+        try {
+            return Language.create({
+                name,
+                localeIdentifier: languageId
+            });
+        }
+        catch {
+            throw new Exception("Language exists", {code: "CORE.LOCALIZATION.LANGUAGE_EXISTS"});
+        }
     }
 
     static async getTranslation(language, key, replacements) {
