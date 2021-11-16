@@ -14,6 +14,13 @@ export default class CacheProvider {
         return this;
     }
 
+    invalidate(name) {
+        let cacheObject = this.cache[name];
+        if(!cacheObject) return this;
+        cacheObject.lastFetch = 0;
+        return this;
+    }
+
     /**
      * @param {string} name
      * @param {Function} callback
