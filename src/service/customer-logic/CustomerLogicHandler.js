@@ -172,6 +172,8 @@ export default class CustomerLogicHandler {
                 return;
             }
 
+            if(logic.loading) continue;
+
             if(logic.loading) {
                 console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Circular dependency detected.`);
                 return;
