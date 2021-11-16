@@ -1,5 +1,6 @@
 
 export default class CacheProvider {
+    /** @type {CacheProvider} */
     static #instance;
     static get instance() {
         return this.#instance || (this.#instance = new CacheProvider());
