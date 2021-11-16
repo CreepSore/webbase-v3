@@ -9,11 +9,24 @@ export default class CacheProvider {
         this.cache = {};
     }
 
+    /**
+     * Unregisters a cache object if it exists
+     * @param {string} name
+     * @return {CacheProvider}
+     * @memberof CacheProvider
+     */
     unregister(name) {
         delete this.cache[name];
         return this;
     }
 
+    /**
+     * Invalidates a cache object and forces it to
+     * re-process the data on the next process call.
+     * @param {string} name
+     * @return {CacheProvider}
+     * @memberof CacheProvider
+     */
     invalidate(name) {
         let cacheObject = this.cache[name];
         if(!cacheObject) return this;
@@ -22,6 +35,7 @@ export default class CacheProvider {
     }
 
     /**
+     * Processes a cache object and returns its data
      * @param {string} name
      * @param {Function} callback
      * @param {number} ttlMs
