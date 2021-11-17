@@ -69,7 +69,10 @@ export default class UserService {
     static async getUserByCredentials(username, password) {
         return await User.findOne({
             where: {
-                username,
+                [Op.or]: {
+                    username,
+                    email: username
+                },
                 password: this.hashPassword(password)
             }
         });
@@ -103,6 +106,36 @@ export default class UserService {
     }
 
     /**
+     * Checks user credentials and returns the
+     * sequelize user object if login was successful
+     * @static
+     * @param {string} username
+     * @param {string} password
+     * @param {string} [tfaToken=null]
+     * @return {Promise<User>}
+     * @memberof UserService
+     */
+    static async loginUser(username, password, tfaToken = null) {
+        let user = await this.getUserByCredentials(username, password);
+        if(!user) throw new Exception("Invalid Credentials", {code: "CORE.AUTHENTICATION.INVALID_CREDENTIALS"});
+        // @ts-ignore
+        if(!user.active) throw new Exception("User is disabled", {code: "CORE.AUTHENTICATION.USER_DISABLED"});
+
+        // @ts-ignore
+        let tfaCheckResult = await this.checkTfa(user.id, tfaToken);
+        if(!tfaCheckResult) {
+            if(tfaToken) {
+                throw new Exception("Invalid TFA Token", {code: "CORE.AUTHENTICATION.INVALID_TFA_TOKEN"});
+            }
+            else {
+                throw new Exception("No TFA Token provided", {code: "CORE.AUTHENTICATION.NO_TFA_TOKEN"});
+            }
+        }
+
+        return user;
+    }
+
+    /**
      * Registers a new user
      * @static
      * @param {string} username username
@@ -112,10 +145,20 @@ export default class UserService {
      * @return {Promise<User>}
      * @memberof UserService
      */
-    static async registerUser(username, password, email = null, tfaKey = null) {
+    static async registerUser(username, password, email = null, tfaKey = null, skipPasswordChecks = true) {
         if((await this.userExistsByUsername(username))
         || (email !== null && await this.userExistsByEmail(email))) {
             throw new Exception("User already exists", {code: "CORE.AUTHENTICATION.USER_EXISTS"});
+        }
+
+        if(!skipPasswordChecks) {
+            if(!password.match(/[a-zA-Z]/)) {
+                throw new Exception("Password must contain at least one letter", {code: "CORE.AUTHENTICATION.PASSWORD_NO_LETTER"});
+            }
+
+            if(password.length < 12) {
+                throw new Exception("Password must be at least 12 characters long", {code: "CORE.AUTHENTICATION.PASSWORD_INVALID_LENGTH"});
+            }
         }
 
         try {

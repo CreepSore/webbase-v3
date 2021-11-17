@@ -12,7 +12,9 @@ import PermissionCommandHandler from "./cli/PermissionCommandHandler.js";
 import PermissionGroupCommandHandler from "./cli/PermissionGroupCommandHandler.js";
 
 import ApiLogin from "./api/login.js";
+import ApiLogout from "./api/logout.js";
 import ApiRegister from "./api/register.js";
+
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import ApiKeyCommandHandler from "./cli/ApiKeyCommandHandler.js";
 
@@ -123,8 +125,9 @@ export default class CoreUsermgmt extends CustomerLogic {
             next();
         });
 
-        params.app.post("/api/usermgmt/login", ExpressRouteWrapper.create(ApiLogin, {permissions: ["CORE.AUTHENTICATION.LOGIN"]}));
-        params.app.post("/api/usermgmt/register", ExpressRouteWrapper.create(ApiRegister, {permissions: ["CORE.AUTHENTICATION.REGISTER"]}));
+        params.app.post("/api/authentication/login", ExpressRouteWrapper.create(ApiLogin, {permissions: ["CORE.AUTHENTICATION.LOGIN"]}));
+        params.app.post("/api/authentication/logout", ExpressRouteWrapper.create(ApiLogout));
+        params.app.post("/api/authentication/register", ExpressRouteWrapper.create(ApiRegister, {permissions: ["CORE.AUTHENTICATION.REGISTER"]}));
     }
 
     /** @param {import("../../service/customer-logic/types").ExpressParams} params */

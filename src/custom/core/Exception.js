@@ -8,6 +8,7 @@ export default class Exception extends Error {
      */
     constructor(message, info) {
         super(message);
+        this.text = message;
         this.info = info;
     }
 
