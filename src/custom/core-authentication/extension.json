@@ -1,5 +1,5 @@
 {
-    "name": "Core.Usermgmt",
+    "name": "Core.Authentication",
     "version": "3.0.0",
     "entrypoint": "index.js",
     "dependencies": ["Core"]

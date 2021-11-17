@@ -2,5 +2,5 @@
     "name": "Core.Localization",
     "version": "3.0.0",
     "entrypoint": "index.js",
-    "dependencies": ["Core", "Core.Usermgmt"]
+    "dependencies": ["Core", "Core.Authentication"]
 }

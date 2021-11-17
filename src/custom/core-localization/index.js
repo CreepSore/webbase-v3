@@ -8,7 +8,7 @@ import CommandHandler from "../../service/command-handler/CommandHandler.js";
 import LocalizationService from "./service/LocalizationService.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import CacheProvider from "../../service/CacheProvider.js";
-import PermissionService from "../core-usermgmt/service/PermissionService.js";
+import PermissionService from "../core-authentication/service/PermissionService.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
