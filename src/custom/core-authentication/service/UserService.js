@@ -29,7 +29,7 @@ export default class UserService {
                     where: {
                         name: {
                             [Op.or]: [
-                                "CORE.USERMGMT.ALL",
+                                "CORE.AUTHENTICATION.ALL",
                                 permission
                             ]
                         }
@@ -41,10 +41,10 @@ export default class UserService {
 
     static async setPermissionGroup(uid, permissionGroup) {
         let permGroup = await PermissionGroup.findOne({where: {name: permissionGroup}});
-        if(!permGroup) throw new Exception("Invalid Permission Group", {code: "CORE.USERMGMT.INVALID_PERM_GROUP"});
+        if(!permGroup) throw new Exception("Invalid Permission Group", {code: "CORE.AUTHENTICATION.INVALID_PERM_GROUP"});
 
         let user = await User.findByPk(uid);
-        if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
+        if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
 
         // @ts-ignore
         await user.setPermissionGroup(permGroup);
@@ -115,7 +115,7 @@ export default class UserService {
     static async registerUser(username, password, email = null, tfaKey = null) {
         if((await this.userExistsByUsername(username))
         || (email !== null && await this.userExistsByEmail(email))) {
-            throw new Exception("User already exists", {code: "CORE.USERMGMT.USER_EXISTS"});
+            throw new Exception("User already exists", {code: "CORE.AUTHENTICATION.USER_EXISTS"});
         }
 
         try {

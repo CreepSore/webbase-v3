@@ -53,13 +53,13 @@ export default class UserCommandHandler extends CommandHandler {
 
     async listUsers() {
         // @ts-ignore
-        let users = (await User.findAll({include: [PermissionGroup]})).map(user => `  [${user.id}]@[${user.PermissionGroup.name}] username: <${user.username}> email: <${user.email}> tfaKey: <${user.tfaKey}> active: <${user.active}>`);
+        let users = (await User.findAll({include: [PermissionGroup]})).map(user => `  [${user.id}]@[${user.PermissionGroup?.name}] username: <${user.username}> email: <${user.email}> tfaKey: <${user.tfaKey}> active: <${user.active}>`);
         console.log("INFO", "Users: \n" + users.join("\n"));
     }
 
     async setPermissionGroup(username, groupName) {
         let user = await UserService.getUserByUsername(username);
-        if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
+        if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
 
         // @ts-ignore
         await UserService.setPermissionGroup(user.id, groupName);
@@ -69,7 +69,7 @@ export default class UserCommandHandler extends CommandHandler {
 
     async setActive(username, state) {
         let user = await UserService.getUserByUsername(username);
-        if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
+        if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
         if(!["true", "false"].includes(String(state).toLowerCase())) throw new Exception("Invalid State", {code: "CORE.INVALID_STATE"});
 
         await user.update({
@@ -82,7 +82,7 @@ export default class UserCommandHandler extends CommandHandler {
 
     async setTfaKey(username, key) {
         let user = await UserService.getUserByUsername(username);
-        if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
+        if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
 
         let newKey = key || uuid.v4();
 
@@ -96,9 +96,9 @@ export default class UserCommandHandler extends CommandHandler {
 
     async printTfa(username) {
         let user = await UserService.getUserByUsername(username);
-        if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
+        if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
         // @ts-ignore
-        if(!user.tfaKey) throw new Exception("User has no TFAKey", {code: "CORE.USERMGMT.TFA_DISABLED"});
+        if(!user.tfaKey) throw new Exception("User has no TFAKey", {code: "CORE.AUTHENTICATION.TFA_DISABLED"});
 
         // @ts-ignore
         let token = TfaService.getTOTP(user.tfaKey);
@@ -109,9 +109,9 @@ export default class UserCommandHandler extends CommandHandler {
 
     async printTfaQr(username) {
         let user = await UserService.getUserByUsername(username);
-        if(!user) throw new Exception("Invalid User", {code: "CORE.USERMGMT.INVALID_USER"});
+        if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
         // @ts-ignore
-        if(!user.tfaKey) throw new Exception("User has no TFAKey", {code: "CORE.USERMGMT.TFA_DISABLED"});
+        if(!user.tfaKey) throw new Exception("User has no TFAKey", {code: "CORE.AUTHENTICATION.TFA_DISABLED"});
 
         let issuer = "";
         try {
@@ -127,7 +127,8 @@ export default class UserCommandHandler extends CommandHandler {
     }
 
     async createUser(username, password, email = null) {
-        let uid = await UserService.registerUser(username, password, email);
-        console.log("INFO", `User [${uid}] created successfully.`);
+        let user = await UserService.registerUser(username, password, email);
+        // @ts-ignore
+        console.log("INFO", `User [${user.username}] created successfully.`);
     }
 }

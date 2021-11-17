@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-import fs from "fs";
-import path from "path";
-
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import Permission from "./models/Permission.js";
 import PermissionGroup from "./models/PermissionGroup.js";
 import User from "./models/User.js";
+import PermissionGroupPermissions from "./models/PermissionGroupPermissions.js";
+import Version from "../../models/Version.js";
+import ApiKey from "./models/ApiKey.js";
 
 import UserCommandHandler from "./cli/UserCommandHandler.js";
 import PermissionCommandHandler from "./cli/PermissionCommandHandler.js";
@@ -14,8 +14,7 @@ import PermissionGroupCommandHandler from "./cli/PermissionGroupCommandHandler.j
 import ApiLogin from "./api/login.js";
 import ApiRegister from "./api/register.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
-import PermissionGroupPermissions from "./models/PermissionGroupPermissions.js";
-import Version from "../../models/Version.js";
+import ApiKeyCommandHandler from "./cli/ApiKeyCommandHandler.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -27,6 +26,7 @@ export default class CoreUsermgmt extends CustomerLogic {
         params.commandHandler.registerSubHandler("user", new UserCommandHandler());
         params.commandHandler.registerSubHandler("perm", new PermissionCommandHandler());
         params.commandHandler.registerSubHandler("permgroup", new PermissionGroupCommandHandler());
+        params.commandHandler.registerSubHandler("apikey", new ApiKeyCommandHandler());
     }
 
     async onStartInstallerApplication() {}
@@ -39,6 +39,7 @@ export default class CoreUsermgmt extends CustomerLogic {
         PermissionGroup.initialize(params.sequelize);
         PermissionGroupPermissions.initialize(params.sequelize);
         User.initialize(params.sequelize);
+        ApiKey.initialize(params.sequelize);
     }
 
     /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
@@ -48,22 +49,28 @@ export default class CoreUsermgmt extends CustomerLogic {
 
         PermissionGroup.belongsToMany(Permission, {through: {model: PermissionGroupPermissions, unique: false}});
         Permission.belongsToMany(PermissionGroup, {through: {model: PermissionGroupPermissions, unique: false}});
+
+        User.hasMany(ApiKey);
+        ApiKey.belongsTo(User);
+
+        PermissionGroup.hasMany(ApiKey);
+        ApiKey.belongsTo(PermissionGroup);
     }
 
     /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
     async sequelizeFirstInstall(params) {
         const permAll = await Permission.create({
-            name: "CORE.USERMGMT.ALL",
+            name: "CORE.AUTHENTICATION.ALL",
             description: "Pseudopermission for everything"
         });
 
         const permLogin = await Permission.create({
-            name: "CORE.USERMGMT.LOGIN",
+            name: "CORE.AUTHENTICATION.LOGIN",
             description: "Enables userlogin"
         });
 
         const permRegister = await Permission.create({
-            name: "CORE.USERMGMT.REGISTER",
+            name: "CORE.AUTHENTICATION.REGISTER",
             description: "Enables registration"
         });
 
@@ -116,8 +123,8 @@ export default class CoreUsermgmt extends CustomerLogic {
             next();
         });
 
-        params.app.post("/api/usermgmt/login", ExpressRouteWrapper.create(ApiLogin, {permissions: ["CORE.USERMGMT.LOGIN"]}));
-        params.app.post("/api/usermgmt/register", ExpressRouteWrapper.create(ApiRegister, {permissions: ["CORE.USERMGMT.REGISTER"]}));
+        params.app.post("/api/usermgmt/login", ExpressRouteWrapper.create(ApiLogin, {permissions: ["CORE.AUTHENTICATION.LOGIN"]}));
+        params.app.post("/api/usermgmt/register", ExpressRouteWrapper.create(ApiRegister, {permissions: ["CORE.AUTHENTICATION.REGISTER"]}));
     }
 
     /** @param {import("../../service/customer-logic/types").ExpressParams} params */

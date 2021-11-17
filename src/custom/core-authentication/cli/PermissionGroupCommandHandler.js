@@ -62,7 +62,7 @@ export default class PermissionGroupCommandHandler extends CommandHandler {
 
     async listGroupPermissions(groupName) {
         let group = await PermissionGroup.findOne({where: {name: groupName}, include: [Permission]});
-        if(!group) throw new Exception("Invalid Permission Group", {code: "CORE.USERMGMT.INVALID_PERM_GROUP"});
+        if(!group) throw new Exception("Invalid Permission Group", {code: "CORE.AUTHENTICATION.INVALID_PERM_GROUP"});
 
         // @ts-ignore
         let permissions = group.Permissions.map(x => `  ${x.name}: ${x.description}`);

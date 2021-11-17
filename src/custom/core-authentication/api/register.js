@@ -3,7 +3,7 @@ import UserService from "../service/UserService.js";
 
 export default async function(req, res) {
     let {username, password, email} = req.body;
-    if(!username || !password || !email) return res.json({success: false, error: new Exception("Invalid Input", {code: "CORE.USERMGMT.INVALID_INPUT"})});
+    if(!username || !password || !email) return res.json({success: false, error: new Exception("Invalid Input", {code: "CORE.AUTHENTICATION.INVALID_INPUT"})});
 
     try {
         let user = await UserService.registerUser(username, password, email);
