@@ -80,7 +80,7 @@ export default class ApiKeyService {
                     where: {
                         name: {
                             [Op.or]: [
-                                "CORE.AUTHENTICATION.ALL",
+                                "CORE.ALL",
                                 permission
                             ]
                         }

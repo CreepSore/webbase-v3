@@ -29,7 +29,7 @@ export default class UserService {
                     where: {
                         name: {
                             [Op.or]: [
-                                "CORE.AUTHENTICATION.ALL",
+                                "CORE.ALL",
                                 permission
                             ]
                         }

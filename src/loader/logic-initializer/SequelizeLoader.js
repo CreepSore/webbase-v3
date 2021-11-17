@@ -53,11 +53,11 @@ export default class SequelizeLoader {
     async setupModels() {
         Version.initialize(this.sequelize);
 
-        await CustomerLogicHandler.instance.runAllCustomerLogicFunction("sequelizeSetupModels", {sequelize: this.sequelize});
+        await CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("sequelizeSetupModels", {sequelize: this.sequelize});
     }
 
     async setupRelations() {
-        await CustomerLogicHandler.instance.runAllCustomerLogicFunction("sequelizeSetupRelation", {sequelize: this.sequelize});
+        await CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("sequelizeSetupRelation", {sequelize: this.sequelize});
     }
 
     /**

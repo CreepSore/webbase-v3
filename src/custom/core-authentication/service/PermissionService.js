@@ -87,7 +87,7 @@ export default class PermissionService {
         if(!permission) return false;
 
         // @ts-ignore
-        return (await this.getAnonymousPermissionGroup()).hasPermission(permission);
+        return await(await this.getAnonymousPermissionGroup()).hasPermission(permission);
     }
 
     static getPermissionGroupByName(name) {

@@ -126,15 +126,15 @@ export default class Core extends CustomerLogic {
             let languages = await CacheProvider.instance.process("CORE.LOCALIZATION.GET-LANGUAGES", () => {
                 return LocalizationService.getAllLanguages();
             }, 60000);
-            res.json(languages);
+            res.json({success: true, data: languages});
         }, {
             permissions: ["CORE.LOCALIZATION.GET_LANGUAGE"]
         }));
 
         app.get("/api/localization/language/fromId/:id", ExpressRouteWrapper.create(async(req, res) => {
-            let language = await CacheProvider.instance.process("CORE.LOCALIZATION.GET-LANGUAGES", () => {
+            let language = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-LANGUAGE-BY-ID:${req.params.id.toUpperCase()}`, async() => {
                 try {
-                    return LocalizationService.getLanguageFromIdentifier(req.params.id);
+                    return await LocalizationService.getLanguageFromIdentifier(req.params.id);
                 }
                 catch(exception) {
                     res.json({success: false, error: exception});
@@ -144,7 +144,7 @@ export default class Core extends CustomerLogic {
 
             if(!language) return;
 
-            res.json(language);
+            res.json({success: true, data: language});
         }, {
             permissions: ["CORE.LOCALIZATION.GET_LANGUAGE"]
         }));
@@ -152,6 +152,9 @@ export default class Core extends CustomerLogic {
         app.post("/api/localization/language/create/:id/:name", ExpressRouteWrapper.create(async(req, res) => {
             try {
                 await LocalizationService.createLanguage(req.params.name, req.params.id);
+                CacheProvider.instance
+                    .invalidate("CORE.LOCALIZATION.GET-LANGUAGES")
+                    .invalidate(`CORE.LOCALIZATION.GET-LANGUAGE-BY-ID:${req.params.id.toUpperCase()}`);
                 res.json({success: true});
             }
             catch(exception) {
@@ -163,11 +166,11 @@ export default class Core extends CustomerLogic {
 
         app.get("/api/localization/translation/get/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
-            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION::${langCode}::${translationCode}`, () => {
+            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`, () => {
                 return LocalizationService.getTranslation(langCode, translationCode);
             }, 60000);
 
-            res.json(translation);
+            res.json({success: true, data: translation});
         }, {
             permissions: ["CORE.LOCALIZATION.GET_TRANSLATION"]
         }));
@@ -175,7 +178,7 @@ export default class Core extends CustomerLogic {
         app.post("/api/localization/translation/get/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
             let replacements = req.body;
-            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION::${langCode}::${translationCode}`, () => {
+            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`, () => {
                 return LocalizationService.getTranslation(langCode, translationCode);
             }, 60000);
 
@@ -186,9 +189,10 @@ export default class Core extends CustomerLogic {
 
         app.post("/api/localization/translation/set/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
-            let translation = req.body;
+            let {translation} = req.body;
 
             await LocalizationService.setTranslation(langCode, translationCode, translation);
+            CacheProvider.instance.invalidate(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`);
             res.json({success: true});
         }, {
             permissions: ["CORE.LOCALIZATION.SET_TRANSLATION"]

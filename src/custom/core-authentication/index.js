@@ -62,7 +62,7 @@ export default class CoreUsermgmt extends CustomerLogic {
     /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
     async sequelizeFirstInstall(params) {
         const permAll = await Permission.create({
-            name: "CORE.AUTHENTICATION.ALL",
+            name: "CORE.ALL",
             description: "Pseudopermission for everything"
         });
 

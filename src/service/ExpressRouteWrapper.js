@@ -12,12 +12,12 @@ export default class ExpressRouteWrapper {
      */
     constructor(callback, options = {}) {
         this.options = options;
-        this.options.permissions ?? [];
-        this.options.onInvalidPermissions ?? function(req, res) {
+        this.options.permissions ??= [];
+        this.options.onInvalidPermissions ??= function(req, res) {
             res.json({success: false, error: new Exception("Invalid Permissions", {code: "CORE.API.INVALID_PERMISSIONS"})});
         };
-        this.options.checkApiKey ?? true;
-        this.options.checkUser ?? true;
+        this.options.checkApiKey ??= true;
+        this.options.checkUser ??= true;
         this.wrapped = callback;
     }
 

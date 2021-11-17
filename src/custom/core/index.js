@@ -55,9 +55,7 @@ export default class Core extends CustomerLogic {
     async onStartMainApplication() {}
 
     /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
-    async sequelizeSetupModels(params) {
-        
-    }
+    async sequelizeSetupModels(params) {}
 
     /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
     async sequelizeFirstInstall(params) {

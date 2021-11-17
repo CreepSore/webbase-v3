@@ -12,7 +12,7 @@ export default class MainApplication {
     async start(options = {}) {
         this.#options = options;
         await CustomerLogicHandler.instance.loadAllCustomerImplementations();
-        await CustomerLogicHandler.instance.runAllCustomerLogicFunction("onStartMainApplication");
+        await CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("onStartMainApplication");
 
         this.sequelizeLoader = new SequelizeLoader();
         await this.sequelizeLoader.start();

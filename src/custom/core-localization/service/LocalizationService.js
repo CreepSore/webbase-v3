@@ -16,16 +16,16 @@ export default class LocalizationService {
         });
     }
 
-    static getLanguageFromIdentifier(identifier) {
-        let language = Language.findOne({where: {localeIdentifier: identifier}});
+    static async getLanguageFromIdentifier(identifier) {
+        let language = await Language.findOne({where: {localeIdentifier: identifier}});
         if(!language) throw new Exception("Language does not exist", {code: "CORE.LOCALIZATION.INVALID_LANGUAGE"});
 
         return language;
     }
 
-    static createLanguage(name, languageId) {
+    static async createLanguage(name, languageId) {
         try {
-            return Language.create({
+            return await Language.create({
                 name,
                 localeIdentifier: languageId
             });

@@ -12,11 +12,11 @@ export default class ExpressLoader {
     async start() {
         let cfg = KvpStorage.instance.wrapper.getConfig();
         this.server = this.app.listen(cfg.web.port, cfg.web.host);
-        CustomerLogicHandler.instance.runAllCustomerLogicFunction("expressStart", {app: this.app});
+        CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("expressStart", {app: this.app});
     }
 
     async stop() {
-        CustomerLogicHandler.instance.runAllCustomerLogicFunction("expressStop", {app: this.app});
+        CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("expressStop", {app: this.app});
         this.server.close();
     }
 }
