@@ -1,5 +1,6 @@
 {
     "name": "Core.Localization",
+    "dir": "core-localization",
     "version": "3.0.0",
     "entrypoint": "index.js",
     "dependencies": ["Core", "Core.Authentication"]

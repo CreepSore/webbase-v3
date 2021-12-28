@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+import path from "path";
+
 import express from "express";
 import * as uuid from "uuid";
 import helmet from "helmet";
@@ -11,10 +13,13 @@ import MailRegistry from "../../service/mail-logic/MailRegistry.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
+ * @typedef {import("../../service/customer-logic/types").SequelizeParams} SequelizeParams
+ * @typedef {import("../../service/customer-logic/types").ExpressParams} ExpressParams
+ * @typedef {import("../../service/customer-logic/types").StartCliApplicationParams} StartCliApplicationParams
  */
 
 export default class Core extends CustomerLogic {
-    /** @param {import("../../service/customer-logic/types").StartCliApplicationParams} params */
+    /** @param {StartCliApplicationParams} params */
     async onStartCliApplication(params) {
         params.commandHandler.registerCommand("help", {
             help: "Prints all help",
@@ -54,10 +59,10 @@ export default class Core extends CustomerLogic {
 
     async onStartMainApplication() {}
 
-    /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
+    /** @param {SequelizeParams} params */
     async sequelizeSetupModels(params) {}
 
-    /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
+    /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
         await Version.create({
             name: this.getMetadata().name,
@@ -65,10 +70,10 @@ export default class Core extends CustomerLogic {
         });
     }
 
-    /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
+    /** @param {SequelizeParams} params */
     async sequelizeSetupRelation(params) {}
 
-    /** @param {import("../../service/customer-logic/types").ExpressParams} params */
+    /** @param {ExpressParams} params */
     async expressStart(params) {
         let cfg = KvpStorage.instance.wrapper.getConfig();
         let {app} = params;
@@ -76,6 +81,8 @@ export default class Core extends CustomerLogic {
         app.use(helmet({
             contentSecurityPolicy: false
         }));
+
+        app.use(express.static(path.resolve(".", "src", "web", "static")));
 
         app.use(express.json());
         app.use(express.urlencoded({extended: true}));
@@ -93,7 +100,7 @@ export default class Core extends CustomerLogic {
         });
     }
 
-    /** @param {import("../../service/customer-logic/types").ExpressParams} params */
+    /** @param {ExpressParams} params */
     async expressStop(params) {}
 
     getPriority() {return 1000;}

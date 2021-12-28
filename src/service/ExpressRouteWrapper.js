@@ -4,6 +4,7 @@ import ApiKeyService from "../custom/core-authentication/service/ApiKeyService.j
 import PermissionService from "../custom/core-authentication/service/PermissionService.js";
 import UserService from "../custom/core-authentication/service/UserService.js";
 import Exception from "../custom/core/Exception.js";
+import Profiler from "./Profiler.js";
 
 export default class ExpressRouteWrapper {
     /**
@@ -27,6 +28,10 @@ export default class ExpressRouteWrapper {
      * @param {import("express").NextFunction} next
      */
     wrapper = async(req, res, next) => {
+        let profilingToken = null;
+        if(this.options.profilingName) {
+            profilingToken = Profiler.instance.startMeasurement(this.options.profilingName);
+        }
         // Api Key Check
         if(this.options.checkApiKey && req.query.apiKey) {
             if(
@@ -56,7 +61,9 @@ export default class ExpressRouteWrapper {
             return await this.options.onInvalidPermissions(req, res, next);
         }
 
-        return await this.wrapped(req, res, next);
+        let result = await this.wrapped(req, res, next);
+        Profiler.instance.endMeasurement(profilingToken);
+        return result;
     }
 
     /**

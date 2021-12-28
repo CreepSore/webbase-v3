@@ -10,6 +10,9 @@
     "parser": "@babel/eslint-parser",       // npm install @babel/eslint-parser @babel/core eslint --save-dev
     "parserOptions": {
         "ecmaVersion": 12,                  // set highest possible version
+        "ecmaFeatures": {
+            "jsx": true
+        },
         "sourceType": "module",             // don't treat scripts as modules (keeps enforcing "use strict")
         "requireConfigFile": false,         // make babel not look for config
         "babelOptions": {
@@ -21,6 +24,7 @@
         "dist",
         "node_modules"
     ],
+    "extends": ["plugin:react/recommended", "plugin:react/jsx-runtime"],
     "rules": {
         /**
          * Strict mode

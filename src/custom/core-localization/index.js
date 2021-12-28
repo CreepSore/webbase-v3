@@ -12,10 +12,13 @@ import PermissionService from "../core-authentication/service/PermissionService.
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
+ * @typedef {import("../../service/customer-logic/types").SequelizeParams} SequelizeParams
+ * @typedef {import("../../service/customer-logic/types").ExpressParams} ExpressParams
+ * @typedef {import("../../service/customer-logic/types").StartCliApplicationParams} StartCliApplicationParams
  */
 
 export default class Core extends CustomerLogic {
-    /** @param {import("../../service/customer-logic/types").StartCliApplicationParams} params */
+    /** @param {StartCliApplicationParams} params */
     async onStartCliApplication(params) {
         params.commandHandler.registerSubHandler("loc", CommandHandler.createFromObject({
             subHandlers: {
@@ -77,7 +80,7 @@ export default class Core extends CustomerLogic {
 
     async onStartMainApplication() {}
 
-    /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
+    /** @param {SequelizeParams} params */
     async sequelizeSetupModels(params) {
         Language.initialize(params.sequelize);
         Localization.initialize(params.sequelize);
@@ -86,7 +89,7 @@ export default class Core extends CustomerLogic {
         Localization.belongsTo(Language);
     }
 
-    /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
+    /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
         // permissions
         let anonymous = await PermissionService.getAnonymousPermissionGroup();
@@ -115,10 +118,10 @@ export default class Core extends CustomerLogic {
         });
     }
 
-    /** @param {import("../../service/customer-logic/types").SequelizeParams} params */
+    /** @param {SequelizeParams} params */
     async sequelizeSetupRelation(params) {}
 
-    /** @param {import("../../service/customer-logic/types").ExpressParams} params */
+    /** @param {ExpressParams} params */
     async expressStart(params) {
         let {app} = params;
 
@@ -161,7 +164,8 @@ export default class Core extends CustomerLogic {
                 res.json({success: false, error: exception});
             }
         }, {
-            permissions: ["CORE.LOCALIZATION.CREATE_LANGUAGE"]
+            permissions: ["CORE.LOCALIZATION.CREATE_LANGUAGE"],
+            profilingName: "CORE.LOCALIZATION.CREATE_LANGUAGE"
         }));
 
         app.get("/api/localization/translation/get/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
@@ -184,7 +188,8 @@ export default class Core extends CustomerLogic {
 
             res.json({success: true, data: LocalizationService.formatTranslationString(translation, replacements)});
         }, {
-            permissions: ["CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED"]
+            permissions: ["CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED"],
+            profilingName: "CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED"
         }));
 
         app.post("/api/localization/translation/set/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
@@ -195,11 +200,12 @@ export default class Core extends CustomerLogic {
             CacheProvider.instance.invalidate(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`);
             res.json({success: true});
         }, {
-            permissions: ["CORE.LOCALIZATION.SET_TRANSLATION"]
+            permissions: ["CORE.LOCALIZATION.SET_TRANSLATION"],
+            profilingName: "CORE.LOCALIZATION.SET_TRANSLATION"
         }));
     }
 
-    /** @param {import("../../service/customer-logic/types").ExpressParams} params */
+    /** @param {ExpressParams} params */
     async expressStop(params) {}
 
     getPriority() {return 1000;}

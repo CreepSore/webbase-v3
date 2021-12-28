@@ -4,5 +4,6 @@ export type ExpressRouteWrapperOptions = {
     permissions?: string[]
     onInvalidPermissions?: RequestHandler,
     checkApiKey?: boolean,
-    checkUser?: boolean
+    checkUser?: boolean,
+    profilingName?: string
 };

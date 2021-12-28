@@ -4,7 +4,7 @@
 config.json
 config.template.json
 storage.db
-src/web/static/js/compiled/
+src/web/static/js
 
 # they're inside the sources anyway??
 *.LICENSE.txt

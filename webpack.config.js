@@ -5,14 +5,10 @@ import {merge as webpackMerge} from "webpack-merge";
 import CustomerLogicFactory from "./src/service/customer-logic/CustomerLogicFactory.js";
 
 
-const staticPath = path.resolve(".", "src", "web", "static");
-const pagesPath = path.resolve(staticPath, "js", "pages");
-const compiledPath = path.resolve(staticPath, "js", "compiled");
+const staticPath = path.resolve(".", "src", "web", "static", "js");
 
 const defaultPaths = {
     staticPath,
-    pagesPath,
-    compiledPath,
     pluginPath: CustomerLogicFactory.getCustomerLogicPath()
 };
 
@@ -22,8 +18,8 @@ const getDefaultConfig = function() {
             regeneratorRuntime: "regenerator-runtime/runtime"
         },
         output: {
-            path: compiledPath,
-            filename: "[name].js"
+            path: staticPath,
+            filename: "[name].comp.js"
         },
         devtool: "inline-source-map",
         resolve: {
@@ -32,12 +28,12 @@ const getDefaultConfig = function() {
         module: {
             rules: [
                 {
-                    test: /\.(js|jsx)$/,
+                    test: /\.(js|jsx)$/i,
                     exclude: /(node_modules|bower_components)/,
                     loader: "babel-loader",
                     options: { presets: ["@babel/env"] }
                 },
-                { test: /\.css$/, use: ["vue-style-loader", "css-loader"] }
+                { test: /\.css$/i, use: ["style-loader", "css-loader", "postcss-loader"] }
             ]
         },
         plugins: [ ]

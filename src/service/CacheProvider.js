@@ -1,3 +1,4 @@
+import Profiler from "./Profiler.js";
 
 export default class CacheProvider {
     /** @type {CacheProvider} */
@@ -48,8 +49,14 @@ export default class CacheProvider {
         if(cacheObject) {
             let doReprocess = reprocessCallback ? await reprocessCallback() : false;
             if(!doReprocess && Date.now() - cacheObject.lastFetch < ttlMs) return cacheObject.data;
+            let profilerId = Profiler.instance.startMeasurement(`CACHE.${name}`, {ttlMs});
             cacheObject.data = await cacheObject.callback();
             cacheObject.lastFetch = Date.now();
+
+            Profiler.instance
+                .addMeasurementData(profilerId, "cacheObject", cacheObject)
+                .endMeasurement(profilerId);
+
             return cacheObject.data;
         }
 

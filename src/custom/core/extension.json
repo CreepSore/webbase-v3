@@ -1,5 +1,6 @@
 {
     "name": "Core",
+    "dir": "core",
     "version": "3.0.0",
     "entrypoint": "index.js",
     "dependencies": []

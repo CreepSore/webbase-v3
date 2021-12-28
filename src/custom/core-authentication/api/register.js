@@ -11,11 +11,11 @@ export default async function(req, res) {
     if(!username || !password || !email) return res.json({success: false, error: new Exception("Invalid Input", {code: "CORE.AUTHENTICATION.INVALID_INPUT"})});
 
     try {
-        let user = await UserService.registerUser(username, password, email);
+        let user = await UserService.registerUser(username, password, email, null, false);
         // @ts-ignore
         res.json({success: true, uid: user.id, active: user.active});
     }
-    catch(ex) {
-        res.json({success: false, error: ex});
+    catch(error) {
+        res.json({success: false, error});
     }
 }

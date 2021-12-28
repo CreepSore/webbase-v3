@@ -37,6 +37,10 @@ export default class ConfigModel {
                     recipients: []
                 }
             };
+
+            this.utils = {
+                runProfiling: false
+            };
         }
     }
 
