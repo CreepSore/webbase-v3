@@ -143,6 +143,11 @@ export default class CoreUsermgmt extends CustomerLogic {
         let viewRouter = express.Router();
         viewRouter.get("/", (req, res) => res.redirect("login"));
         viewRouter.get("/login", (req, res) => {
+            if(res.locals.user) {
+                res.redirect("/");
+                return;
+            }
+
             res.render(path.join(this.getPluginDir(), "web", "views", "react-page.ejs"), {
                 scripts: ["/js/core.authentication/login.comp.js"]
             });

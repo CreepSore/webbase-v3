@@ -9,6 +9,12 @@
     <% (locals.scripts || []).forEach(script => { %>
     <script src="<%= script %>"></script>
     <% }); %>
+
+    <style>
+        html, body, main {
+            min-height: 100vh;
+        }
+    </style>
 </head>
 <body>
     <main id="react-container">

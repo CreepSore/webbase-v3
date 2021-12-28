@@ -3,3 +3,76 @@
 @tailwind utilities;
 @tailwind variants;
 
+@layer components {
+    .login-form-container {
+        @apply flex;
+        @apply justify-center;
+        @apply items-center;
+        @apply w-full;
+        @apply h-screen;
+    }
+
+    .login-form {
+        @apply bg-gray-100 text-gray-700;
+        @apply w-full m-3 pb-3;
+        @apply md:max-w-[500px] md:m-0;
+        @apply rounded-xl;
+    }
+
+    .login-form h1 {
+        @apply p-3;
+        @apply border-b border-solid border-gray-700;
+        @apply text-xl;
+    }
+
+    .login-form .error {
+        @apply text-red-400 border-b border-solid border-gray-700 px-3;
+    }
+
+    .login-form .login-form-input {
+        @apply pt-2 px-2;
+    }
+
+    .login-form .login-form-input input {
+        @apply 
+            w-full
+            h-8
+            text-gray-700
+            px-2
+            mb-2;
+
+        @apply 
+            rounded-md
+            border
+            border-solid
+            border-gray-700;
+
+        @apply shadow-sm shadow-gray-700;
+    }
+
+    .login-form .login-form-input input:focus {
+        @apply outline-none border-black border;
+    }
+
+    .login-form .login-form-input input:hover {
+        @apply outline-none border;
+    }
+
+    .login-form .login-form-input .button-container {
+        @apply w-full flex justify-center items-center;
+        @apply mt-2;
+    }
+
+    .login-form .login-form-input .button-container .login-button {
+        @apply text-blue-500 border border-dashed border-blue-500 rounded-md;
+        @apply py-2 px-10;
+    }
+
+    .login-form .login-form-input .button-container .login-button:focus {
+        @apply border-solid bg-blue-500 text-white;
+    }
+
+    .login-form .login-form-input .button-container .login-button:hover {
+        @apply border-solid;
+    }
+}

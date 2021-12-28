@@ -3,6 +3,8 @@ import Language from "../models/Language.js";
 import Localization from "../models/Localization.js";
 
 export default class LocalizationService {
+    static missingTranslations = new Set();
+
     static async getAllLanguages() {
         return (await Language.findAll()).map(lang => {
             return {
@@ -50,7 +52,10 @@ export default class LocalizationService {
             ]
         });
 
-        if(!translationObject) return null;
+        if(!translationObject) {
+            this.missingTranslations.add(`${String(language).toUpperCase()}::${String(key).toUpperCase()}`);
+            return null;
+        }
 
         // @ts-ignore
         return this.formatTranslationString(translationObject.value, replacements);
@@ -76,6 +81,8 @@ export default class LocalizationService {
                 value
             });
         }
+
+        this.missingTranslations.delete(`${String(language).toUpperCase()}::${String(key).toUpperCase()}`);
     }
 
     static async deleteTranslation(language, key) {

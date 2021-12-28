@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+import express from "express";
+
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 
 import Localization from "./models/Localization.js";
@@ -125,7 +127,10 @@ export default class Core extends CustomerLogic {
     async expressStart(params) {
         let {app} = params;
 
-        app.get("/api/localization/languages", ExpressRouteWrapper.create(async(req, res) => {
+        // eslint-disable-next-line new-cap
+        let apiRouter = express.Router();
+
+        apiRouter.get("/languages", ExpressRouteWrapper.create(async(req, res) => {
             let languages = await CacheProvider.instance.process("CORE.LOCALIZATION.GET-LANGUAGES", () => {
                 return LocalizationService.getAllLanguages();
             }, 60000);
@@ -134,7 +139,7 @@ export default class Core extends CustomerLogic {
             permissions: ["CORE.LOCALIZATION.GET_LANGUAGE"]
         }));
 
-        app.get("/api/localization/language/fromId/:id", ExpressRouteWrapper.create(async(req, res) => {
+        apiRouter.get("/language/fromId/:id", ExpressRouteWrapper.create(async(req, res) => {
             let language = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-LANGUAGE-BY-ID:${req.params.id.toUpperCase()}`, async() => {
                 try {
                     return await LocalizationService.getLanguageFromIdentifier(req.params.id);
@@ -152,7 +157,7 @@ export default class Core extends CustomerLogic {
             permissions: ["CORE.LOCALIZATION.GET_LANGUAGE"]
         }));
 
-        app.post("/api/localization/language/create/:id/:name", ExpressRouteWrapper.create(async(req, res) => {
+        apiRouter.post("/language/create/:id/:name", ExpressRouteWrapper.create(async(req, res) => {
             try {
                 await LocalizationService.createLanguage(req.params.name, req.params.id);
                 CacheProvider.instance
@@ -168,7 +173,7 @@ export default class Core extends CustomerLogic {
             profilingName: "CORE.LOCALIZATION.CREATE_LANGUAGE"
         }));
 
-        app.get("/api/localization/translation/get/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
+        apiRouter.get("/translation/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
             let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`, () => {
                 return LocalizationService.getTranslation(langCode, translationCode);
@@ -179,7 +184,7 @@ export default class Core extends CustomerLogic {
             permissions: ["CORE.LOCALIZATION.GET_TRANSLATION"]
         }));
 
-        app.post("/api/localization/translation/get/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
+        apiRouter.post("/translation/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
             let replacements = req.body;
             let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`, () => {
@@ -192,7 +197,7 @@ export default class Core extends CustomerLogic {
             profilingName: "CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED"
         }));
 
-        app.post("/api/localization/translation/set/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
+        apiRouter.put("/translation/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
             let {translation} = req.body;
 
@@ -203,10 +208,29 @@ export default class Core extends CustomerLogic {
             permissions: ["CORE.LOCALIZATION.SET_TRANSLATION"],
             profilingName: "CORE.LOCALIZATION.SET_TRANSLATION"
         }));
+
+        apiRouter.get("/translation/missing", ExpressRouteWrapper.create(async(req, res) => {
+            res.json({success: true, data: LocalizationService.missingTranslations});
+        }, {
+            permissions: ["CORE.LOCALIZATION.GET_MISSING"],
+            profilingName: "CORE.LOCALIZATION.GET_MISSING"
+        }));
+
+        app.use("/api/core.localization", apiRouter);
     }
 
     /** @param {ExpressParams} params */
     async expressStop(params) {}
+
+    getWebpackConfig(params) {
+        return {
+            resolve: {
+                alias: {
+                    "core.localization": this.getPluginDir()
+                }
+            }
+        };
+    }
 
     getPriority() {return 1000;}
     async onLoad() {

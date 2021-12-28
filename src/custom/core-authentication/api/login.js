@@ -16,7 +16,8 @@ export default async function(req, res) {
         let user = await UserService.loginUser(username, password, token);
         // @ts-ignore
         req.session.uid = user.id;
-        return res.json({success: true});
+        // @ts-ignore
+        return res.json({success: true, data: {uid: user.id}});
     }
     catch (exception) {
         return res.json({success: false, error: exception});
