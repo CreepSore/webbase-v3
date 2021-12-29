@@ -61,10 +61,12 @@ export default class Profiler {
         return [...this.measurements.entries()].map(x => x[1]).flat().find(x => x.id === id);
     }
 
-    addMeasurementData(id, key, value) {
+    addMeasurementData(id, data) {
         let measurement = this.getMeasurementById(id);
         if(!measurement) return this;
-        measurement.additionalData[key] = value;
+        Object.entries(data).forEach(([key, value]) => {
+            measurement.additionalData[key] = value;
+        });
         return this;
     }
 

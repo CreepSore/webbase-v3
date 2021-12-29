@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@layer components {
+    .profiling {
+        @apply h-screen;
+        @apply bg-slate-900 text-white;
+
+        .profiling-table-container {
+            table.profiling-table {
+                @apply w-full table-auto;
+
+                tr {
+                    th, td {
+                        @apply py-1 text-left;
+                        @apply font-normal;
+                    }
+                }
+
+                thead {
+                    tr {
+                        @apply bg-slate-500;
+
+                        th {
+                            
+                        }
+                        td {
+
+                        }
+                    }
+                }
+
+                tbody {
+                    tr {
+                        @apply bg-slate-800;
+                        &:nth-child(odd) {
+                            @apply bg-slate-700;
+                        }
+                        &:hover {
+                            filter: brightness(115%);
+                        }
+
+                        th {
+                            
+                        }
+                        td {
+                        
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

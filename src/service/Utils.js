@@ -1,4 +1,17 @@
-<!DOCTYPE html>
+import ejs from "ejs";
+
+export default class Utils {
+    /**
+     * @param {Array<string>|string} scripts
+     * @param {any} locals
+     * @returns {string}
+     */
+    static renderDefaultReactPage(scripts, locals = {}) {
+        // ! Ignore: lol
+        // eslint-disable-next-line no-param-reassign
+        if(!Array.isArray(scripts)) scripts = [scripts];
+
+        const src = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,4 +34,9 @@
 
     </main>
 </body>
-</html>
+</html>`;
+
+        locals.scripts = scripts;
+        return ejs.render(src, locals);
+    }
+}

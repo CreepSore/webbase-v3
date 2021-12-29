@@ -1,3 +1,4 @@
+import Profiler from "../../../service/Profiler.js";
 import Exception from "../../core/Exception.js";
 import UserService from "../service/UserService.js";
 
@@ -9,6 +10,12 @@ import UserService from "../service/UserService.js";
 export default async function(req, res) {
     let {username, password, email} = req.body;
     if(!username || !password || !email) return res.json({success: false, error: new Exception("Invalid Input", {code: "CORE.AUTHENTICATION.INVALID_INPUT"})});
+    let profilerToken = Profiler.instance.startMeasurement("CORE.AUTHENTICATION.REGISTER");
+    Profiler.instance.addMeasurementData(profilerToken, {
+        username,
+        email,
+        password: password.replace(/./g, "*")
+    });
 
     try {
         let user = await UserService.registerUser(username, password, email, null, false);
@@ -17,5 +24,8 @@ export default async function(req, res) {
     }
     catch(error) {
         res.json({success: false, error});
+    }
+    finally {
+        Profiler.instance.endMeasurement(profilerToken);
     }
 }

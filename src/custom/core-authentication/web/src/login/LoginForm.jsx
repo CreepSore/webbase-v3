@@ -59,15 +59,19 @@ export default class LoginForm extends React.PureComponent {
         AuthenticationApi.login(this.state.username, this.state.password, this.state.token)
             .then(() => {
                 this.setState({error: ""});
-                location.reload();
+                location.href = LoginForm.redirectUrl;
             }).catch(ex => {
                 console.log(ex);
                 if(ex.info.code === "CORE.AUTHENTICATION.ALREADY_LOGGED_IN") {
-                    location.reload();
+                    location.href = LoginForm.redirectUrl;
                 }
                 else {
                     this.setState({error: ex.text});
                 }
             });
+    }
+
+    static get redirectUrl() {
+        return (new URLSearchParams(location.search)).get("redirectTo") || "/";
     }
 }

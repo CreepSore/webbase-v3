@@ -1,12 +1,12 @@
 
 export default class ProfilingApi {
     /**
-     * @returns {Promise<import("../../../../service/Profiler").Measurement[]>}
+     * @returns {Promise<Object<string, import("../../../../service/Profiler").Measurement[]>>}
      */
     static async fetchProfilingData() {
-        let result = await fetch("/api/profiling/")
+        let result = await fetch("/api/core.profiling/measurements")
             .then(response => response.json());
 
-        return result.data || [];
+        return result.data || {};
     }
 }

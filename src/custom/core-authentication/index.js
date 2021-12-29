@@ -21,6 +21,7 @@ import ApiLogout from "./api/logout.js";
 import ApiRegister from "./api/register.js";
 
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
+import Utils from "../../service/Utils.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -135,23 +136,32 @@ export default class CoreUsermgmt extends CustomerLogic {
 
         // eslint-disable-next-line new-cap
         let apiRouter = express.Router();
-        apiRouter.post("/login", ExpressRouteWrapper.create(ApiLogin, {permissions: ["CORE.AUTHENTICATION.LOGIN"]}));
+        apiRouter.post("/login", ExpressRouteWrapper.create(ApiLogin, {
+            permissions: ["CORE.AUTHENTICATION.LOGIN"]
+        }));
         apiRouter.post("/logout", ExpressRouteWrapper.create(ApiLogout));
-        apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {permissions: ["CORE.AUTHENTICATION.REGISTER"]}));
+        apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {
+            permissions: ["CORE.AUTHENTICATION.REGISTER"]
+        }));
 
         // eslint-disable-next-line new-cap
         let viewRouter = express.Router();
         viewRouter.get("/", (req, res) => res.redirect("login"));
-        viewRouter.get("/login", (req, res) => {
+        viewRouter.get("/login", ExpressRouteWrapper.create((req, res) => {
             if(res.locals.user) {
                 res.redirect("/");
                 return;
             }
 
-            res.render(path.join(this.getPluginDir(), "web", "views", "react-page.ejs"), {
-                scripts: ["/js/core.authentication/login.comp.js"]
-            });
-        });
+            res.send(Utils.renderDefaultReactPage("/js/core.authentication/login.comp.js", {
+                title: "Login"
+            }));
+        }, {
+            permissions: ["CORE.AUTHENTICATION.LOGIN"],
+            onInvalidPermissions: (req, res) => {
+                res.redirect("/");
+            }
+        }));
 
         app.use("/api/core.authentication", apiRouter);
         app.use("/core.authentication", viewRouter);

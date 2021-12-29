@@ -7,6 +7,7 @@ import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import Profiler from "../../service/Profiler.js";
 import Version from "../../models/Version.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
+import Utils from "../../service/Utils.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -43,25 +44,32 @@ export default class CoreProfiling extends CustomerLogic {
 
         // eslint-disable-next-line new-cap
         let apiRouter = express.Router();
-        apiRouter.get("/", async(req, res) => {
+        apiRouter.get("/measurements", ExpressRouteWrapper.create(async(req, res) => {
             res.json({
                 success: true,
                 data: Profiler.instance.measurementList
             });
-        });
+        }, {
+            permissions: ["CORE.PROFILING.VIEW"]
+        }));
+
+        app.use("/api/core.profiling", apiRouter);
 
         // eslint-disable-next-line new-cap
         let viewRouter = express.Router();
+
         viewRouter.get("/", ExpressRouteWrapper.create(async(req, res) => {
-            res.render(path.join(this.getPluginDir(), "web", "views", "react-page.ejs"), {
-                scripts: ["/js/core.profiling/profiling.comp.js"]
-            });
+            res.send(Utils.renderDefaultReactPage("/js/core.profiling/profiling.comp.js", {
+                title: "Profiling"
+            }));
         }, {
-            permissions: []
+            permissions: ["CORE.PROFILING.VIEW"],
+            onInvalidPermissions: (req, res) => {
+                res.redirect("/core.authentication/login?redirectTo=%2Fcore.profiling%2F");
+            }
         }));
 
         app.use("/core.profiling", viewRouter);
-        app.use("/api/core.profiling", apiRouter);
     }
 
     /** @param {ExpressParams} params */
