@@ -78,7 +78,7 @@ export default class Profiling extends React.PureComponent {
     onMeasurementRowClick = (measurement) => {
         let dataText = JSON.stringify(measurement.additionalData, null, 2);
         let dataLines = dataText.split("\n").length;
-        debugger;
+
         this.setState({
             selectedMeasurement: measurement,
             selectedMeasurementText: dataText,
@@ -87,6 +87,11 @@ export default class Profiling extends React.PureComponent {
     }
 
     fetchData = async() => {
+        let isEnabled = await ProfilingApi.getIsEnabled();
+        if(!isEnabled) {
+            location.href = "/";
+        }
+
         let data = await ProfilingApi.fetchProfilingData();
         this.setState({data, keys: Object.entries(data).map(([k, v]) => {return {name: k, count: v.length};})});
     }

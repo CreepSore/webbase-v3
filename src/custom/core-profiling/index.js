@@ -8,6 +8,7 @@ import Profiler from "../../service/Profiler.js";
 import Version from "../../models/Version.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import Utils from "../../service/Utils.js";
+import KvpStorage from "../../service/KvpStorage.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -48,6 +49,15 @@ export default class CoreProfiling extends CustomerLogic {
             res.json({
                 success: true,
                 data: Profiler.instance.measurementList
+            });
+        }, {
+            permissions: ["CORE.PROFILING.VIEW"]
+        }));
+
+        apiRouter.get("/enabled", ExpressRouteWrapper.create(async(req, res) => {
+            res.json({
+                success: true,
+                data: KvpStorage.instance.wrapper.getConfig().utils.runProfiling
             });
         }, {
             permissions: ["CORE.PROFILING.VIEW"]
