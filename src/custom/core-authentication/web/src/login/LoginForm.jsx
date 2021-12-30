@@ -26,7 +26,7 @@ export default class LoginForm extends React.PureComponent {
                 <p className="error" hidden={this.state.error.length === 0}>{this.state.error}</p>
                 <div className="login-form-input">
                     <input onChange={(ev) => this.updateInput(ev.target.value, "username")} type="text" placeholder={this.state.translations["LoginForm.Input.Username"]} />
-                    <input onChange={(ev) => this.updateInput(ev.target.value, "password")} type="text" placeholder={this.state.translations["LoginForm.Input.Password"]} />
+                    <input onChange={(ev) => this.updateInput(ev.target.value, "password")} type="password" placeholder={this.state.translations["LoginForm.Input.Password"]} />
                     <input onChange={(ev) => this.updateInput(ev.target.value, "token")} type="text" placeholder={this.state.translations["LoginForm.Input.Token"]} hidden={this.state.tfaHidden}/>
                     <div className="button-container">
                         <button

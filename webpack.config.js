@@ -40,7 +40,8 @@ const getDefaultConfig = function() {
     };
 };
 
-export default async() => {
+export default async(env, options) => {
+    process.env.NODE_ENV = options.mode;
     let config = getDefaultConfig();
     let customerLogicHandler = await CustomerLogicFactory.createAndInitializeCustomerLogicHandler(false);
 

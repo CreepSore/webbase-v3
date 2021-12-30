@@ -14,22 +14,22 @@
 
     .login-form {
         @apply bg-gray-100 text-gray-700;
+        @apply shadow-xl;
         @apply w-full m-3 pb-3;
         @apply md:max-w-[500px] md:m-0;
         @apply rounded-xl;
 
         h1 {
-            @apply p-3;
-            @apply border-b border-solid border-gray-700;
+            @apply p-3 pl-5;
             @apply text-xl;
         }
 
         .error {
-            @apply text-red-400 border-b border-solid border-gray-700 px-3;
+            @apply text-red-400 px-3;
         }
 
         .login-form-input {
-            @apply pt-2 px-2;
+            @apply pt-2 px-5;
 
             input {
                 @apply 
@@ -38,18 +38,14 @@
                     text-gray-700
                     px-2
                     mb-2;
-        
+
                 @apply 
                     rounded-md
-                    border
-                    border-solid
-                    border-gray-700;
-        
-                @apply shadow-sm shadow-gray-700;
+                    shadow-inner;
             }
 
             input:focus {
-                @apply outline-none border-black border;
+                @apply outline-none border;
             }
 
             input:hover {
@@ -62,15 +58,18 @@
 
                 .login-button {
                     @apply text-blue-500 border border-dashed border-blue-500 rounded-md;
-                    @apply py-2 px-10;
+                    @apply py-1 px-10;
+                    @apply transition-all;
                 }
 
                 .login-button:focus {
-                    @apply border-solid bg-blue-500 text-white;
+                    @apply border-none;
+                    @apply shadow-lg;
                 }
 
                 .login-button:hover {
-                    @apply border-solid;
+                    @apply border-none;
+                    @apply shadow-lg;
                 }
             }
         }

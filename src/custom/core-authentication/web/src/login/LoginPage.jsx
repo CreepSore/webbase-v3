@@ -13,7 +13,7 @@ export default class LoginPage extends React.PureComponent {
 
     render = () => {
         return (
-            <div className="login-form-container bg-gray-900">
+            <div className="login-form-container bg-white">
                 <LoginForm></LoginForm>
             </div>
         );

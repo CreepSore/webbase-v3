@@ -54,12 +54,15 @@ export default class CacheProvider {
             cacheObject.lastFetch = Date.now();
 
             Profiler.instance
-                .addMeasurementData(profilerId, "cacheObject", cacheObject)
+                .addMeasurementData(profilerId, {
+                    cacheObject
+                })
                 .endMeasurement(profilerId);
 
             return cacheObject.data;
         }
 
+        let profilerId = Profiler.instance.startMeasurement(`CACHE.${name}`, {ttlMs});
         cacheObject = this.cache[name] = {
             name,
             callback,
@@ -67,6 +70,11 @@ export default class CacheProvider {
             lastFetch: Date.now(),
             data: await callback()
         };
+        Profiler.instance
+            .addMeasurementData(profilerId, {
+                cacheObject
+            })
+            .endMeasurement(profilerId);
 
         return cacheObject.data;
     }

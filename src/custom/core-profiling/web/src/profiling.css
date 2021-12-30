@@ -3,58 +3,44 @@
 @tailwind utilities;
 @tailwind variants;
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
+
 @layer components {
     .profiling {
-        @apply h-screen;
-        @apply bg-slate-900 text-white;
-
-        .profiling-charts-container {
+        @apply min-h-screen;
+        .profiling-bar {
             @apply bg-slate-500;
-            
-            .profiling-chart {
-                @apply max-h-32;
+            @apply py-2;
+
+            .logo {
+                h1 {
+                    @apply text-white font-bold font-[Roboto] tracking-widest text-lg align-middle;
+                    @apply pl-2;
+                }
+            }
+        }
+
+        .profiling-container {
+            @apply m-0;
+            @apply grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-1;
+
+            .profiling-container-col {
+                @apply shadow;
             }
         }
 
         .profiling-table-container {
-            table.profiling-table {
-                @apply w-full table-auto;
-
-                tr {
-                    th, td {
-                        @apply py-1 text-left;
-                        @apply font-normal;
-                    }
-                }
-
-                thead {
-                    tr {
-                        @apply bg-slate-500;
-
-                        th {
-                            
-                        }
-                        td {
-
-                        }
-                    }
-                }
+            .profiling-table {
+                @apply w-full;
+                @apply border-separate;
+                @apply bg-slate-100 lg:bg-white;
 
                 tbody {
                     tr {
-                        @apply bg-slate-800;
-                        &:nth-child(odd) {
-                            @apply bg-slate-700;
-                        }
-                        &:hover {
-                            filter: brightness(115%);
-                        }
-
-                        th {
-                            
-                        }
                         td {
-                        
+                            @apply my-3 lg:my-1;
+                            @apply border-b border-slate-500;
                         }
                     }
                 }
