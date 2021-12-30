@@ -6,6 +6,19 @@ import ProfilingGroupsTable from "./ProfilingGroupsTable.jsx";
 import "./profiling.css";
 import ProfilingMeasurementsTable from "./ProfilingMeasurementsTable.jsx";
 
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement
+} from "chart.js";
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
+import {Bar} from "react-chartjs-2";
 
 export default class Profiling extends React.PureComponent {
     constructor(props) {
@@ -20,12 +33,56 @@ export default class Profiling extends React.PureComponent {
             selectedMeasurementTextLines: 0
         };
         this.fetchData();
+        this.chartRef = React.createRef();
     }
 
     render = () => {
+        let canvas = this.chartRef.current?.canvas;
+        if(canvas) {
+            canvas.style.backgroundColor = "rgb(255,255,255)";
+        }
         return (
             <div className="profiling">
                 <div hidden={this.state.measurements !== null}>
+                    <div className="profiling-charts-container">
+                        <div className="profiling-chart">
+                            <Bar
+                                ref={this.chartRef}
+                                options={{
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            axis: "y",
+                                            suggestedMax: 20
+                                        }
+                                    },
+                                    plugins: {
+                                        tooltip: {
+                                            callbacks: {
+                                                afterLabel: (ti) => {
+                                                    let data = this.chartEntries[ti.dataIndex];
+                                                    return `\n${data.key}`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }}
+                                data={{
+                                    labels: this.chartDateLabels,
+                                    datasets: [
+                                        {
+                                            label: "Execution Time",
+                                            data: this.chartData,
+                                            borderColor: "rgba(255, 0, 0, 1)",
+                                            borderWidth: 1,
+                                            backgroundColor: "rgba(255, 0, 0, 0.3)",
+                                            barPercentage: 0.3
+                                        }
+                                    ]
+                                }}
+                            />
+                        </div>
+                    </div>
                     <ProfilingGroupsTable
                         keys={this.state.keys}
                         onRowClick={e => this.onGroupsRowClick(e)}></ProfilingGroupsTable>
@@ -84,6 +141,22 @@ export default class Profiling extends React.PureComponent {
             selectedMeasurementText: dataText,
             selectedMeasurementTextLines: dataLines
         });
+    }
+
+    get chartDateLabels() {
+        return this.chartEntries.map(entry => new Date(entry.startTime));
+    }
+
+    get chartData() {
+        return this.chartEntries.map(entry => entry.duration);
+    }
+
+    get chartEntries() {
+        // eslint-disable-next-line no-unused-vars
+        return (Object.entries(this.state.data) || []).map(([k, v]) => {
+            v.forEach(x => {x.key = k;});
+            return v;
+        }).flat();
     }
 
     fetchData = async() => {

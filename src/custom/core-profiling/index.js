@@ -75,7 +75,7 @@ export default class CoreProfiling extends CustomerLogic {
         }, {
             permissions: ["CORE.PROFILING.VIEW"],
             onInvalidPermissions: (req, res) => {
-                res.redirect("/core.authentication/login?redirectTo=%2Fcore.profiling%2F");
+                res.redirect(this.createRedirectUrl("/core.profiling/"));
             }
         }));
 
@@ -84,6 +84,10 @@ export default class CoreProfiling extends CustomerLogic {
 
     /** @param {ExpressParams} params */
     async expressStop(params) {}
+
+    createRedirectUrl(redirectTo) {
+        return `/core.authentication/login?redirectTo=${encodeURIComponent(redirectTo)}`;
+    }
 
     getWebpackConfig() {
         return {

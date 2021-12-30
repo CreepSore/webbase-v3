@@ -8,6 +8,14 @@
         @apply h-screen;
         @apply bg-slate-900 text-white;
 
+        .profiling-charts-container {
+            @apply bg-slate-500;
+            
+            .profiling-chart {
+                @apply max-h-32;
+            }
+        }
+
         .profiling-table-container {
             table.profiling-table {
                 @apply w-full table-auto;
