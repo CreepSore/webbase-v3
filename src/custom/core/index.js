@@ -10,6 +10,7 @@ import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import KvpStorage from "../../service/KvpStorage.js";
 import Version from "../../models/Version.js";
 import MailRegistry from "../../service/mail-logic/MailRegistry.js";
+import DatabridgeClient from "../../service/databridge/DatabridgeClient.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -104,6 +105,8 @@ export default class Core extends CustomerLogic {
     async expressStop(params) {}
 
     getPriority() {return 1000;}
-    async onLoad() {}
+    async onLoad() {
+        DatabridgeClient.connectToTcp("127.0.0.1", 1234);
+    }
     async onUnload() {}
 }
