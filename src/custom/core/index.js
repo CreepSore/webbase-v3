@@ -2,6 +2,7 @@
 import path from "path";
 
 import express from "express";
+import expressWs from "express-ws";
 import * as uuid from "uuid";
 import helmet from "helmet";
 import expressSession from "express-session";
@@ -77,6 +78,7 @@ export default class Core extends CustomerLogic {
     async expressStart(params) {
         let cfg = KvpStorage.instance.wrapper.getConfig();
         let {app} = params;
+        expressWs(app);
 
         app.use(helmet({
             contentSecurityPolicy: false
@@ -104,6 +106,6 @@ export default class Core extends CustomerLogic {
     async expressStop(params) {}
 
     getPriority() {return 1000;}
-    async onLoad() {}
+    async onLoad() { }
     async onUnload() {}
 }
