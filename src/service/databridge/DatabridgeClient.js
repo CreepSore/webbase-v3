@@ -1,5 +1,6 @@
-import DatabridgeHttpTransfer from "./transfer-methods/DatabridgeHttpTransfer.js";
-import DatabridgeTcpTransfer from "./transfer-methods/DatabridgeTcpTransfer.js";
+import DatabridgeHttpTransfer from "./client-transfer-methods/DatabridgeHttpTransfer.js";
+import DatabridgeTcpTransfer from "./client-transfer-methods/DatabridgeTcpTransfer.js";
+import DatabridgePacketFactory from "./DatabridgePacketFactory.js";
 
 /**
  * @typedef {import("./types").IDatabridgePacket} IDatabridgePacket
@@ -12,11 +13,17 @@ import DatabridgeTcpTransfer from "./transfer-methods/DatabridgeTcpTransfer.js";
 
 export default class DatabridgeClient {
     /**
-     * @param {import("./types").IDatabridgeTransferMethod} transferMethod
+     * @param {import("./types").IDatabridgeClientTransferMethod} transferMethod
      */
     constructor(transferMethod) {
         this.transferMethod = transferMethod;
         this.packetHandlers = [];
+        /** @type {Object<string, IDatabridgePacket>} */
+        this.lastPackets = {};
+
+        this.transferMethod.addPacketHandler("ANY", (packet) => {
+            this.lastPackets[packet.type] = packet;
+        });
     }
 
     /**
@@ -27,6 +34,9 @@ export default class DatabridgeClient {
      */
     connect(autoReconnect = false, maxConnectionTries = -1) {
         this.transferMethod.connect(autoReconnect, maxConnectionTries);
+        this.pingLoop = setInterval(() => {
+            this.sendPacket(DatabridgePacketFactory.constructPingPacket());
+        }, 5000);
         return this;
     }
 

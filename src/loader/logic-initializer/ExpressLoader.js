@@ -11,8 +11,8 @@ export default class ExpressLoader {
 
     async start() {
         let cfg = KvpStorage.instance.wrapper.getConfig();
-        this.server = this.app.listen(cfg.web.port, cfg.web.host);
         CustomerLogicHandler.instance.runAllCustomerLogicFunctionDependencyFirst("expressStart", {app: this.app});
+        this.server = this.app.listen(cfg.web.port, cfg.web.host);
     }
 
     async stop() {

@@ -2,6 +2,7 @@
 import path from "path";
 
 import express from "express";
+import expressWs from "express-ws";
 import * as uuid from "uuid";
 import helmet from "helmet";
 import expressSession from "express-session";
@@ -10,7 +11,6 @@ import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import KvpStorage from "../../service/KvpStorage.js";
 import Version from "../../models/Version.js";
 import MailRegistry from "../../service/mail-logic/MailRegistry.js";
-import DatabridgeClient from "../../service/databridge/DatabridgeClient.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -78,6 +78,7 @@ export default class Core extends CustomerLogic {
     async expressStart(params) {
         let cfg = KvpStorage.instance.wrapper.getConfig();
         let {app} = params;
+        expressWs(app);
 
         app.use(helmet({
             contentSecurityPolicy: false
@@ -105,8 +106,6 @@ export default class Core extends CustomerLogic {
     async expressStop(params) {}
 
     getPriority() {return 1000;}
-    async onLoad() {
-        DatabridgeClient.connectToTcp("127.0.0.1", 1234);
-    }
+    async onLoad() { }
     async onUnload() {}
 }

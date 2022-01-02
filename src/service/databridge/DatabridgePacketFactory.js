@@ -12,7 +12,7 @@ export default class DatabridgePacketFactory {
 
     /**
      * @static
-     * @param {number} clientId
+     * @param {string} clientId
      * @return {import("./types").IServerHandshakePacket}
      * @memberof DatabridgePacketFactory
      */
