@@ -1,3 +1,4 @@
+import DatabridgeRegistry from "./DatabridgeRegistry.js";
 import DatabridgeHttpTransfer from "./server-transfer-methods/DatabridgeHttpTransfer.js";
 import DatabridgeTcpTransfer from "./server-transfer-methods/DatabridgeTcpTransfer.js";
 
@@ -40,6 +41,11 @@ export default class DatabridgeServer {
      */
     sendPacket(clientId, packet) {
         this.transferMethod.sendPacket(clientId, packet);
+        return this;
+    }
+
+    registerToRegistry(name) {
+        DatabridgeRegistry.instance.setServer(name, this);
         return this;
     }
 

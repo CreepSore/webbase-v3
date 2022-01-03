@@ -1,6 +1,7 @@
 import DatabridgeHttpTransfer from "./client-transfer-methods/DatabridgeHttpTransfer.js";
 import DatabridgeTcpTransfer from "./client-transfer-methods/DatabridgeTcpTransfer.js";
 import DatabridgePacketFactory from "./DatabridgePacketFactory.js";
+import DatabridgeRegistry from "./DatabridgeRegistry.js";
 
 /**
  * @typedef {import("./types").IDatabridgePacket} IDatabridgePacket
@@ -52,6 +53,11 @@ export default class DatabridgeClient {
         if(!this.transferMethod.isConnected) return false;
         this.transferMethod.sendPacket(packet);
         return true;
+    }
+
+    registerToRegistry(name) {
+        DatabridgeRegistry.instance.setClient(name, this);
+        return this;
     }
 
     static connectToHttp(url, autoReconnect = undefined, maxConnectionTries = undefined) {
