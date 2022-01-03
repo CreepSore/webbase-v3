@@ -200,7 +200,7 @@ export default class CustomerLogicHandler {
                 return;
             }
 
-            if(logic.loading) continue;
+            if(logic.loading || logic.loaded) continue;
 
             if(logic.loading) {
                 console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Circular dependency detected.`);
@@ -210,12 +210,10 @@ export default class CustomerLogicHandler {
             await this.loadCustomerLogic(logic);
         }
 
-        if(!customerLogic.loaded) {
-            console.log("INFO", `Extension [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}] loaded.`);
-            customerLogic.onLoad?.();
-            customerLogic.loaded = true;
-            customerLogic.loading = false;
-        }
+        console.log("INFO", `Extension [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}] loaded.`);
+        customerLogic.onLoad?.();
+        customerLogic.loaded = true;
+        customerLogic.loading = false;
     }
 
     /**
