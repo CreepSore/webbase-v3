@@ -42,6 +42,7 @@ const logLevelUnicodeMapping = {
 
 export default class Logger {
     static formatToUnicode = true;
+    static loggedEntries = [];
 
     static getFormattedLog(level, ...data) {
         let color = null;
@@ -62,11 +63,17 @@ export default class Logger {
         return toPrint.join("\n");
     }
 
+    static doLog(level, ...data) {
+        if(this.loggedEntries.length > 1000) this.loggedEntries = this.loggedEntries.slice(0, 1000);
+        this.loggedEntries.push(Logger.getFormattedLog(level, ...data));
+    }
+
     static replaceConsoleLog() {
         this.originalLog = console.log;
         let {originalLog} = this;
-        console.log = function(level, ...data) {
+        console.log = (level, ...data) => {
             originalLog(Logger.getFormattedLog(level, ...data));
+            this.doLog(level, ...data);
         };
     }
 

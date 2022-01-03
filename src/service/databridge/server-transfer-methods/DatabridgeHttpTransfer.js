@@ -113,4 +113,10 @@ export default class DatabridgeHttpTransfer {
         }
         this.packetHandler[type].push(handler);
     }
+
+    removePacketHandler(callback) {
+        for(let type in this.packetHandler) {
+            this.packetHandler[type] = this.packetHandler[type].filter(handler => handler !== callback);
+        }
+    }
 }

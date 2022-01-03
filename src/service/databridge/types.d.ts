@@ -24,6 +24,7 @@ export interface IDatabridgeClientTransferMethod {
      */
     disconnect(forceClose: boolean): void;
     addPacketHandler(type: string | "ANY", handler: (packet: IDatabridgePacket<string, any>, transfer: IDatabridgeClientTransferMethod) => void): void;
+    removePacketHandler(callback);
 
     dataParser: typeof DatabridgeDataParser;
     setDataParser(dataParser: typeof DatabridgeDataParser);
@@ -39,6 +40,7 @@ export interface IDatabridgeServerTransferMethod {
     stopListening(forceClose): void;
 
     addPacketHandler(type: string | "ANY", handler: (packet: IDatabridgePacket<string, any>, transfer: IDatabridgeClientTransferMethod) => void): void;
+    removePacketHandler(callback);
 
     dataParser: typeof DatabridgeDataParser;
     setDataParser(dataParser: typeof DatabridgeDataParser);
