@@ -210,10 +210,12 @@ export default class CustomerLogicHandler {
             await this.loadCustomerLogic(logic);
         }
 
-        console.log("INFO", `Extension [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}] loaded.`);
-        customerLogic.onLoad?.();
-        customerLogic.loaded = true;
-        customerLogic.loading = false;
+        if(!customerLogic.loaded) {
+            console.log("INFO", `Extension [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}] loaded.`);
+            customerLogic.onLoad?.();
+            customerLogic.loaded = true;
+            customerLogic.loading = false;
+        }
     }
 
     /**
