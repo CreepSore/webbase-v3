@@ -30,6 +30,7 @@ export default class DatabridgeTcpTransfer {
                 }
             ]
         };
+        this.eventHandlers = {};
         this.connected = false;
         /** @type {Object<string, net.Socket>} */
         this.clients = {};
@@ -39,6 +40,8 @@ export default class DatabridgeTcpTransfer {
         this.serverSocket = net.createServer(socket => {
             let clientId = uuid.v4();
             this.clients[clientId] = socket;
+
+            this.eventHandlers.CONNECT?.forEach(handler => handler(clientId));
 
             socket.on("data", async(data) => {
                 let parsedPackets = await this.dataParser(data);
@@ -51,6 +54,7 @@ export default class DatabridgeTcpTransfer {
 
             socket.on("close", () => {
                 delete this.clients[clientId];
+                this.eventHandlers.DISCONNECT?.forEach(handler => handler(clientId));
             });
 
             socket.on("error", err => console.log("WARN", err));
@@ -141,6 +145,28 @@ export default class DatabridgeTcpTransfer {
         for(let type in this.packetHandler) {
             this.packetHandler[type] = this.packetHandler[type].filter(handler => handler !== callback);
         }
+    }
+
+    addConnectHandler(callback) {
+        if(!this.eventHandlers.CONNECT) {
+            this.eventHandlers.CONNECT = [];
+        }
+        this.eventHandlers.CONNECT.push(callback);
+    }
+
+    removeConnectHandler(callback) {
+        this.eventHandlers.CONNECT = this.eventHandlers.CONNECT.filter(handler => handler !== callback);
+    }
+
+    addDisconnectHandler(callback) {
+        if(!this.eventHandlers.DISCONNECT) {
+            this.eventHandlers.DISCONNECT = [];
+        }
+        this.eventHandlers.DISCONNECT.push(callback);
+    }
+
+    removeDisconnectHandler(callback) {
+        this.eventHandlers.DISCONNECT = this.eventHandlers.DISCONNECT.filter(handler => handler !== callback);
     }
 
     get isConnected() {

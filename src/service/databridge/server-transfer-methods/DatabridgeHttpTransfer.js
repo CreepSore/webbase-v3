@@ -27,6 +27,7 @@ export default class DatabridgeHttpTransfer {
                 }
             ]
         };
+        this.eventHandlers = {};
         this.clients = {};
     }
 
@@ -34,6 +35,8 @@ export default class DatabridgeHttpTransfer {
         options.router.ws(options.url, (/** @type {import("ws").WebSocket} */ ws) => {
             let clientId = uuid.v4();
             this.clients[clientId] = ws;
+
+            this.eventHandlers.CONNECT.forEach(handler => handler(clientId));
 
             console.log("WEBINFO", `Client [${clientId}] connected to DataBridge`);
 
@@ -46,8 +49,9 @@ export default class DatabridgeHttpTransfer {
                 });
             });
 
-            ws.on("end", () => {
+            ws.on("close", () => {
                 delete this.clients[clientId];
+                this.eventHandlers.DISCONNECT.forEach(handler => handler(clientId));
                 console.log("WEBINFO", `Client [${clientId}] disconnected from DataBridge`);
             });
 
@@ -118,5 +122,27 @@ export default class DatabridgeHttpTransfer {
         for(let type in this.packetHandler) {
             this.packetHandler[type] = this.packetHandler[type].filter(handler => handler !== callback);
         }
+    }
+
+    addConnectHandler(callback) {
+        if(!this.eventHandlers.CONNECT) {
+            this.eventHandlers.CONNECT = [];
+        }
+        this.eventHandlers.CONNECT.push(callback);
+    }
+
+    removeConnectHandler(callback) {
+        this.eventHandlers.CONNECT = this.eventHandlers.CONNECT.filter(handler => handler !== callback);
+    }
+
+    addDisconnectHandler(callback) {
+        if(!this.eventHandlers.DISCONNECT) {
+            this.eventHandlers.DISCONNECT = [];
+        }
+        this.eventHandlers.DISCONNECT.push(callback);
+    }
+
+    removeDisconnectHandler(callback) {
+        this.eventHandlers.DISCONNECT = this.eventHandlers.DISCONNECT.filter(handler => handler !== callback);
     }
 }

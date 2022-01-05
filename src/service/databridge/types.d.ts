@@ -35,12 +35,18 @@ export interface IDatabridgeClientTransferMethod {
 }
 
 export interface IDatabridgeServerTransferMethod {
+    clients: {[clientId: string]: any};
+
     sendPacket(clientId: string, packet: IDatabridgePacket<string, any>): void;
     startListening(options: any): void;
     stopListening(forceClose): void;
 
     addPacketHandler(type: string | "ANY", handler: (packet: IDatabridgePacket<string, any>, transfer: IDatabridgeClientTransferMethod) => void): void;
     removePacketHandler(callback);
+    addConnectHandler(callback: (clientId: string) => void);
+    removeConnectHandler(callback);
+    addDisconnectHandler(callback: (clientId: string) => void);
+    removeDisconnectHandler(callback);
 
     dataParser: typeof DatabridgeDataParser;
     setDataParser(dataParser: typeof DatabridgeDataParser);
