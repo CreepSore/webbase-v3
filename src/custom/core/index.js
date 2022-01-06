@@ -8,6 +8,7 @@ import helmet from "helmet";
 import expressSession from "express-session";
 
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
+import CustomerLogicHandler from "../../service/customer-logic/CustomerLogicHandler.js";
 import KvpStorage from "../../service/KvpStorage.js";
 import Version from "../../models/Version.js";
 import MailRegistry from "../../service/mail-logic/MailRegistry.js";
@@ -52,6 +53,31 @@ export default class Core extends CustomerLogic {
             callback: async() => {
                 // @ts-ignore
                 console.log("INFO", `Installed Components:\n${(await Version.findAll()).map(v => `  - ${v.name} ${v.version}`).join("\n")}`);
+            }
+        });
+
+        params.commandHandler.registerCommand("genNpmCmd", {
+            help: "[i|r] ; Generates a npm command that installs all needed packages of the dependencies",
+            callback: async(args) => {
+                let toInstall = new Set();
+                let extensions = CustomerLogicHandler.instance.sortedCustomerLogic;
+
+                extensions.forEach(ext => {
+                    let meta = ext.getMetadata();
+                    if(Array.isArray(meta.npmDependencies)) {
+                        meta.npmDependencies.forEach(dep => {
+                            if(typeof dep !== "string") return;
+                            toInstall.add(dep);
+                        });
+                    }
+                });
+
+                if(toInstall.size === 0) {
+                    console.log("INFO", "No npm-packages to install");
+                    return;
+                }
+
+                console.log("INFO", `npm ${args[0] === "r" ? "remove" : "install"} ${[...toInstall].join(" ")}`);
             }
         });
     }
