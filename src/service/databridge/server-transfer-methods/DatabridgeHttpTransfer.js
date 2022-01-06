@@ -28,13 +28,13 @@ export default class DatabridgeHttpTransfer {
             ]
         };
         this.eventHandlers = {};
-        this.clients = {};
+        this.clientSockets = {};
     }
 
     startListening(options) {
         options.router.ws(options.url, (/** @type {import("ws").WebSocket} */ ws) => {
             let clientId = uuid.v4();
-            this.clients[clientId] = ws;
+            this.clientSockets[clientId] = ws;
 
             this.eventHandlers.CONNECT.forEach(handler => handler(clientId));
 
@@ -50,7 +50,7 @@ export default class DatabridgeHttpTransfer {
             });
 
             ws.on("close", () => {
-                delete this.clients[clientId];
+                delete this.clientSockets[clientId];
                 this.eventHandlers.DISCONNECT.forEach(handler => handler(clientId));
                 console.log("WEBINFO", `Client [${clientId}] disconnected from DataBridge`);
             });
@@ -64,7 +64,7 @@ export default class DatabridgeHttpTransfer {
     }
 
     sendPacket(clientId, packet) {
-        let socket = this.clients[clientId];
+        let socket = this.clientSockets[clientId];
         if(!socket) return;
         socket.send(this.dataBuilder(packet).toString("utf-8"));
     }

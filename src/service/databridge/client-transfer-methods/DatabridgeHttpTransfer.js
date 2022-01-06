@@ -54,8 +54,12 @@ export default class DatabridgeHttpTransfer {
             this.packetHandler.ANY.forEach(handler => handler(packet, this));
         }
 
-        if(!this.packetHandler[packet.type]) return;
-        this.packetHandler[packet.type].forEach(handler => handler(packet, this));
+        this.firePacketHandlers(packet.type, packet);
+    }
+
+    firePacketHandlers(type, packet) {
+        if(!this.packetHandler[type]) return;
+        this.packetHandler[type].forEach(handler => handler(packet, this));
     }
 
     async dataParser(data) {

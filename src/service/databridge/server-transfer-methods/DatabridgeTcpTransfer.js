@@ -33,13 +33,13 @@ export default class DatabridgeTcpTransfer {
         this.eventHandlers = {};
         this.connected = false;
         /** @type {Object<string, net.Socket>} */
-        this.clients = {};
+        this.clientSockets = {};
     }
 
     startListening(options) {
         this.serverSocket = net.createServer(socket => {
             let clientId = uuid.v4();
-            this.clients[clientId] = socket;
+            this.clientSockets[clientId] = socket;
 
             this.eventHandlers.CONNECT?.forEach(handler => handler(clientId));
 
@@ -54,7 +54,7 @@ export default class DatabridgeTcpTransfer {
 
             let closed = false;
             socket.on("close", () => {
-                delete this.clients[clientId];
+                delete this.clientSockets[clientId];
                 this.eventHandlers.DISCONNECT?.forEach(handler => handler(clientId));
                 closed = true;
             });
@@ -66,7 +66,7 @@ export default class DatabridgeTcpTransfer {
             });
 
             socket.on("end", () => {
-                delete this.clients[clientId];
+                delete this.clientSockets[clientId];
             });
         });
 
@@ -74,7 +74,7 @@ export default class DatabridgeTcpTransfer {
     }
 
     stopListening() {
-        Object.entries(this.clients).forEach(([, socket]) => {
+        Object.entries(this.clientSockets).forEach(([, socket]) => {
             socket.destroy();
         });
         this.serverSocket.close();
@@ -86,7 +86,7 @@ export default class DatabridgeTcpTransfer {
      * @memberof DatabridgeTcpTransfer
      */
     sendPacket(clientId, packet) {
-        let socket = this.clients[clientId];
+        let socket = this.clientSockets[clientId];
         if(!socket) return this;
         socket.write(this.dataBuilder(packet).toString("utf-8"));
         return this;

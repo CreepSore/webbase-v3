@@ -18,7 +18,6 @@ export default class DatabridgeClient {
      */
     constructor(transferMethod) {
         this.transferMethod = transferMethod;
-        this.packetHandlers = [];
         /** @type {Object<string, IDatabridgePacket>} */
         this.lastPackets = {};
 
