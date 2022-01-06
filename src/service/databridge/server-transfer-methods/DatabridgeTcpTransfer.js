@@ -52,12 +52,18 @@ export default class DatabridgeTcpTransfer {
                 });
             });
 
+            let closed = false;
             socket.on("close", () => {
                 delete this.clients[clientId];
                 this.eventHandlers.DISCONNECT?.forEach(handler => handler(clientId));
+                closed = true;
             });
 
-            socket.on("error", err => console.log("WARN", err));
+            socket.on("error", () => {
+                if(!closed) {
+                    this.eventHandlers.DISCONNECT?.forEach(handler => handler(clientId));
+                }
+            });
 
             socket.on("end", () => {
                 delete this.clients[clientId];
