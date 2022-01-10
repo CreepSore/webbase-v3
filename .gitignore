@@ -5,6 +5,7 @@ config.json
 config.template.json
 storage.db
 src/web/static/js
+src/custom/.gitmodules
 
 # they're inside the sources anyway??
 *.LICENSE.txt
