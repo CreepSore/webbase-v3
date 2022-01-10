@@ -119,7 +119,7 @@ export default class CoreUsermgmt extends CustomerLogic {
         let {app} = params;
         app.use(async(req, res, next) => {
             // @ts-ignore
-            if(!req.session.uid) return next();
+            if(!req.session?.uid) return next();
             // @ts-ignore
             let user = await User.findByPk(req.session.uid);
 
