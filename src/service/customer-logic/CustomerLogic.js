@@ -23,6 +23,10 @@ export default class CustomerLogic {
     async sequelizeSetupRelation(params) {}
 
     /** @param {import("./types").ExpressParams} params */
+    async beforeExpressStart(params) {}
+    /** @param {import("./types").ExpressParams} params */
+    async afterExpressStart(params) {}
+    /** @param {import("./types").ExpressParams} params */
     async expressStart(params) {}
     /** @param {import("./types").ExpressParams} params */
     async expressStop(params) {}
