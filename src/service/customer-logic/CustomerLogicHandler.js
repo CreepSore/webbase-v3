@@ -153,7 +153,7 @@ export default class CustomerLogicHandler {
         let executed = [];
         let results = [];
         for(let customerLogic of this.sortedCustomerLogic) {
-            if(executed.includes(customerLogic)) return null;
+            if(executed.includes(customerLogic)) continue;
             for(let dependency of (customerLogic.getMetadata().dependencies || []).map((dep) => this.getCustomerLogicByName(dep))) {
                 if(executed.includes(dependency)) continue;
                 executed.push(dependency);
