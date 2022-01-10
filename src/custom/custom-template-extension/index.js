@@ -32,6 +32,12 @@ export default class ExtensionTemplate extends CustomerLogic {
     async sequelizeSetupRelation(params) {}
 
     /** @param {ExpressParams} params */
+    async beforeExpressStart(params) { }
+
+    /** @param {ExpressParams} params */
+    async afterExpressStart(params) { }
+
+    /** @param {ExpressParams} params */
     async expressStart(params) { }
 
     /** @param {ExpressParams} params */
