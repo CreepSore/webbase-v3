@@ -4,7 +4,7 @@
 config.json
 config.template.json
 storage.db
-src/web/static/js
+src/web/static/compiled
 src/custom/.gitmodules
 
 # they're inside the sources anyway??

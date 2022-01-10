@@ -5,7 +5,7 @@ import {merge as webpackMerge} from "webpack-merge";
 import CustomerLogicFactory from "./src/service/customer-logic/CustomerLogicFactory.js";
 
 
-const staticPath = path.resolve(".", "src", "web", "static", "js");
+const staticPath = path.resolve(".", "src", "web", "static", "compiled");
 
 const defaultPaths = {
     staticPath,
@@ -19,7 +19,7 @@ const getDefaultConfig = function() {
         },
         output: {
             path: staticPath,
-            filename: "[name].comp.js"
+            filename: "[name]"
         },
         devtool: "inline-source-map",
         resolve: {

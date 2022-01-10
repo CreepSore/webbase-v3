@@ -69,7 +69,7 @@ export default class CoreProfiling extends CustomerLogic {
         let viewRouter = express.Router();
 
         viewRouter.get("/", ExpressRouteWrapper.create(async(req, res) => {
-            res.send(Utils.renderDefaultReactPage("/js/core.profiling/profiling.comp.js", {
+            res.send(Utils.renderDefaultReactPage("/compiled/core.profiling/profiling.js", {
                 title: "Profiling"
             }));
         }, {
@@ -92,7 +92,7 @@ export default class CoreProfiling extends CustomerLogic {
     getWebpackConfig() {
         return {
             entry: {
-                "core.profiling/profiling": path.join(this.getPluginDir(), "web", "src", "main.jsx")
+                "core.profiling/profiling.js": path.join(this.getPluginDir(), "web", "src", "main.jsx")
             }
         };
     }

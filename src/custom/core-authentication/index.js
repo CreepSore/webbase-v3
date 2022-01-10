@@ -153,7 +153,7 @@ export default class CoreUsermgmt extends CustomerLogic {
                 return;
             }
 
-            res.send(Utils.renderDefaultReactPage("/js/core.authentication/login.comp.js", {
+            res.send(Utils.renderDefaultReactPage("/compiled/core.authentication/login.js", {
                 title: "Login"
             }));
         }, {
@@ -173,7 +173,7 @@ export default class CoreUsermgmt extends CustomerLogic {
     getWebpackConfig() {
         return {
             entry: {
-                "core.authentication/login": path.join(this.getPluginDir(), "web", "src", "login", "main.jsx")
+                "core.authentication/login.js": path.join(this.getPluginDir(), "web", "src", "login", "main.jsx")
             }
         };
     }
