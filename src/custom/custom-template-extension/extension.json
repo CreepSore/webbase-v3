@@ -1,0 +1,9 @@
+{
+    "name": "Extension.Template",
+    "dir": "custom-template-extension",
+    "version": "3.0.0",
+    "enabled": false,
+    "entrypoint": "index.js",
+    "dependencies": ["Core"],
+    "npmDependencies": []
+}
