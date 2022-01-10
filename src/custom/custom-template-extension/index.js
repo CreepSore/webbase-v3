@@ -9,7 +9,7 @@ import Version from "../../models/Version.js";
  * @typedef {import("../../service/customer-logic/types").StartCliApplicationParams} StartCliApplicationParams
  */
 
-export default class Core extends CustomerLogic {
+export default class ExtensionTemplate extends CustomerLogic {
     /** @param {StartCliApplicationParams} params */
     async onStartCliApplication(params) {}
 
