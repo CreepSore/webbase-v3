@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import path from "path";
+import fs from "fs";
 
 import express from "express";
 import expressWs from "express-ws";
@@ -8,7 +9,7 @@ import helmet from "helmet";
 import expressSession from "express-session";
 
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
-import CustomerLogicHandler from "../../service/customer-logic/CustomerLogicHandler.js";
+import CustomerLogicFactory from "../../service/customer-logic/CustomerLogicFactory.js";
 import KvpStorage from "../../service/KvpStorage.js";
 import Version from "../../models/Version.js";
 import MailRegistry from "../../service/mail-logic/MailRegistry.js";
@@ -59,11 +60,29 @@ export default class Core extends CustomerLogic {
         params.commandHandler.registerCommand("genNpmCmd", {
             help: "[i|r] ; Generates a npm command that installs all needed packages of the dependencies",
             callback: async(args) => {
-                let toInstall = new Set();
-                let extensions = CustomerLogicHandler.instance.sortedCustomerLogic;
+                let resolvedLogicPath = CustomerLogicFactory.getCustomerLogicPath();
 
-                extensions.forEach(ext => {
-                    let meta = ext.getMetadata();
+                let extFolders = fs.readdirSync(resolvedLogicPath);
+                let metas = extFolders
+                    .filter(x => fs.statSync(path.join(resolvedLogicPath, x)).isDirectory())
+                    .map(pluginDirectory => {
+                        let resolvedPluginDir = path.resolve(resolvedLogicPath, pluginDirectory);
+                        let metaPath = path.join(resolvedPluginDir, "extension.json");
+
+                        if(!fs.existsSync(metaPath)) {
+                            return null;
+                        }
+
+                        try {
+                            let extensionData = JSON.parse(String(fs.readFileSync(metaPath)));
+                            return extensionData;
+                        }
+                        catch(error) { return null; }
+                    })
+                    .filter(Boolean);
+
+                let toInstall = new Set();
+                metas.forEach(meta => {
                     if(Array.isArray(meta.npmDependencies)) {
                         meta.npmDependencies.forEach(dep => {
                             if(typeof dep !== "string") return;
