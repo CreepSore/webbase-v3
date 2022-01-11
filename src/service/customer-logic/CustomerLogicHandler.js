@@ -180,6 +180,10 @@ export default class CustomerLogicHandler {
         });
 
         let calcResult = false;
+        if(!calcResult && !upwards) {
+            results.set(currentNode.getMetadata().name, await this.runCustomerLogicFunction(currentNode, functionName, ...args));
+            calcResult = true;
+        }
         for(let dependency of deps) {
             await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, true);
             if(!calcResult) {
