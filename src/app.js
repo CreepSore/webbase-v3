@@ -23,15 +23,17 @@ async function main() {
         return;
     }
 
+    // Lol
+    let cfgCopy = JSON.parse(JSON.stringify(cfg));
     let customerLogic = await CustomerLogicFactory.createAndInitializeCustomerLogicHandler(false);
     CustomerLogicHandler.instance.sortedCustomerLogic.forEach(logic => {
         let model = logic.getConfigModel();
-        if(!cfg.extensions) {
-            cfg.extensions = {};
+        if(!cfgCopy.extensions) {
+            cfgCopy.extensions = {};
         }
-        cfg.extensions[logic.getMetadata().name] = model || {};
+        cfgCopy.extensions[logic.getMetadata().name] = model || {};
     });
-    ConfigModel.exportModel(ConfigModel.templatePath, cfg);
+    ConfigModel.exportModel(ConfigModel.templatePath, cfgCopy);
 
 
     let args = [...process.argv];
