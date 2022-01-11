@@ -12,7 +12,7 @@ export default class LoginForm extends React.PureComponent {
             username: "",
             password: "",
             token: "",
-            tfaHidden: false,
+            tfaHidden: true,
             error: ""
         };
 

@@ -210,7 +210,7 @@ export default class CoreLocalization extends CustomerLogic {
         }));
 
         apiRouter.get("/translation/missing", ExpressRouteWrapper.create(async(req, res) => {
-            res.json({success: true, data: LocalizationService.missingTranslations});
+            res.json({success: true, data: [...LocalizationService.missingTranslations]});
         }, {
             permissions: ["CORE.LOCALIZATION.GET_MISSING"],
             profilingName: "CORE.LOCALIZATION.GET_MISSING"

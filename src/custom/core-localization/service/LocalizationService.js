@@ -38,9 +38,11 @@ export default class LocalizationService {
     }
 
     static async getTranslation(language, key, replacements) {
+        let upperKey = String(key).toUpperCase();
+
         let translationObject = await Localization.findOne({
             where: {
-                key
+                key: upperKey
             },
             include: [
                 {
@@ -53,7 +55,7 @@ export default class LocalizationService {
         });
 
         if(!translationObject) {
-            this.missingTranslations.add(`${String(language).toUpperCase()}::${String(key).toUpperCase()}`);
+            this.missingTranslations.add(`${upperKey}::${upperKey}`);
             return null;
         }
 
@@ -67,7 +69,7 @@ export default class LocalizationService {
 
         let [find, newCreated] = await Localization.findOrCreate({
             where: {
-                key,
+                key: String(key).toUpperCase(),
                 // @ts-ignore
                 LanguageId: languageObj.id
             },
@@ -91,7 +93,7 @@ export default class LocalizationService {
 
         let translationObject = await Localization.findOne({
             where: {
-                key
+                key: String(key).toUpperCase()
             },
             include: [
                 {
