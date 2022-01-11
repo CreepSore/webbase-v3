@@ -100,6 +100,7 @@ export default class UserService {
         if(!user) return false;
         // @ts-ignore
         if(!user.tfaKey) return true;
+        if(!tokenIn) return false;
 
         // @ts-ignore
         return TfaService.verify(user.tfaKey, tokenIn.replace(/ /g, ""));

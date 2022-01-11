@@ -12,5 +12,5 @@ export default async function(req, res) {
     // @ts-ignore
     delete req.session.uid;
 
-    res.json({success: true});
+    res.redirect("/");
 }

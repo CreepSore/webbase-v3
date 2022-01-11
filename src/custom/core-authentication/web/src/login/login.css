@@ -10,10 +10,11 @@
         @apply items-center;
         @apply w-full;
         @apply h-screen;
+        @apply bg-gray-100;
     }
 
     .login-form {
-        @apply bg-gray-100 text-gray-700;
+        @apply bg-gray-200 text-gray-700;
         @apply shadow-xl;
         @apply w-full m-3 pb-3;
         @apply md:max-w-[500px] md:m-0;
@@ -68,9 +69,15 @@
                 }
 
                 .login-button:hover {
-                    @apply border-none;
+                    @apply border-transparent;
                     @apply shadow-lg;
                 }
+            }
+
+            .tfa-input {
+                @apply h-8;
+                @apply text-xl;
+                letter-spacing: 0.2em;
             }
         }
     }

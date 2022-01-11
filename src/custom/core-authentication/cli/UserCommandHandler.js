@@ -1,7 +1,7 @@
 import fs from "fs";
 
 import qrcode from "qrcode";
-import base32 from "base32.js";
+import {base32} from "rfc4648";
 import * as uuid from "uuid";
 
 import CommandHandler from "../../../service/command-handler/CommandHandler.js";
@@ -18,6 +18,11 @@ export default class UserCommandHandler extends CommandHandler {
         this.registerCommand("create", {
             help: "<username> <password> [email]",
             callback: async(args) => await this.createUser(args[0], args[1], args[2])
+        });
+
+        this.registerCommand("setPassword", {
+            help: "<username> <password>",
+            callback: async(args) => await this.setPassword(args[0], args[1])
         });
 
         this.registerCommand("list", {
@@ -57,6 +62,18 @@ export default class UserCommandHandler extends CommandHandler {
         console.log("INFO", "Users: \n" + users.join("\n"));
     }
 
+    async setPassword(username, password) {
+        let user = await UserService.getUserByUsername(username);
+        if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
+
+        await user.update({
+            password: UserService.hashPassword(password)
+        });
+
+        // @ts-ignore
+        console.log("INFO", `Successfully changed password of user [${user.username}]`);
+    }
+
     async setPermissionGroup(username, groupName) {
         let user = await UserService.getUserByUsername(username);
         if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
@@ -85,13 +102,15 @@ export default class UserCommandHandler extends CommandHandler {
         if(!user) throw new Exception("Invalid User", {code: "CORE.AUTHENTICATION.INVALID_USER"});
 
         let newKey = key || uuid.v4();
+        let toEncode = Buffer.from(newKey);
+        let encoded = base32.stringify(toEncode, {pad: true});
 
         await user.update({
-            tfaKey: base32.encode(newKey, {type: "rfc4648"})
+            tfaKey: encoded
         });
 
         // @ts-ignore
-        console.log("INFO", `Updated tfa key of user [${user.username}] to [${newKey}]`);
+        console.log("INFO", `Updated tfa key of user [${user.username}] to [${encoded}]`);
     }
 
     async printTfa(username) {

@@ -7,7 +7,9 @@ export default class TfaService {
      * @param {number} timeoffset The time offset (in the future and in the present) in ms
      * @returns {boolean}
      */
-    static verify = function(key, code, timeoffset = 30000) {
+    static verify(key, code, timeoffset = 30000) {
+        if(!code) return false;
+
         let normalizedOffset = Math.abs(timeoffset);
         let totpPresent = this.getTOTP(key, -normalizedOffset);
         let totpNow = this.getTOTP(key, 0);
@@ -15,11 +17,17 @@ export default class TfaService {
         return [totpPresent, totpNow, totpFuture].includes(code);
     }
 
-    static getTOTP = function(key, timeoffset) {
+    /**
+     * @param {string} key
+     * @param {Number} timeoffset
+     * @returns {string}
+     */
+    static getTOTP(key, timeoffset) {
+        // @ts-ignore
         return totp(key, {
             period: 30,
             // @ts-ignore
             timestamp: Date.now() + timeoffset
         });
-    };
+    }
 }

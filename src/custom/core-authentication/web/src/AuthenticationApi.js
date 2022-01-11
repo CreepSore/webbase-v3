@@ -29,11 +29,9 @@ export default class AuthenticationApi {
      * @throws {Exception}
      */
     static async logout() {
-        let result = await fetch("/api/core.authentication/logout", {
-            method: "POST"
-        }).then(response => response.json());
-
-        if(!result.success) throw result.error;
+        await fetch("/api/core.authentication/logout", {
+            method: "GET"
+        });
     }
 
     /**

@@ -139,7 +139,7 @@ export default class CoreUsermgmt extends CustomerLogic {
         apiRouter.post("/login", ExpressRouteWrapper.create(ApiLogin, {
             permissions: ["CORE.AUTHENTICATION.LOGIN"]
         }));
-        apiRouter.post("/logout", ExpressRouteWrapper.create(ApiLogout));
+        apiRouter.get("/logout", ExpressRouteWrapper.create(ApiLogout));
         apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {
             permissions: ["CORE.AUTHENTICATION.REGISTER"]
         }));

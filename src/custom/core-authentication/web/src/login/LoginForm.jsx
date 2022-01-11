@@ -11,8 +11,8 @@ export default class LoginForm extends React.PureComponent {
             translations: {},
             username: "",
             password: "",
-            token: null,
-            tfaHidden: true,
+            token: "",
+            tfaHidden: false,
             error: ""
         };
 
@@ -25,9 +25,21 @@ export default class LoginForm extends React.PureComponent {
                 <h1>{this.state.translations["LoginForm.Header"]}</h1>
                 <p className="error" hidden={this.state.error.length === 0}>{this.state.error}</p>
                 <div className="login-form-input">
-                    <input onChange={(ev) => this.updateInput(ev.target.value, "username")} type="text" placeholder={this.state.translations["LoginForm.Input.Username"]} />
-                    <input onChange={(ev) => this.updateInput(ev.target.value, "password")} type="password" placeholder={this.state.translations["LoginForm.Input.Password"]} />
-                    <input onChange={(ev) => this.updateInput(ev.target.value, "token")} type="text" placeholder={this.state.translations["LoginForm.Input.Token"]} hidden={this.state.tfaHidden}/>
+                    <input
+                        onChange={(ev) => this.updateInput(ev.target.value, "username")}
+                        type="text"
+                        placeholder={this.state.translations["LoginForm.Input.Username"]} />
+                    <input
+                        onChange={(ev) => this.updateInput(ev.target.value, "password")}
+                        type="password"
+                        placeholder={this.state.translations["LoginForm.Input.Password"]} />
+                    <input
+                        className="tfa-input"
+                        value={this.state.token}
+                        onChange={(ev) => this.updateInput(ev.target.value, "token")}
+                        type="text"
+                        placeholder={this.state.translations["LoginForm.Input.Token"]}
+                        hidden={this.state.tfaHidden}/>
                     <div className="button-container">
                         <button
                             className="login-button"
@@ -44,14 +56,25 @@ export default class LoginForm extends React.PureComponent {
                 "LoginForm.Header",
                 "LoginForm.Input.Username",
                 "LoginForm.Input.Password",
-                "LoginForm.Input.LoginButton"
+                "LoginForm.Input.LoginButton",
+                "LoginForm.Input.Token"
             ])
         });
     }
 
     updateInput = (val, name) => {
+        if(name === "token") {
+            if(val.length > 6 || String(val).match(/[^0-9]/)) {
+                return;
+            }
+        }
+
         this.setState({
             [name]: val
+        }, () => {
+            if(name === "token" && val.length === 6) {
+                this.loginClick();
+            }
         });
     }
 
@@ -64,6 +87,12 @@ export default class LoginForm extends React.PureComponent {
                 console.log(ex);
                 if(ex.info.code === "CORE.AUTHENTICATION.ALREADY_LOGGED_IN") {
                     location.href = LoginForm.redirectUrl;
+                }
+                else if(ex.info.code === "CORE.AUTHENTICATION.NO_TFA_TOKEN") {
+                    this.setState({tfaHidden: false});
+                }
+                else if(ex.info.code === "CORE.AUTHENTICATION.INVALID_TFA_TOKEN") {
+                    this.setState({token: "", error: ex.text});
                 }
                 else {
                     this.setState({error: ex.text});
