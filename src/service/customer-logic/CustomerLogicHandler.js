@@ -20,6 +20,7 @@ export default class CustomerLogicHandler {
     }
 
     constructor() {
+        /** @type {Set<CustomerLogic>} */
         this.customerLogicImplementations = new Set();
         this.sharedObjects = new Map();
         // dummy object to detect non existing functions
@@ -150,21 +151,48 @@ export default class CustomerLogicHandler {
      * @memberof CustomerLogicHandler
      */
     async runAllCustomerLogicFunctionDependencyFirst(functionName, ...args) {
-        let executed = [];
-        let results = [];
-        for(let customerLogic of this.sortedCustomerLogic) {
-            if(executed.includes(customerLogic)) continue;
-            for(let dependency of (customerLogic.getMetadata().dependencies || []).map((dep) => this.getCustomerLogicByName(dep))) {
-                if(executed.includes(dependency)) continue;
-                executed.push(dependency);
-                await this.runCustomerLogicFunction(dependency, functionName, ...args);
-            }
+        let executed = new Set();
+        let results = new Map();
+        let noDependence = [...this.customerLogicImplementations].filter(customerLogic => (customerLogic.getMetadata().dependencies || []).length === 0);
+        for(let masterExtension of noDependence) {
+            this.traverseRunDependencyTree(functionName, args, masterExtension, executed, results, false);
+        }
+        return [...results.values()];
+    }
 
-            executed.push(customerLogic);
-            results.push(await this.runCustomerLogicFunction(customerLogic, functionName, ...args));
+    /**
+     * Recursively traverses the logic tree
+     * @param {string} functionName
+     * @param {any} args
+     * @param {CustomerLogic} currentNode
+     * @param {Set<CustomerLogic>} [executed=new Set()]
+     * @param {Map<string, any>} [results=new Map()]
+     * @return {Promise<any>}
+     * @memberof CustomerLogicHandler
+     */
+    async traverseRunDependencyTree(functionName, args, currentNode, executed = new Set(), results = new Map(), upwards = false) {
+        if(executed.has(currentNode)) return;
+        executed.add(currentNode);
+        let deps = upwards ? [...this.customerLogicImplementations].filter(cl => {
+            return !executed.has(cl) && currentNode.getMetadata().dependencies.includes(cl.getMetadata().name);
+        }) : [...this.customerLogicImplementations].filter(cl => {
+            return !executed.has(cl) && cl.getMetadata().dependencies.includes(currentNode.getMetadata().name);
+        });
+
+        let calcResult = false;
+        for(let dependency of deps) {
+            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, true);
+            if(!calcResult) {
+                results.set(currentNode.getMetadata().name, await this.runCustomerLogicFunction(currentNode, functionName, ...args));
+                calcResult = true;
+            }
+            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, false);
         }
 
-        return results;
+        if(!calcResult) {
+            results.set(currentNode.getMetadata().name, await this.runCustomerLogicFunction(currentNode, functionName, ...args));
+            calcResult = true;
+        }
     }
 
     /**
