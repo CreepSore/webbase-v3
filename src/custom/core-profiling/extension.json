@@ -3,5 +3,5 @@
     "dir": "core-profiling",
     "version": "3.0.0",
     "entrypoint": "index.js",
-    "dependencies": ["Core.Authentication"]
+    "dependencies": ["Core", "Core.Authentication"]
 }
