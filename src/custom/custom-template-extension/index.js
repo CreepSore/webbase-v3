@@ -47,6 +47,10 @@ export default class ExtensionTemplate extends CustomerLogic {
         return {};
     }
 
+    getConfigModel() {
+        return {};
+    }
+
     getPriority() {return 1000;}
     async onLoad() { }
     async onUnload() {}

@@ -4,22 +4,35 @@ import MainApplication from "./loader/MainApplication.js";
 import InstallerApplication from "./loader/InstallerApplication.js";
 import CliApplication from "./loader/CliApplication.js";
 import CustomerLogicFactory from "./service/customer-logic/CustomerLogicFactory.js";
+import CustomerLogicHandler from "./service/customer-logic/CustomerLogicHandler.js";
 import Logger from "./service/Logger.js";
 import KvpStorage from "./service/KvpStorage.js";
 import ConfigModel from "./service/ConfigModel.js";
 
 async function main() {
     Logger.replaceConsoleLog();
+    /** @type {ConfigModel} */
+    let cfg;
     try {
-        ConfigModel.exportDefault(ConfigModel.templatePath);
-        KvpStorage.instance.setItem(KvpStorage.defaultKeys.config, ConfigModel.import(ConfigModel.configPath));
+        cfg = ConfigModel.import(ConfigModel.configPath);
+        KvpStorage.instance.setItem(KvpStorage.defaultKeys.config, cfg);
     }
     catch(err) {
+        ConfigModel.exportDefault(ConfigModel.templatePath);
         console.log("ERROR", `Failed to load config: ${err}`);
         return;
     }
 
     let customerLogic = await CustomerLogicFactory.createAndInitializeCustomerLogicHandler(false);
+    CustomerLogicHandler.instance.sortedCustomerLogic.forEach(logic => {
+        let model = logic.getConfigModel();
+        if(!cfg.extensions) {
+            cfg.extensions = {};
+        }
+        cfg.extensions[logic.getMetadata().name] = model || {};
+    });
+    ConfigModel.exportModel(ConfigModel.templatePath, cfg);
+
 
     let args = [...process.argv];
     let parsedArgs = minimist(args.slice(2), {

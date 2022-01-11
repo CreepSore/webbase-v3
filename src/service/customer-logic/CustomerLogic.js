@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import KvpStorage from "../KvpStorage.js";
 
 /**
  * @typedef {import("./types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -34,6 +35,12 @@ export default class CustomerLogic {
     getPriority() {return 0;}
     getPluginDir() {return this.dependencies.additionalDependencies.pluginDir;}
     getMetadata() {return this.dependencies.additionalDependencies.metadata;}
+    getWebpackConfig(params) { return {}; }
+    getConfigModel() { return {}; }
+    getConfig(key) {
+        let cfg = KvpStorage.instance.wrapper.getConfig();
+        return cfg.extensions?.[this.getMetadata().name]?.[key];
+    }
     async onLoad() {}
     async onUnload() {}
     async injectDependencies(dependencies) {

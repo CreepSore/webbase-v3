@@ -41,6 +41,8 @@ export default class ConfigModel {
             this.utils = {
                 runProfiling: false
             };
+
+            this.extensions = {};
         }
     }
 
@@ -56,8 +58,12 @@ export default class ConfigModel {
         return JSON.parse(String(fs.readFileSync(sourcePath)));
     }
 
+    static exportModel(targetPath, model) {
+        fs.writeFileSync(targetPath, JSON.stringify(model, null, 4));
+    }
+
     static exportDefault(targetPath) {
         let defaultModel = new ConfigModel(true);
-        fs.writeFileSync(targetPath, JSON.stringify(defaultModel, null, 4));
+        this.exportModel(defaultModel, targetPath);
     }
 }
