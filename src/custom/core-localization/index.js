@@ -19,7 +19,7 @@ import PermissionService from "../core-authentication/service/PermissionService.
  * @typedef {import("../../service/customer-logic/types").StartCliApplicationParams} StartCliApplicationParams
  */
 
-export default class Core extends CustomerLogic {
+export default class CoreLocalization extends CustomerLogic {
     /** @param {StartCliApplicationParams} params */
     async onStartCliApplication(params) {
         params.commandHandler.registerSubHandler("loc", CommandHandler.createFromObject({

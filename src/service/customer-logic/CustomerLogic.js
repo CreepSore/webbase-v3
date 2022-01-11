@@ -37,9 +37,10 @@ export default class CustomerLogic {
     getMetadata() {return this.dependencies.additionalDependencies.metadata;}
     getWebpackConfig(params) { return {}; }
     getConfigModel() { return {}; }
-    getConfig(key) {
+    getConfig(key = null) {
         let cfg = KvpStorage.instance.wrapper.getConfig();
-        return cfg.extensions?.[this.getMetadata().name]?.[key];
+        let cfgBase = cfg.extensions?.[this.getMetadata().name];
+        return key === null ? cfgBase : cfgBase[key];
     }
     async onLoad() {}
     async onUnload() {}
