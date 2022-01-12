@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&display=swap');
+@layer base {
+    main {
+        @apply bg-slate-900;
+        div.edit-page {
+            div.edit-controls {
+                @apply bg-white;
+                @apply w-full p-2;
+                @apply flex items-center gap-4;
+            }
+        }
+    }
+}
+
+@layer components {
+    input[type="button"], input[type="submit"], button {
+        &.btn {
+            @apply flex justify-center items-center gap-2;
+            @apply font-["Be_Vietnam_Pro"] text-white tracking-wider;
+            @apply py-1 px-4 rounded;
+            @apply hover:brightness-105;
+
+            &.disabled, &[disabled] {
+                @apply cursor-not-allowed;
+                @apply bg-slate-400;
+                @apply hover:brightness-100;
+            }
+        }
+    }
+
+    .jsx-filter {
+        @apply relative;
+        @apply select-none;
+
+        .jsx-filter-component {
+            @apply box-content;
+            @apply cursor-pointer;
+            @apply w-64 p-1;
+            @apply border border-black rounded;
+            @apply flex justify-between items-center;
+        }
+
+        .jsx-filter-selector {
+            @apply origin-bottom-left;
+            @apply absolute left-0 right-0 mt-1;
+            @apply p-3;
+            @apply bg-white border border-black rounded shadow-sm;
+
+            .jsx-filter-selector-child {
+                @apply cursor-pointer;
+                @apply p-1;
+                @apply hover:bg-gray-100;
+
+                &.selected {
+                    @apply bg-green-100;
+                }
+
+                &:first-child {
+                    @apply rounded-t;
+                }
+
+                &:last-child {
+                    @apply rounded-b;
+                }
+            }
+
+            button {
+                @apply w-full mt-3 py-1;
+                @apply rounded bg-red-400 text-white font-bold;
+            }
+        }
+    }
+
+    .edit-table-container {
+        @apply overflow-auto;
+        
+        table.edit-table {
+            @apply w-full;
+
+            td {
+                &:last-child {
+                    @apply text-center;
+                }
+            }
+
+            thead {
+                @apply font-["Roboto"];
+                @apply bg-green-600 text-white;
+
+                input, select {
+                    @apply w-full;
+                    @apply text-black;
+                }
+            }
+
+            tbody {
+                @apply font-["Roboto"];
+                th {
+                    @apply text-left font-normal;
+                }
+
+                tr {
+                    &:nth-child(odd) {
+                        @apply bg-green-400;
+                    }
+
+                    &:nth-child(even) {
+                        @apply bg-green-300;
+                    }
+
+                    &:hover {
+                        @apply brightness-105;
+                    }
+
+                    &.selected {
+                        @apply bg-red-300;
+                    }
+
+                    &.disabled {
+                        @apply bg-slate-400;
+                    }
+
+                    input {
+                        @apply w-full;
+                    }
+                }
+            }
+        }
+    }
+}

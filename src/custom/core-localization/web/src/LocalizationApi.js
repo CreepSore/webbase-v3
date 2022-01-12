@@ -20,6 +20,30 @@ export default class LocalizationApi {
     /**
      * @throws {Exception}
      */
+    static async getAllTranslations() {
+        let result = await fetch("/api/core.localization/translation/all")
+            .then(response => response.json());
+
+        if(!result.success) throw result.error;
+
+        return result.data;
+    }
+
+    /**
+     * @throws {Exception}
+     */
+    static async getMissingTranslations() {
+        let result = await fetch("/api/core.localization/translation/missing")
+            .then(res => res.json());
+
+        if(!result.success) throw result.error;
+
+        return result.data;
+    }
+
+    /**
+     * @throws {Exception}
+     */
     static async getLanguageById(id) {
         let result = await fetch(`/api/core.localization/language/fromId/${id}`)
             .then(response => response.json());
@@ -89,17 +113,5 @@ export default class LocalizationApi {
         });
 
         return result;
-    }
-
-    /**
-     * @throws {Exception}
-     */
-    static async getMissing() {
-        let result = await fetch("/api/core.localization/translation/missing")
-            .then(res => res.json());
-
-        if(!result.success) throw result.error;
-
-        return result.data;
     }
 }

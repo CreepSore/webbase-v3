@@ -18,8 +18,16 @@ export default class LocalizationService {
         });
     }
 
+    static async getAllTranslations() {
+        return (await Localization.findAll({
+            include: [{
+                model: Language
+            }]
+        }));
+    }
+
     static async getLanguageFromIdentifier(identifier) {
-        let language = await Language.findOne({where: {localeIdentifier: identifier}});
+        let language = await Language.findOne({where: {localeIdentifier: String(identifier).toLowerCase()}});
         if(!language) throw new Exception("Language does not exist", {code: "CORE.LOCALIZATION.INVALID_LANGUAGE"});
 
         return language;
@@ -55,7 +63,7 @@ export default class LocalizationService {
         });
 
         if(!translationObject) {
-            this.missingTranslations.add(`${upperKey}::${upperKey}`);
+            this.missingTranslations.add(`${String(language).toUpperCase()}::${upperKey}`);
             return null;
         }
 

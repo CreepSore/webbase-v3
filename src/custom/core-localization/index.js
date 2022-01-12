@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
+import path from "path";
+
 import express from "express";
 
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
-
 import Localization from "./models/Localization.js";
 import Version from "../../models/Version.js";
 import Language from "./models/Language.js";
@@ -11,6 +12,7 @@ import LocalizationService from "./service/LocalizationService.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import CacheProvider from "../../service/CacheProvider.js";
 import PermissionService from "../core-authentication/service/PermissionService.js";
+import Utils from "../../service/Utils.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -127,7 +129,7 @@ export default class CoreLocalization extends CustomerLogic {
     async expressStart(params) {
         let {app} = params;
 
-        // eslint-disable-next-line new-cap
+        let viewRouter = express.Router();
         let apiRouter = express.Router();
 
         apiRouter.get("/languages", ExpressRouteWrapper.create(async(req, res) => {
@@ -216,7 +218,26 @@ export default class CoreLocalization extends CustomerLogic {
             profilingName: "CORE.LOCALIZATION.GET_MISSING"
         }));
 
+        apiRouter.get("/translation/all", ExpressRouteWrapper.create(async(req, res) => {
+            res.json({success: true, data: await LocalizationService.getAllTranslations()});
+        }, {
+            permissions: ["CORE.LOCALIZATION.GET_ALL"],
+            profilingName: "CORE.LOCALIZATION.GET_ALL"
+        }));
+
+        viewRouter.get("/edit", ExpressRouteWrapper.create(async(req, res) => {
+            res.send(Utils.renderDefaultReactPage("/compiled/core.localization/edit.js", {
+                title: "Localization"
+            }));
+        }, {
+            permissions: ["CORE.LOCALIZATION.EDIT"],
+            onInvalidPermissions: (req, res) => {
+                res.redirect("/core.authentication/login?redirectTo=%2Fcore.localization%2Fedit");
+            }
+        }));
+
         app.use("/api/core.localization", apiRouter);
+        app.use("/core.localization", viewRouter);
     }
 
     /** @param {ExpressParams} params */
@@ -224,10 +245,8 @@ export default class CoreLocalization extends CustomerLogic {
 
     getWebpackConfig(params) {
         return {
-            resolve: {
-                alias: {
-                    "core.localization": this.getPluginDir()
-                }
+            entry: {
+                "core.localization/edit.js": path.join(this.getPluginDir(), "web", "src", "edit", "main.jsx")
             }
         };
     }
