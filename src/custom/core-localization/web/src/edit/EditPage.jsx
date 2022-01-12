@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
-import {SaveIcon} from "@heroicons/react/solid";
+import {SaveIcon, ArrowCircleDownIcon, ArrowCircleUpIcon} from "@heroicons/react/solid";
 
 import LocalizationApi from "../LocalizationApi.js";
 import Filter from "./components/FilterComponent.jsx";
@@ -106,6 +106,46 @@ export default function EditPage() {
         });
     };
 
+    const onExportButtonClicked = async() => {
+        let translations = (await LocalizationApi.getAllTranslations()).map(t => {
+            return {
+                key: t.key,
+                value: t.value,
+                langId: t.Language.localeIdentifier
+            };
+        });
+
+        let blob = new Blob([JSON.stringify(translations, null, 2)], {type: "text/json;charset=utf-8"});
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = "translations.json";
+        a.click();
+    };
+
+    const onImportButtonClicked = () => {
+        let input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".json";
+        input.click();
+
+        input.onchange = async() => {
+            let reader = new FileReader();
+            reader.onload = async(event) => {
+                // @ts-ignore
+                Promise.all(JSON.parse(event.target.result).map(async(t) => {
+                    await LocalizationApi.setTranslation(t.langId, t.key, t.value);
+                })).then(() => {
+                    location.reload();
+                });
+            };
+
+            reader.onerror = () => {};
+
+            reader.readAsText(input.files[0]);
+        };
+    };
+
     React.useEffect(() => {
         let newVisible = [];
         let filters = filter.map(f => f.value);
@@ -139,6 +179,16 @@ export default function EditPage() {
                     filterPossibilities={filterPossibilities}
                     onFilterAdd={id => addToFilter(id)}
                     onFilterRemove={id => removeFromFilter(id)} />
+                <button
+                    className="btn bg-orange-500"
+                    onClick={() => onExportButtonClicked()}>
+                    <p>Export</p><ArrowCircleDownIcon height={"1em"} width={"1em"}/>
+                </button>
+                <button
+                    className="btn bg-orange-500"
+                    onClick={() => onImportButtonClicked()}>
+                    <p>Import</p><ArrowCircleUpIcon height={"1em"} width={"1em"}/>
+                </button>
             </div>
 
             <div className="edit-table-container">
