@@ -52,4 +52,23 @@ export default class AuthenticationApi {
 
         if(!result.success) throw result.error;
     }
+
+    static async updateUserInformation(uid, email, password, username, tfaKey, active) {
+        let result = await fetch(`/api/core.authentication/user/${uid}`, {
+            method: "PUT",
+            body: JSON.stringify({
+                uid,
+                email,
+                password,
+                username,
+                tfaKey,
+                active
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+    }
 }

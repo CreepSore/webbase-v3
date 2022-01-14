@@ -19,6 +19,8 @@ import ApiKeyCommandHandler from "./cli/ApiKeyCommandHandler.js";
 import ApiLogin from "./api/login.js";
 import ApiLogout from "./api/logout.js";
 import ApiRegister from "./api/register.js";
+import ApiUpdateUserdata from "./api/updateUserData.js";
+import ApiGetUsers from "./api/getUsers.js";
 
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import Utils from "../../service/Utils.js";
@@ -84,6 +86,16 @@ export default class CoreUsermgmt extends CustomerLogic {
             description: "Enables registration"
         });
 
+        const permUserUpdateBasic = await Permission.create({
+            name: "CORE.AUTHENTICATION.EDIT.USER.BASIC",
+            description: "Enables updating user information"
+        });
+
+        const permUserUpdateAdvanced = await Permission.create({
+            name: "CORE.AUTHENTICATION.EDIT.USER.ADVANCED",
+            description: "Enables updating user information"
+        });
+
         await PermissionGroup.create({
             name: "Anonymous",
             description: "Gets used if the user is not logged in"
@@ -92,6 +104,8 @@ export default class CoreUsermgmt extends CustomerLogic {
             group.addPermission(permLogin);
             // @ts-ignore
             group.addPermission(permRegister);
+            // @ts-ignore
+            group.addPermission(permUserUpdateBasic);
         });
 
         await PermissionGroup.create({
@@ -142,6 +156,12 @@ export default class CoreUsermgmt extends CustomerLogic {
         apiRouter.get("/logout", ExpressRouteWrapper.create(ApiLogout));
         apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {
             permissions: ["CORE.AUTHENTICATION.REGISTER"]
+        }));
+        apiRouter.put("/user/:id", ExpressRouteWrapper.create(ApiUpdateUserdata, {
+            permissions: ["CORE.AUTHENTICATION.EDIT.USER.BASIC"]
+        }));
+        apiRouter.get("/users", ExpressRouteWrapper.create(ApiGetUsers, {
+            permissions: ["CORE.AUTHENTICATION.GETUSERS"]
         }));
 
         // eslint-disable-next-line new-cap

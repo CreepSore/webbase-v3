@@ -1,6 +1,7 @@
 import Profiler from "../../../service/Profiler.js";
 import Exception from "../../core/Exception.js";
 import UserService from "../service/UserService.js";
+import CacheProvider from "../../../service/CacheProvider.js";
 
 /**
  * @export
@@ -26,6 +27,7 @@ export default async function(req, res) {
         res.json({success: false, error});
     }
     finally {
+        CacheProvider.instance.invalidate("CORE.AUTHENTICATION.GETUSERS");
         Profiler.instance.endMeasurement(profilerToken);
     }
 }

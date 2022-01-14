@@ -8,6 +8,7 @@ import Permission from "../models/Permission.js";
 import PermissionGroup from "../models/PermissionGroup.js";
 import Exception from "../../core/Exception.js";
 import TfaService from "../../../service/TfaService.js";
+import { base32 } from "rfc4648";
 
 export default class UserService {
     /**
@@ -60,6 +61,19 @@ export default class UserService {
 
     static async getUserByEmail(email = "") {
         return await User.findOne({where: {email}});
+    }
+
+    static async getUsers() {
+        return await User.findAll({
+            include: [
+                {
+                    model: PermissionGroup,
+                    include: [{
+                        model: Permission
+                    }]
+                }
+            ]
+        });
     }
 
     static async userExistsByUid(uid) {
@@ -153,14 +167,12 @@ export default class UserService {
         }
 
         if(!skipPasswordChecks) {
-            if(!password.match(/[a-zA-Z]/)) {
-                throw new Exception("Password must contain at least one letter", {code: "CORE.AUTHENTICATION.PASSWORD_NO_LETTER"});
-            }
-
-            if(password.length < 12) {
-                throw new Exception("Password must be at least 12 characters long", {code: "CORE.AUTHENTICATION.PASSWORD_INVALID_LENGTH"});
-            }
+            let passwordError = this.checkPassword(password);
+            if(passwordError) throw passwordError;
         }
+
+        let emailError = this.checkEmail(email);
+        if(emailError) throw emailError;
 
         try {
             let options = {
@@ -181,6 +193,60 @@ export default class UserService {
         catch {
             throw new Exception("User creation failed", {code: "CORE.UNKNOWN"});
         }
+    }
+
+    static async updateUserInformationBasic(uid, email, password) {
+        let emailError = this.checkEmail(email);
+        let passwordError = this.checkPassword(password);
+        if(emailError) {
+            throw emailError;
+        }
+
+        if(passwordError) {
+            throw passwordError;
+        }
+
+        await User.update({
+            email,
+            password
+        }, {where: {id: uid}});
+    }
+
+    static async updateUserInformationAdvanced(uid, username, tfaKey, active) {
+        let updatePayload = {
+            username,
+            active
+        };
+
+        if(tfaKey) {
+            let toEncode = Buffer.from(tfaKey);
+            // eslint-disable-next-line no-param-reassign
+            updatePayload.tfaKey = base32.stringify(toEncode, {pad: true});
+        }
+
+        await User.update(updatePayload, {where: {id: uid}});
+    }
+
+    static checkEmail(email) {
+        let mailRegex = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
+        if(!mailRegex.test(email)) {
+            return new Exception("Invalid Email", {code: "CORE.AUTHENTICATION.INVALID_EMAIL"});
+        }
+
+        return null;
+    }
+
+    static checkPassword(password) {
+        if(!password.test(/^(?=.*[0-9])(?=.*[a-zA-Z]).+$/)) {
+            return new Exception("Password must contain one letter and one number", {code: "CORE.AUTHENTICATION.PASSWORD_SYMBOL_MISMATCH"});
+        }
+
+        // Not checking length via regex for better error handling
+        if(password.length < 12) {
+            return new Exception("Password must be at least 12 characters long", {code: "CORE.AUTHENTICATION.PASSWORD_INVALID_LENGTH"});
+        }
+
+        return null;
     }
 
     static hashPassword(password) {

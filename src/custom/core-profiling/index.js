@@ -9,6 +9,7 @@ import Version from "../../models/Version.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import Utils from "../../service/Utils.js";
 import KvpStorage from "../../service/KvpStorage.js";
+import Permission from "../core-authentication/models/Permission.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -29,6 +30,11 @@ export default class CoreProfiling extends CustomerLogic {
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
+        await Permission.create({
+            name: "CORE.PROFILING.VIEW",
+            description: "Enabled profiling view"
+        });
+
         await Version.create({
             name: this.getMetadata().name,
             version: this.getMetadata().version

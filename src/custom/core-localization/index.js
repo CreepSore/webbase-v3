@@ -102,6 +102,9 @@ export default class CoreLocalization extends CustomerLogic {
         let permGetTranslation = await PermissionService.createPermission("CORE.LOCALIZATION.GET_TRANSLATION", "Permission to get translations");
         let permGetTranslationFormatted = await PermissionService.createPermission("CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED", "Permission to get translations");
         let permSetTranslation = await PermissionService.createPermission("CORE.LOCALIZATION.SET_TRANSLATION", "Permission to set translations");
+        let permGetMissing = await PermissionService.createPermission("CORE.LOCALIZATION.GET_MISSING", "Permission to get missing translations");
+        let permGetAll = await PermissionService.createPermission("CORE.LOCALIZATION.GET_ALL", "Permission to get all translations, not including missing");
+        let permEdit = await PermissionService.createPermission("CORE.LOCALIZATION.EDIT", "Permission to edit translations");
 
         // @ts-ignore
         await anonymous.addPermissions([permGetLanguage, permGetTranslation, permGetTranslationFormatted]);

@@ -48,6 +48,7 @@
         }
 
         .jsx-filter-selector {
+            @apply z-50;
             @apply origin-bottom-left;
             @apply absolute left-0 right-0 mt-1;
             @apply p-3;
