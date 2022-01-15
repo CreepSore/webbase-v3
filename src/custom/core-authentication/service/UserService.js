@@ -167,20 +167,19 @@ export default class UserService {
      * @return {Promise<User>}
      * @memberof UserService
      */
-    static async registerUser(username, password, email = null, tfaKey = null, skipPasswordChecks = true) {
+    static async registerUser(username, password, email = null, tfaKey = null, skipChecks = true) {
         if((await this.userExistsByUsername(username))
         || (email !== null && await this.userExistsByEmail(email))) {
             throw new Exception("User already exists", {code: "CORE.AUTHENTICATION.USER_EXISTS"});
         }
 
-        if(!skipPasswordChecks) {
+        if(!skipChecks) {
             let passwordError = this.checkPassword(password);
             if(passwordError) throw passwordError;
+
+            let emailError = this.checkEmail(email);
+            if(emailError) throw emailError;
         }
-
-        let emailError = this.checkEmail(email);
-        if(emailError) throw emailError;
-
         try {
             let options = {
                 username,

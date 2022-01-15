@@ -104,4 +104,33 @@ export default class AuthenticationApi {
         if(!result.success) throw result.error;
         return result.data;
     }
+
+    /**
+     * @static
+     * @param {string} id Id of Permission group
+     * @param {string[]} permissions Array of permission IDs
+     * @return {Promise<void>}
+     * @memberof AuthenticationApi
+     */
+    static async setPermGroupPerms(id, permissions) {
+        let result = await fetch(`/api/core.authentication/permGroups/${id}`, {
+            method: "POST",
+            body: JSON.stringify(permissions),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.data;
+    }
+
+    static async getPermissions() {
+        let result = await fetch("/api/core.authentication/permissions", {
+            method: "GET"
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.data;
+    }
 }

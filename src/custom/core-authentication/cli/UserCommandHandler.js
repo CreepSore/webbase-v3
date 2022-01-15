@@ -146,7 +146,7 @@ export default class UserCommandHandler extends CommandHandler {
     }
 
     async createUser(username, password, email = null) {
-        let user = await UserService.registerUser(username, password, email);
+        let user = await UserService.registerUser(username, password, email, null, true);
         // @ts-ignore
         console.log("INFO", `User [${user.username}] created successfully.`);
     }

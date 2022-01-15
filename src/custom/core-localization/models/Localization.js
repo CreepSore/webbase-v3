@@ -11,7 +11,7 @@ export default class Localization extends sqlze.Model {
                 defaultValue: () => uuid.v4()
             },
             key: {
-                type: sqlze.TEXT,
+                type: sqlze.STRING(256),
                 allowNull: false
             },
             value: {
