@@ -1,0 +1,9 @@
+{
+    "name": "Core.Dashboard",
+    "dir": "custom-template-extension",
+    "version": "3.0.0",
+    "enabled": true,
+    "entrypoint": "index.js",
+    "dependencies": ["Core", "Core.Authentication", "Core.Localization"],
+    "npmDependencies": []
+}

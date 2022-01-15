@@ -1,5 +1,6 @@
 import Exception from "../../core/Exception.js";
 import UserService from "../service/UserService.js";
+import CacheProvider from "../../../service/CacheProvider.js";
 
 /**
  * @export
@@ -17,15 +18,21 @@ export default async function(req, res) {
         return;
     }
 
-    // @ts-ignore
-    if(await UserService.hasPermission(req.session.uid, "CORE.AUTHENTICATION.EDIT.USER.BASIC")) {
-        await UserService.updateUserInformationBasic(req.params.uid, req.body.email, req.body.password);
-        hasHandled = true;
-    }
+    try {
+        // @ts-ignore
+        if(await UserService.hasPermission(req.session.uid, "CORE.AUTHENTICATION.EDIT.USER.BASIC")) {
+            await UserService.updateUserInformationBasic(req.params.uid, req.body.email, req.body.password);
+            hasHandled = true;
+        }
 
-    if(isAdvanced) {
-        await UserService.updateUserInformationAdvanced(req.params.uid, req.body.username, req.body.tfaKey, req.body.active);
-        hasHandled = true;
+        if(isAdvanced) {
+            await UserService.updateUserInformationAdvanced(req.params.uid, req.body.username, req.body.tfaKey, req.body.active, req.body.permissionGroup);
+            hasHandled = true;
+        }
+    }
+    catch(ex) {
+        res.json({success: false, error: ex});
+        return;
     }
 
     if(!hasHandled) {
@@ -33,5 +40,6 @@ export default async function(req, res) {
         return;
     }
 
+    CacheProvider.instance.invalidate("CORE.AUTHENTICATION.GETUSERS");
     res.json({success: true});
 }

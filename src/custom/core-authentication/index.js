@@ -21,6 +21,8 @@ import ApiLogout from "./api/logout.js";
 import ApiRegister from "./api/register.js";
 import ApiUpdateUserdata from "./api/updateUserData.js";
 import ApiGetUsers from "./api/getUsers.js";
+import ApiDeleteUser from "./api/deleteUser.js";
+import ApiGetPermGroups from "./api/getPermissionGroups.js";
 
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import Utils from "../../service/Utils.js";
@@ -96,6 +98,21 @@ export default class CoreUsermgmt extends CustomerLogic {
             description: "Enables updating user information"
         });
 
+        const permUserDelete = await Permission.create({
+            name: "CORE.AUTHENTICATION.DELETE.USER",
+            description: "Enables user deletion"
+        });
+
+        const getUsers = await Permission.create({
+            name: "CORE.AUTHENTICATION.GETUSERS",
+            description: "Enables fetching of users"
+        });
+
+        const getPermGroups = await Permission.create({
+            name: "CORE.AUTHENTICATION.GETPERMGROUPS",
+            description: "Enables fetching of permission groups"
+        });
+
         await PermissionGroup.create({
             name: "Anonymous",
             description: "Gets used if the user is not logged in"
@@ -157,11 +174,17 @@ export default class CoreUsermgmt extends CustomerLogic {
         apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {
             permissions: ["CORE.AUTHENTICATION.REGISTER"]
         }));
-        apiRouter.put("/user/:id", ExpressRouteWrapper.create(ApiUpdateUserdata, {
+        apiRouter.put("/user/:uid", ExpressRouteWrapper.create(ApiUpdateUserdata, {
             permissions: ["CORE.AUTHENTICATION.EDIT.USER.BASIC"]
+        }));
+        apiRouter.delete("/user/:uid", ExpressRouteWrapper.create(ApiDeleteUser, {
+            permissions: ["CORE.AUTHENTICATION.DELETE.USER"]
         }));
         apiRouter.get("/users", ExpressRouteWrapper.create(ApiGetUsers, {
             permissions: ["CORE.AUTHENTICATION.GETUSERS"]
+        }));
+        apiRouter.get("/permGroups", ExpressRouteWrapper.create(ApiGetPermGroups, {
+            permissions: ["CORE.AUTHENTICATION.GETPERMGROUPS"]
         }));
 
         // eslint-disable-next-line new-cap

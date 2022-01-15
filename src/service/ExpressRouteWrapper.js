@@ -46,17 +46,11 @@ export default class ExpressRouteWrapper {
             }
         }
 
+        let hasAnonymPerm = !res.locals.user && (await Promise.all(this.options.permissions.map(x => PermissionService.isAnonymousPermission(x)))).some(x => x === false);
+        let hasPerm = res.locals.user && (await Promise.all(this.options.permissions.map(x => UserService.hasPermission(res.locals.user.id, x)))).some(x => x === false);
         // User check
         if(
-            this.options.checkUser && (
-                (
-                    !res.locals.user &&
-                    (await Promise.all(this.options.permissions.map(x => PermissionService.isAnonymousPermission(x)))).some(x => x === false)
-                ) || (
-                    res.locals.user &&
-                    (await Promise.all(this.options.permissions.map(x => UserService.hasPermission(res.locals.user.id, x)))).some(x => x === false)
-                )
-            )
+            this.options.checkUser && (hasAnonymPerm || hasPerm)
         ) {
             return await this.options.onInvalidPermissions(req, res, next);
         }

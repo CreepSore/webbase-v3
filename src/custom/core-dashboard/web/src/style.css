@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro&display=swap');
+
+@layer base {
+    .dashboard-page {
+        @apply flex flex-row;
+        @apply min-h-screen max-h-screen w-screen;
+    
+        .dashboard-content {
+            @apply flex-grow;
+            @apply overflow-auto;
+            @apply w-full;
+        }
+    }
+
+    .user-page {
+        @apply w-full max-h-screen h-screen overflow-auto;
+
+
+    }
+}
+
+@layer components {
+    .dashboard-sidebar {
+        @apply max-w-[20%] min-w-[200px] min-h-screen max-h-screen bg-green-300;
+        @apply pt-3;
+
+        .sidebar-entry {
+            @apply flex flex-row items-center gap-3;
+            @apply cursor-pointer;
+            @apply p-1 pl-3;
+            @apply mx-3 mb-1 rounded-xl;
+            @apply bg-green-300;
+
+            &:hover, &.active {
+                @apply bg-green-200;
+            }
+        }
+    }
+
+    .user-create-dialog-container {
+        @apply fixed top-0 left-0 right-0 bottom-0;
+        @apply flex justify-center items-center;
+        @apply backdrop-blur z-50;
+
+        .user-create-dialog {
+            @apply bg-white text-black;
+            @apply border border-gray-600;
+            @apply rounded-lg shadow-lg;
+            @apply min-w-[33%];
+            @apply p-2;
+
+            &-controls {
+                @apply flex justify-end;
+                @apply p-1;
+            }
+
+            &-form {
+                input[type=text] {
+                    @apply p-1;
+                    @apply outline-none border-none;
+                    @apply border-b border-solid border-b-gray-300 focus:border-b-black;
+                }
+            }
+        }
+    }
+
+    button, input[type=button] {
+        &.btn-pill {
+            @apply px-3 text-center rounded-full;
+        }
+    }
+
+    table.edit-table {
+        @apply w-full;
+
+        td {
+            &:last-child {
+                @apply text-center;
+            }
+        }
+
+        thead {
+            @apply font-["Roboto"];
+            @apply bg-green-600 text-white;
+
+            input, select {
+                @apply w-full;
+                @apply text-black;
+            }
+        }
+
+        tbody {
+            @apply font-["Roboto"];
+            th {
+                @apply text-left font-normal;
+            }
+
+            tr {
+                &:nth-child(odd) {
+                    @apply bg-green-400;
+                }
+
+                &:nth-child(even) {
+                    @apply bg-green-300;
+                }
+
+                &:hover {
+                    @apply brightness-105;
+                }
+
+                &.selected {
+                    @apply bg-red-300;
+                }
+
+                &.disabled {
+                    @apply bg-slate-400;
+                }
+
+                input {
+                    @apply w-full;
+                    @apply px-1;
+                }
+
+                td {
+                    @apply py-1;
+                }
+            }
+        }
+    }
+}

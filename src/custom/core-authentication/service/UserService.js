@@ -21,7 +21,7 @@ export default class UserService {
      * @memberof UserService
      */
     static async hasPermission(uid, permission) {
-        return Boolean(await User.findOne({
+        let result = await User.findOne({
             where: {id: uid},
             include: {
                 model: PermissionGroup,
@@ -34,10 +34,13 @@ export default class UserService {
                                 permission
                             ]
                         }
-                    }
-                }]
+                    },
+                    required: true
+                }],
+                required: true
             }
-        }));
+        });
+        return Boolean(result);
     }
 
     static async setPermissionGroup(uid, permissionGroup) {
@@ -98,6 +101,10 @@ export default class UserService {
 
     static async userExistsByEmail(email) {
         return await this.getUserByEmail(email) !== null;
+    }
+
+    static async deleteUser(uid) {
+        return await User.destroy({where: {id: uid}});
     }
 
     /**
@@ -195,24 +202,33 @@ export default class UserService {
         }
     }
 
-    static async updateUserInformationBasic(uid, email, password) {
-        let emailError = this.checkEmail(email);
-        let passwordError = this.checkPassword(password);
-        if(emailError) {
-            throw emailError;
+    static async updateUserInformationBasic(uid, email, password, skipChecks = true) {
+        let updatePayload = {};
+
+        if(email) {
+            if(!skipChecks) {
+                let emailError = this.checkEmail(email);
+                if(emailError) {
+                    throw emailError;
+                }
+            }
+            updatePayload.email = email;
         }
 
-        if(passwordError) {
-            throw passwordError;
+        if(password) {
+            if(!skipChecks) {
+                let passwordError = this.checkPassword(password);
+                if(passwordError) {
+                    throw passwordError;
+                }
+            }
+            updatePayload.password = this.hashPassword(password);
         }
 
-        await User.update({
-            email,
-            password
-        }, {where: {id: uid}});
+        await User.update(updatePayload, {where: {id: uid}});
     }
 
-    static async updateUserInformationAdvanced(uid, username, tfaKey, active) {
+    static async updateUserInformationAdvanced(uid, username, tfaKey, active, permissionGroupName) {
         let updatePayload = {
             username,
             active
@@ -222,6 +238,14 @@ export default class UserService {
             let toEncode = Buffer.from(tfaKey);
             // eslint-disable-next-line no-param-reassign
             updatePayload.tfaKey = base32.stringify(toEncode, {pad: true});
+        }
+
+        if(permissionGroupName) {
+            let permissionGroup = await PermissionGroup.findOne({where: {name: permissionGroupName}});
+            if(permissionGroup) {
+                // @ts-ignore
+                updatePayload.PermissionGroupId = permissionGroup.id;
+            }
         }
 
         await User.update(updatePayload, {where: {id: uid}});
@@ -237,7 +261,7 @@ export default class UserService {
     }
 
     static checkPassword(password) {
-        if(!password.test(/^(?=.*[0-9])(?=.*[a-zA-Z]).+$/)) {
+        if(!/^(?=.*[0-9])(?=.*[a-zA-Z]).+$/.test(password)) {
             return new Exception("Password must contain one letter and one number", {code: "CORE.AUTHENTICATION.PASSWORD_SYMBOL_MISMATCH"});
         }
 
