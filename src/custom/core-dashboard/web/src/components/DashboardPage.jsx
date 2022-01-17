@@ -37,17 +37,17 @@ export default function DashboardPage() {
                     {
                         key: "home",
                         label: "Home",
-                        icon: <HomeIcon height={16} width={16} />
+                        icon: <HomeIcon height={24} width={24} />
                     },
                     {
                         key: "users",
                         label: "Users",
-                        icon: <UserIcon height={16} width={16} />
+                        icon: <UserIcon height={24} width={24} />
                     },
                     {
                         key: "permissions",
                         label: "Permissions",
-                        icon: <ShieldCheckIcon height={16} width={16} />
+                        icon: <ShieldCheckIcon height={24} width={24} />
                     }
                 ]}
                 active={active}

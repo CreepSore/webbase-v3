@@ -25,8 +25,7 @@
 
     .permissions-page {
         @apply w-full max-h-screen h-screen overflow-auto;
-        @apply flex flex-row gap-2;
-        @apply p-1;
+        @apply flex flex-row;
 
         .sidebar {
             @apply max-w-[20%] w-full;
@@ -36,18 +35,23 @@
 
 @layer components {
     .dashboard-sidebar {
-        @apply max-w-[20%] min-w-[200px] min-h-screen max-h-screen bg-green-300;
-        @apply pt-3;
+        @apply max-w-[25%] w-[250px] min-h-screen max-h-screen bg-blue-500 text-white;
+        @apply pt-10;
 
         .sidebar-entry {
             @apply flex flex-row items-center gap-3;
             @apply cursor-pointer;
             @apply p-1 pl-3;
-            @apply mx-3 mb-1 rounded-xl;
-            @apply bg-green-300;
+            @apply mb-1;
+            @apply bg-blue-500;
+            @apply text-lg;
 
-            &:hover, &.active {
-                @apply bg-green-200;
+            &:hover {
+                @apply brightness-110;
+            }
+
+            &.active {
+                @apply border-r-4 border-white;
             }
         }
     }
@@ -56,16 +60,13 @@
         @apply w-full h-full;
         .permgroup-editor {
             @apply bg-slate-100;
-            @apply rounded-xl;
-            @apply w-full h-full;
 
             .permgroup-editor-header {
-                @apply p-2;
+                @apply p-3;
                 @apply flex flex-row justify-between items-center;
-                @apply border-b border-slate-600;
 
                 p {
-                    @apply text-xl;
+                    @apply text-lg;
                 }
             }
 
@@ -85,7 +86,6 @@
         @apply flex flex-col items-center gap-1;
         @apply w-full h-full;
         @apply bg-slate-100;
-        @apply rounded-xl;
         @apply py-4;
 
         .entries {
@@ -174,7 +174,7 @@
 
         thead {
             @apply font-["Roboto"];
-            @apply bg-green-600 text-white;
+            @apply bg-blue-600 text-white;
 
             input, select {
                 @apply w-full;
@@ -190,11 +190,11 @@
 
             tr {
                 &:nth-child(odd) {
-                    @apply bg-green-400;
+                    @apply bg-blue-400;
                 }
 
                 &:nth-child(even) {
-                    @apply bg-green-300;
+                    @apply bg-blue-300;
                 }
 
                 &:hover {

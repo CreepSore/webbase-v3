@@ -8,7 +8,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "../../style.css";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
-export default function SelectorList({entries, onSelectionChanged, arrowType, noSelectionHandling}) {
+export default function SelectorList({entries, onSelectionChanged, arrowType, noSelectionHandling, style}) {
     let [selected, setSelected] = React.useState(null);
     let [filteredEntries, setFilteredEntries] = React.useState(entries);
     let [filterText, setFilterText] = React.useState("");
@@ -61,5 +61,6 @@ SelectorList.propTypes = {
     })).isRequired,
     onSelectionChanged: PropTypes.func.isRequired,
     arrowType: PropTypes.string,
-    noSelectionHandling: PropTypes.bool
+    noSelectionHandling: PropTypes.bool,
+    style: PropTypes.object
 };

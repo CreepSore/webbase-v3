@@ -24,8 +24,8 @@ function UserTableRow({user, onEditClicked, onDeleteClicked}) {
         <td>**********</td>
         <td>**********</td>
         <td>{user.active ? "Yes" : "No"}</td>
-        <td>
-            <button className="btn-pill bg-blue-400" onClick={() => onEditClicked(user)}>Edit</button>
+        <td className="flex justify-center gap-2">
+            <button className="btn-pill bg-slate-400" onClick={() => onEditClicked(user)}>Edit</button>
             <button className="btn-pill bg-red-400" onClick={() => clickDelete()}>{deleteClickedCount === 0 ? "Delete" : 4 - deleteClickedCount}</button>
         </td>
     </tr>;

@@ -66,7 +66,7 @@ export default function UserPage() {
                     permGroups={permGroups}
                 />}
 
-            <div className="flex justify-end px-1 w-full bg-green-600">
+            <div className="flex justify-end px-1 w-full bg-blue-600">
                 <button
                     className="hover:text-green-300 text-white"
                     onClick={() => setUserCreateDialogVisible(true)}><UserAddIcon height={32} width={32}/></button>
