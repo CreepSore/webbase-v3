@@ -8,7 +8,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "../../style.css";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
-export default function SelectorList({entries, onSelectionChanged, arrowType, noSelectionHandling, style}) {
+export default function SelectorList({entries, onSelectionChanged, arrowType, noSelectionHandling}) {
     let [selected, setSelected] = React.useState(null);
     let [filteredEntries, setFilteredEntries] = React.useState(entries);
     let [filterText, setFilterText] = React.useState("");
@@ -19,7 +19,7 @@ export default function SelectorList({entries, onSelectionChanged, arrowType, no
     };
 
     useEffect(() => {
-        setFilteredEntries(entries.filter(e => e.label.toLowerCase().includes(filterText.toLowerCase())));
+        setFilteredEntries(entries.filter(e => e.label.toLowerCase().includes(filterText.toLowerCase()) || e.tooltip.toLowerCase().includes(filterText.toLowerCase())));
     }, [entries, filterText]);
 
     return (
@@ -43,6 +43,7 @@ export default function SelectorList({entries, onSelectionChanged, arrowType, no
                         key={e.key}
                         className={`selector-child ${selected === e.key ? "selected" : ""}`}
                         onClick={() => updateSelected(e.key)}
+                        title={e.tooltip || ""}
                     >
                         {arrowType === "left" && <ArrowLeftIcon height={16} width={16} />}
                         {e.label}
@@ -57,7 +58,8 @@ export default function SelectorList({entries, onSelectionChanged, arrowType, no
 SelectorList.propTypes = {
     entries: PropTypes.arrayOf(PropTypes.shape({
         key: PropTypes.string.isRequired,
-        label: PropTypes.string.isRequired
+        label: PropTypes.string.isRequired,
+        tooltip: PropTypes.string
     })).isRequired,
     onSelectionChanged: PropTypes.func.isRequired,
     arrowType: PropTypes.string,

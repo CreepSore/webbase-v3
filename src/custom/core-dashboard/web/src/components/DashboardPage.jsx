@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
-import {HomeIcon, UserIcon, ShieldCheckIcon} from "@heroicons/react/solid";
+import {HomeIcon, UserIcon, ShieldCheckIcon, LogoutIcon, TranslateIcon} from "@heroicons/react/solid";
 
 import DashboardSidebar from "./DashboardSidebar.jsx";
 import UserPage from "../pages/user/UserPage.jsx";
 import PermissionsPage from "../pages/permissions/PermissionsPage.jsx";
+import TranslatePage from "../pages/translate/TranslatePage.jsx";
 import "../style.css";
 
 export default function DashboardPage() {
@@ -22,6 +23,12 @@ export default function DashboardPage() {
                 break;
             case "permissions":
                 nextPage = <PermissionsPage/>;
+                break;
+            case "localization":
+                nextPage = <TranslatePage/>;
+                break;
+            case "logout":
+                location.href = "logout";
                 break;
             default:
                 nextPage = <div>Unknown page</div>;
@@ -48,6 +55,16 @@ export default function DashboardPage() {
                         key: "permissions",
                         label: "Permissions",
                         icon: <ShieldCheckIcon height={24} width={24} />
+                    },
+                    {
+                        key: "localization",
+                        label: "Localization",
+                        icon: <TranslateIcon height={24} width={24} />
+                    },
+                    {
+                        key: "logout",
+                        label: "Log Out",
+                        icon: <LogoutIcon height={24} width={24} />
                     }
                 ]}
                 active={active}

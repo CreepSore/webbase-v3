@@ -33,7 +33,7 @@ const getDefaultConfig = function() {
                     loader: "babel-loader",
                     options: { presets: ["@babel/env"] }
                 },
-                { test: /\.(css)$/i, use: ["style-loader", "css-loader", "postcss-loader"] }
+                { test: /\.(css)$/i, use: ["style-loader", "css-loader", "postcss-loader", "sass-loader"] }
             ]
         },
         plugins: [ ]

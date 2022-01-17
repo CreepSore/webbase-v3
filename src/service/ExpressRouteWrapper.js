@@ -32,6 +32,9 @@ export default class ExpressRouteWrapper {
         if(this.options.profilingName) {
             profilingToken = Profiler.instance.startMeasurement(this.options.profilingName);
         }
+        else {
+            profilingToken = Profiler.instance.startMeasurement(req.originalUrl);
+        }
         // Api Key Check
         if(this.options.checkApiKey && req.query.apiKey) {
             if(

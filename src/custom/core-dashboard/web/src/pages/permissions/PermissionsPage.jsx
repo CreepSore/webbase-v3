@@ -38,14 +38,14 @@ export default function PermissionsPage() {
         <div className="permissions-page">
             <div className="sidebar">
                 <SelectorList
-                    entries={permissionGroups.map(p => {return {key: p.id, label: p.name};})}
+                    entries={permissionGroups.map(p => {return {key: p.id, label: p.name, tooltip: p.description};})}
                     onSelectionChanged={key => setSelectedPermissionGroup(permissionGroups.find(pg => pg.id === key))}
                     arrowType="right"/>
             </div>
             <div className="permgroup-editor-container">
                 {selectedPermissionGroup && <PermissionGroupEditor
                     permissionGroup={selectedPermissionGroup}
-                    permissions={permissions.map(p => {return {key: p.id, label: p.name};})}
+                    permissions={permissions.map(p => {return {key: p.id, label: p.name, tooltip: p.description};})}
                     onSaveClicked={(perms) => {updatePerms(perms);}}
                 />}
             </div>

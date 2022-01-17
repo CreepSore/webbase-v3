@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import path from "path";
 
+import express from "express";
+
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import Version from "../../models/Version.js";
 import Utils from "../../service/Utils.js";
@@ -49,7 +51,9 @@ export default class CoreDashboard extends CustomerLogic {
 
     /** @param {ExpressParams} params */
     async expressStart(params) {
-        params.app.get("/core.dashboard/", ExpressRouteWrapper.create((req, res) => {
+        let viewRouter = express.Router();
+
+        viewRouter.get("/", ExpressRouteWrapper.create((req, res) => {
             res.send(Utils.renderDefaultReactPage("/compiled/core.dashboard/main.js", {
                 title: "Dashboard"
             }));
@@ -59,6 +63,12 @@ export default class CoreDashboard extends CustomerLogic {
                 res.redirect(this.getApi("Core.Authentication").constructRedirectUrl(req.originalUrl));
             }
         }));
+
+        viewRouter.get("/logout", (req, res) => {
+            res.redirect(this.getApi("Core.Authentication").constructLogoutUrl());
+        });
+
+        params.app.use("/core.dashboard", viewRouter);
     }
 
     /** @param {ExpressParams} params */

@@ -174,7 +174,7 @@
 
         thead {
             @apply font-["Roboto"];
-            @apply bg-blue-600 text-white;
+            @apply bg-blue-500 text-white;
 
             input, select {
                 @apply w-full;

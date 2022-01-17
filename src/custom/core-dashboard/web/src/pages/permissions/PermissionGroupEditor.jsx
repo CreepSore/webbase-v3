@@ -35,7 +35,7 @@ export default function PermissionGroupEditor({permissionGroup, permissions, onS
                 <p>{permissionGroup.name}</p>
                 <div className="permgroup-editor-header-actions">
                     <button
-                        className="btn-pill bg-green-200 hover:bg-green-300"
+                        className="btn-pill bg-green-200 hover:bg-green-300 border   border-green-300"
                         onClick={() => onSaveClicked(assignedPermissions)}>Save</button>
                 </div>
             </div>

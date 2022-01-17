@@ -247,6 +247,9 @@ export default class CoreUsermgmt extends CustomerLogic {
                     redirectUrl = `${redirectUrl}?redirectTo=${encodeURIComponent(redirectTo)}`;
                 }
                 return redirectUrl;
+            },
+            constructLogoutUrl: () => {
+                return "/api/core.authentication/logout";
             }
         };
     }
