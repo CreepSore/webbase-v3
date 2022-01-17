@@ -239,6 +239,18 @@ export default class CoreUsermgmt extends CustomerLogic {
         };
     }
 
+    exposeApi() {
+        return {
+            constructRedirectUrl: (redirectTo = "") => {
+                let redirectUrl = "/core.authentication/login";
+                if(redirectTo) {
+                    redirectUrl = `${redirectUrl}?redirectTo=${encodeURIComponent(redirectTo)}`;
+                }
+                return redirectUrl;
+            }
+        };
+    }
+
     getPriority() {return 999;}
     async onLoad() {
         this.extensionInfo = await this.getMetadata();

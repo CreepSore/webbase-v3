@@ -23,6 +23,7 @@ export default class CustomerLogicHandler {
         /** @type {Set<CustomerLogic>} */
         this.customerLogicImplementations = new Set();
         this.sharedObjects = new Map();
+        this.exposedApis = {};
         // dummy object to detect non existing functions
         this.nullobj = {};
         if(!CustomerLogicHandler.#mainInstance) {
@@ -200,6 +201,60 @@ export default class CustomerLogicHandler {
     }
 
     /**
+     * @callback TraverseCallback
+     * @param {CustomerLogic} customerLogic
+     */
+
+    /**
+     * Traverses the dependency tree and runs a callback on it
+     * @param {TraverseCallback} callback Callback to execute for each customer logic instance
+     * @param {CustomerLogic} [currentNode=null] If not set, the root node(s) will be used
+     * @param {boolean} [upwards=false] if true, the dependency tree will be traversed upwards
+     * @param {Set<CustomerLogic>} [executed=new Set()] already executed customer logic instances
+     * @param {Map<string, any>} [results=new Map()] results of the callback
+     * @return {Promise<Map<string, any>>}
+     * @memberof CustomerLogicHandler
+     */
+    async traverseTree(callback, currentNode = null, upwards = false, executed = new Set(), results = new Map()) {
+        if(!currentNode) {
+            let noDependence = [...this.customerLogicImplementations].filter(customerLogic => (customerLogic.getMetadata().dependencies || []).length === 0);
+            for(let masterExtension of noDependence) {
+                await this.traverseTree(callback, masterExtension, upwards, executed, results);
+            }
+            return results;
+        }
+
+        if(executed.has(currentNode)) return results;
+        executed.add(currentNode);
+        let deps = upwards ? [...this.customerLogicImplementations].filter(cl => {
+            return !executed.has(cl) && currentNode.getMetadata().dependencies.includes(cl.getMetadata().name);
+        }) : [...this.customerLogicImplementations].filter(cl => {
+            return !executed.has(cl) && cl.getMetadata().dependencies.includes(currentNode.getMetadata().name);
+        });
+
+        let calcResult = false;
+        if(!calcResult && !upwards) {
+            results.set(currentNode.getMetadata().name, await callback(currentNode));
+            calcResult = true;
+        }
+        for(let dependency of deps) {
+            await this.traverseTree(callback, dependency, true, executed, results);
+            if(!calcResult) {
+                results.set(currentNode.getMetadata().name, await callback(currentNode));
+                calcResult = true;
+            }
+            await this.traverseTree(callback, dependency, false, executed, results);
+        }
+
+        if(!calcResult) {
+            results.set(currentNode.getMetadata().name, await callback(currentNode));
+            calcResult = true;
+        }
+
+        return results;
+    }
+
+    /**
      * Runs a function on the specified customer logic instance if the function does exist.
      * @param {CustomerLogic} customerLogic
      * @param {string} functionName
@@ -215,35 +270,41 @@ export default class CustomerLogicHandler {
 
     /**
      * Loads a customer logic instance
+     * TODO: Change to tree-loading
      * @param {CustomerLogic} customerLogic
      * @memberof CustomerLogicHandler
      */
     async loadCustomerLogic(customerLogic) {
         if(!customerLogic || customerLogic.loaded) return;
+        let metadata = customerLogic.getMetadata();
         customerLogic.loading = true;
-        for(let dependencyName of customerLogic.getMetadata().dependencies || []) {
-            if(dependencyName === customerLogic.getMetadata().name) {
-                console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Extension tried to load itself as dependency.`);
+        for(let dependencyName of metadata.dependencies || []) {
+            if(dependencyName === metadata.name) {
+                console.log("ERROR", `Failed to load customer logic [${metadata.name} v${metadata.version}]: Extension tried to load itself as dependency.`);
                 return;
             }
             let logic = this.getCustomerLogicByName(dependencyName);
             if(!logic) {
-                console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Dependency ${dependencyName} not found.`);
+                console.log("ERROR", `Failed to load customer logic [${metadata.name} v${metadata.version}]: Dependency ${dependencyName} not found.`);
                 return;
             }
 
             if(logic.loading || logic.loaded) continue;
 
             if(logic.loading) {
-                console.log("ERROR", `Failed to load customer logic [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}]: Circular dependency detected.`);
+                console.log("ERROR", `Failed to load customer logic [${metadata.name} v${metadata.version}]: Circular dependency detected.`);
                 return;
             }
 
             await this.loadCustomerLogic(logic);
         }
 
-        console.log("INFO", `Extension [${customerLogic.getMetadata().name} v${customerLogic.getMetadata().version}] loaded.`);
+        console.log("INFO", `Extension [${metadata.name} v${metadata.version}] loaded.`);
         customerLogic.onLoad?.();
+        let api = await customerLogic.exposeApi?.();
+        if(api) {
+            this.sharedObjects.set(`API.${metadata.name}`, api);
+        }
         customerLogic.loaded = true;
         customerLogic.loading = false;
     }

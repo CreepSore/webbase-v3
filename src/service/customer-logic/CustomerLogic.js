@@ -35,12 +35,25 @@ export default class CustomerLogic {
     getPriority() {return 0;}
     getPluginDir() {return this.dependencies.additionalDependencies.pluginDir;}
     getMetadata() {return this.dependencies.additionalDependencies.metadata;}
+    getSharedObjects() {return this.dependencies.sharedObjects;}
+    getApi(extension = null) {
+        if(!extension) {
+            // Disabled for simplicity
+            // eslint-disable-next-line no-param-reassign
+            extension = this.getMetadata().name;
+        }
+
+        return this.getSharedObjects().get(`API.${extension}`);
+    }
     getWebpackConfig(params) { return {}; }
     getConfigModel() { return {}; }
     getConfig(key = null) {
         let cfg = KvpStorage.instance.wrapper.getConfig();
         let cfgBase = cfg.extensions?.[this.getMetadata().name];
         return key === null ? cfgBase : cfgBase[key];
+    }
+    exposeApi() {
+        return {};
     }
     async onLoad() {}
     async onUnload() {}

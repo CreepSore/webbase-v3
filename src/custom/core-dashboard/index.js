@@ -56,7 +56,7 @@ export default class CoreDashboard extends CustomerLogic {
         }, {
             permissions: ["CORE.DASHBOARD.VIEW"],
             onInvalidPermissions: (req, res) => {
-                res.redirect("/core.authentication/login?redirectTo=" + encodeURIComponent(req.originalUrl));
+                res.redirect(this.getApi("Core.Authentication").constructRedirectUrl(req.originalUrl));
             }
         }));
     }

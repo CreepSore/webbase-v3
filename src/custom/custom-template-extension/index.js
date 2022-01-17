@@ -51,6 +51,10 @@ export default class ExtensionTemplate extends CustomerLogic {
         return {};
     }
 
+    exposeApi() {
+        return {};
+    }
+
     getPriority() {return 1000;}
     async onLoad() { }
     async onUnload() {}

@@ -81,7 +81,7 @@ export default class CoreProfiling extends CustomerLogic {
         }, {
             permissions: ["CORE.PROFILING.VIEW"],
             onInvalidPermissions: (req, res) => {
-                res.redirect(this.createRedirectUrl("/core.profiling/"));
+                res.redirect(this.getApi("Core.Authentication").constructRedirectUrl(req.originalUrl));
             }
         }));
 

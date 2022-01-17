@@ -235,7 +235,7 @@ export default class CoreLocalization extends CustomerLogic {
         }, {
             permissions: ["CORE.LOCALIZATION.EDIT"],
             onInvalidPermissions: (req, res) => {
-                res.redirect("/core.authentication/login?redirectTo=%2Fcore.localization%2Fedit");
+                res.redirect(this.getApi("Core.Authentication").constructRedirectUrl(req.originalUrl));
             }
         }));
 
