@@ -52,7 +52,7 @@ export default class LoginForm extends React.PureComponent {
 
     fetchTranslations = async() => {
         this.setState({
-            translations: await LocalizationApi.massTranslate("en", [
+            translations: await LocalizationApi.massTranslate(await LocalizationApi.getLanguage(), [
                 "LoginForm.Header",
                 "LoginForm.Input.Username",
                 "LoginForm.Input.Password",

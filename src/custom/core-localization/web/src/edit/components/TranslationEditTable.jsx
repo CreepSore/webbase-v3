@@ -12,7 +12,7 @@ export default function TranslationEditTable({rows, onTranslationEdited}) {
     useEffect(() => {
         languages.current = [];
         rows.forEach(row => {
-            if(languages.current.find(l => l.id === row.Language.id)) return;
+            if(languages.current.find(l => l.name === row.Language.name)) return;
             languages.current.push(row.Language);
         });
 
