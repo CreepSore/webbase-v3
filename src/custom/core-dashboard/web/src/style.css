@@ -34,6 +34,14 @@
 }
 
 @layer components {
+    .add-button {
+        @apply fixed right-0 bottom-0 m-4;
+        @apply rounded-full p-2;
+        @apply text-gray-800;
+        @apply cursor-pointer;
+        @apply hover:brightness-110;
+    }
+
     .dashboard-sidebar {
         @apply max-w-[25%] w-[250px] min-h-screen max-h-screen bg-blue-500 text-white;
         @apply pt-10;
@@ -130,12 +138,12 @@
         }
     }
 
-    .user-create-dialog-container {
+    .dialog-container {
         @apply fixed top-0 left-0 right-0 bottom-0;
         @apply flex justify-center items-center;
         @apply backdrop-blur z-50;
 
-        .user-create-dialog {
+        .dialog {
             @apply bg-white text-black;
             @apply border border-gray-600;
             @apply rounded-lg shadow-lg;
@@ -143,7 +151,7 @@
             @apply p-2;
 
             &-controls {
-                @apply flex justify-end;
+                @apply flex justify-between;
                 @apply p-1;
             }
 

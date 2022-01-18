@@ -4,24 +4,38 @@ import AuthenticationApi from "../../../../../core-authentication/web/src/Authen
 import SelectorList from "./SelectorList.jsx";
 import PermissionGroupEditor from "./PermissionGroupEditor.jsx";
 
+import {PlusIcon} from "@heroicons/react/solid";
+
 import "../../style.css";
+import AddPermissionGroupDialog from "./AddPermissionGroupDialog.jsx";
+import AuthPermissions from "../../../../../core-authentication/permissions.js";
 
 export default function PermissionsPage() {
     let [selectedPermissionGroup, setSelectedPermissionGroup] = React.useState(null);
     let [permissionGroups, setPermissionGroups] = React.useState([]);
     let [permissions, setPermissions] = React.useState([]);
+    let [myPermissions, setMyPermissions] = React.useState([]);
+    let [addPermissionGroupDialogShown, setAddPermissionGroupDialogShown] = React.useState(false);
+
+    let fetchMyPermissions = () => {
+        return AuthenticationApi.getMyPermissions()
+            .then(setMyPermissions);
+    };
 
     let fetchPermissionGroups = () => {
-        AuthenticationApi.getPermGroups().then(setPermissionGroups).catch(() => {});
+        return AuthenticationApi.getPermGroups().then(setPermissionGroups).catch(() => {});
     };
 
     let fetchPermissions = () => {
-        AuthenticationApi.getPermissions().then(setPermissions).catch(() => {});
+        return AuthenticationApi.getPermissions().then(setPermissions).catch(() => {});
     };
 
     let fetchData = async() => {
-        fetchPermissionGroups();
-        fetchPermissions();
+        Promise.all([
+            fetchMyPermissions(),
+            fetchPermissionGroups(),
+            fetchPermissions()
+        ]);
     };
 
     useEffect(() => {
@@ -36,6 +50,17 @@ export default function PermissionsPage() {
 
     return (
         <div className="permissions-page">
+            {addPermissionGroupDialogShown &&
+                <AddPermissionGroupDialog
+                    onClose={() => setAddPermissionGroupDialogShown(false)}
+                    onSave={() => fetchData().then(() => setAddPermissionGroupDialogShown(false))}
+                />}
+            <div
+                className="add-button bg-blue-400"
+                onClick={() => setAddPermissionGroupDialogShown(true)}
+                hidden={!myPermissions.some(p => [AuthPermissions["CORE.ALL"].key, AuthPermissions["CORE.AUTHENTICATION.PERMGROUPS.NEW"].key].includes(p))}>
+                <PlusIcon height={48} width={48} />
+            </div>
             <div className="sidebar">
                 <SelectorList
                     entries={permissionGroups.map(p => {return {key: p.id, label: p.name, tooltip: p.description};})}

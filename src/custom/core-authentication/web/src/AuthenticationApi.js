@@ -78,6 +78,15 @@ export default class AuthenticationApi {
         if(!result.success) throw result.error;
     }
 
+    static async getMyPermissions() {
+        let result = await fetch("/api/core.authentication/user/me/permissions", {
+            method: "GET"
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.data;
+    }
+
     static async getUsers() {
         let result = await fetch("/api/core.authentication/users", {
             method: "GET"
@@ -116,6 +125,22 @@ export default class AuthenticationApi {
         let result = await fetch(`/api/core.authentication/permGroups/${id}`, {
             method: "POST",
             body: JSON.stringify(permissions),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.data;
+    }
+
+    static async newPermGroup(name, description) {
+        let result = await fetch("/api/core.authentication/permGroup/new", {
+            method: "POST",
+            body: JSON.stringify({
+                name,
+                description
+            }),
             headers: {
                 "Content-Type": "application/json"
             }

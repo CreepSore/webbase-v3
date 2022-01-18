@@ -156,7 +156,7 @@ export default class CustomerLogicHandler {
         let results = new Map();
         let noDependence = [...this.customerLogicImplementations].filter(customerLogic => (customerLogic.getMetadata().dependencies || []).length === 0);
         for(let masterExtension of noDependence) {
-            this.traverseRunDependencyTree(functionName, args, masterExtension, executed, results, false);
+            await this.traverseRunDependencyTree(functionName, args, masterExtension, executed, results, false);
         }
         return [...results.values()];
     }

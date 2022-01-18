@@ -6,11 +6,13 @@ import UserTable from "./UserTable.jsx";
 import UserCreateDialog from "./UserCreateDialog.jsx";
 import AuthenticationApi from "../../../../../core-authentication/web/src/AuthenticationApi.js";
 
+import AuthPermissions from "../../../../../core-authentication/permissions.js";
 import "../../style.css";
 
 export default function UserPage() {
     let [users, setUsers] = React.useState([]);
     let [permGroups, setPermGroups] = React.useState([]);
+    let [myPermissions, setMyPermissions] = React.useState([]);
     let [userCreateDialogVisible, setUserCreateDialogVisible] = React.useState(false);
 
     let fetchUsers = () => {
@@ -50,12 +52,21 @@ export default function UserPage() {
     useEffect(() => {
         fetchUsers();
         fetchPermGroups();
+        AuthenticationApi.getMyPermissions().then(setMyPermissions);
     }, []);
 
     useEffect(() => {
         fetchUsers();
         fetchPermGroups();
     }, [userCreateDialogVisible]);
+
+    let hasPermissionsForCreation = () => {
+        if(myPermissions.includes(AuthPermissions["CORE.ALL"].key)) return true;
+
+        return myPermissions.includes(AuthPermissions["CORE.AUTHENTICATION.REGISTER"].key)
+            && myPermissions.includes(AuthPermissions["CORE.AUTHENTICATION.EDIT.USER.BASIC"].key)
+            && myPermissions.includes(AuthPermissions["CORE.AUTHENTICATION.EDIT.USER.ADVANCED"].key);
+    };
 
     return (
         <div className="user-page">
@@ -69,7 +80,8 @@ export default function UserPage() {
             <div className="flex justify-end px-1 w-full bg-blue-600">
                 <button
                     className="hover:text-green-300 text-white"
-                    onClick={() => setUserCreateDialogVisible(true)}><UserAddIcon height={32} width={32}/></button>
+                    onClick={() => setUserCreateDialogVisible(true)}
+                    hidden={!hasPermissionsForCreation()}><UserAddIcon height={32} width={32}/></button>
             </div>
 
             <UserTable

@@ -46,9 +46,12 @@ export default function UserCreateDialog({onClose, onSave, permGroups}) {
     };
 
     return (
-        <div className="user-create-dialog-container">
-            <div className="user-create-dialog">
-                <div className="user-create-dialog-controls">
+        <div className="dialog-container">
+            <div className="dialog">
+                <div className="dialog-controls">
+                    <div className="mb-2">
+                        <h1 className="flex flex-row text-2xl"><UserAddIcon height={32} width={32} /> Add User</h1>
+                    </div>
                     <button
                         className="text-red hover:brightness-95"
                         onClick={() => onClose()}
@@ -56,10 +59,7 @@ export default function UserCreateDialog({onClose, onSave, permGroups}) {
                         <XCircleIcon height={24} width={24} />
                     </button>
                 </div>
-                <div className="user-create-dialog-form">
-                    <div className="mb-2">
-                        <h1 className="flex flex-row text-2xl"><UserAddIcon height={32} width={32}/> Add User</h1>
-                    </div>
+                <div className="dialog-form">
                     <div className="flex flex-col gap-2">
                         <input
                             type="text"

@@ -51,8 +51,14 @@ export default class InstallerApplication {
         let loader = new SequelizeLoader();
         await loader.start();
 
-        options.drop && await this.runDropLogic(loader);
-        options.setup && await this.runSetupLogic(loader);
+        if(options.drop){
+            console.log("INFO", "Dropping old Schema ...");
+            await this.runDropLogic(loader);
+        }
+        if(options.setup) {
+            console.log("INFO", "Installing Schema ...");
+            await this.runSetupLogic(loader);
+        }
 
         console.log("INFO", "Installer application process finished.");
     }

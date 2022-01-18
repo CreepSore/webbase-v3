@@ -23,11 +23,16 @@ import ApiUpdateUserdata from "./api/updateUserData.js";
 import ApiGetUsers from "./api/getUsers.js";
 import ApiDeleteUser from "./api/deleteUser.js";
 import ApiGetPermGroups from "./api/getPermissionGroups.js";
+import ApiNewPermGroup from "./api/createPermgroup.js";
+import ApiMyPermissions from "./api/myPermissions.js";
 import ApiGetPermissions from "./api/getPermissions.js";
 import ApiSetPermGroupPerms from "./api/setPermgroupPerms.js";
 
+import permissions from "./permissions.js";
+
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import Utils from "../../service/Utils.js";
+import PermissionService from "./service/PermissionService.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -73,82 +78,43 @@ export default class CoreUsermgmt extends CustomerLogic {
         ApiKey.belongsTo(PermissionGroup);
     }
 
+    /**
+     * @param {Object<string, {description: string, anonymous?: boolean, default?: boolean, superadmin?: boolean}>} object
+     * @memberof CoreUsermgmt
+     */
+    async setupPermissionsByObject(object) {
+        let [anonymousGroup, defaultGroup, superadminGroup] = await Promise.all([
+            PermissionService.getAnonymousPermissionGroup(),
+            PermissionService.getDefaultPermissionGroup(),
+            PermissionService.getSuperAdminPermissionGroup()
+        ]);
+
+        return await Promise.all(Object.entries(permissions).map(async([name, data]) => {
+            let perm = await Permission.create({name, data});
+            if(data.anonymous) {
+                // @ts-ignore
+                anonymousGroup.addPermission(perm);
+            }
+
+            if(data.default) {
+                // @ts-ignore
+                defaultGroup.addPermission(perm);
+            }
+
+            if(data.superadmin) {
+                // @ts-ignore
+                superadminGroup.addPermission(perm);
+            }
+        }));
+    }
+
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
-        const permAll = await Permission.create({
-            name: "CORE.ALL",
-            description: "Pseudopermission for everything"
-        });
+        await PermissionGroup.create({name: "Anonymous", description: "Anonymous users"});
+        await PermissionGroup.create({name: "Default", description: "Default users"});
+        await PermissionGroup.create({name: "Superadmin", description: "Superadmin users"});
 
-        const permLogin = await Permission.create({
-            name: "CORE.AUTHENTICATION.LOGIN",
-            description: "Enables userlogin"
-        });
-
-        const permRegister = await Permission.create({
-            name: "CORE.AUTHENTICATION.REGISTER",
-            description: "Enables registration"
-        });
-
-        const permUserUpdateBasic = await Permission.create({
-            name: "CORE.AUTHENTICATION.EDIT.USER.BASIC",
-            description: "Enables updating user information"
-        });
-
-        const permUserUpdateAdvanced = await Permission.create({
-            name: "CORE.AUTHENTICATION.EDIT.USER.ADVANCED",
-            description: "Enables updating user information"
-        });
-
-        const permUserDelete = await Permission.create({
-            name: "CORE.AUTHENTICATION.USER.DELETE",
-            description: "Enables user deletion"
-        });
-
-        const getUsers = await Permission.create({
-            name: "CORE.AUTHENTICATION.USERS.GET",
-            description: "Enables fetching of users"
-        });
-
-        const getPermGroups = await Permission.create({
-            name: "CORE.AUTHENTICATION.PERMGROUPS.GET",
-            description: "Enables fetching of permission groups"
-        });
-
-        const getPerms = await Permission.create({
-            name: "CORE.AUTHENTICATION.PERMISSIONS.GET",
-            description: "Enables fetching of permissions"
-        });
-
-        const setPermGroupPerms = await Permission.create({
-            name: "CORE.AUTHENTICATION.PERMGROUPS.UPDATE",
-            description: "Enables fetching of permissions"
-        });
-
-        await PermissionGroup.create({
-            name: "Anonymous",
-            description: "Gets used if the user is not logged in"
-        }).then(async group => {
-            // @ts-ignore
-            group.addPermission(permLogin);
-            // @ts-ignore
-            group.addPermission(permRegister);
-            // @ts-ignore
-            group.addPermission(permUserUpdateBasic);
-        });
-
-        await PermissionGroup.create({
-            name: "Default",
-            description: "Default group for logged in users"
-        }).then(async group => {});
-
-        await PermissionGroup.create({
-            name: "SuperAdmin",
-            description: "Superadmin group"
-        }).then(async group => {
-            // @ts-ignore
-            group.addPermission(permAll);
-        });
+        this.setupPermissionsByObject(permissions);
 
         await Version.create({
             name: this.extensionInfo.name,
@@ -186,6 +152,9 @@ export default class CoreUsermgmt extends CustomerLogic {
         apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {
             permissions: ["CORE.AUTHENTICATION.REGISTER"]
         }));
+        apiRouter.get("/user/me/permissions", ExpressRouteWrapper.create(ApiMyPermissions, {
+            permissions: ["CORE.AUTHENTICATION.USER.ME.PERMISSIONS.GET"]
+        }));
         apiRouter.put("/user/:uid", ExpressRouteWrapper.create(ApiUpdateUserdata, {
             permissions: ["CORE.AUTHENTICATION.EDIT.USER.BASIC"]
         }));
@@ -197,6 +166,9 @@ export default class CoreUsermgmt extends CustomerLogic {
         }));
         apiRouter.get("/permGroups", ExpressRouteWrapper.create(ApiGetPermGroups, {
             permissions: ["CORE.AUTHENTICATION.PERMGROUPS.GET"]
+        }));
+        apiRouter.post("/permGroup/new", ExpressRouteWrapper.create(ApiNewPermGroup, {
+            permissions: ["CORE.AUTHENTICATION.PERMGROUPS.NEW"]
         }));
         apiRouter.post("/permGroups/:id", ExpressRouteWrapper.create(ApiSetPermGroupPerms, {
             permissions: ["CORE.AUTHENTICATION.PERMGROUPS.UPDATE"]
