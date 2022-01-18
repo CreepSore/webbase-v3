@@ -180,7 +180,7 @@ export default class CoreLocalization extends CustomerLogic {
 
         apiRouter.get("/translation/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
-            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`, () => {
+            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${String(langCode).toUpperCase()}:${String(translationCode).toUpperCase()}`, () => {
                 return LocalizationService.getTranslation(langCode, translationCode);
             }, 60000);
 
@@ -192,7 +192,7 @@ export default class CoreLocalization extends CustomerLogic {
         apiRouter.post("/translation/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
             let {langCode, translationCode} = req.params;
             let replacements = req.body;
-            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`, () => {
+            let translation = await CacheProvider.instance.process(`CORE.LOCALIZATION.GET-TRANSLATION:${String(langCode).toUpperCase()}:${String(translationCode).toUpperCase()}`, () => {
                 return LocalizationService.getTranslation(langCode, translationCode);
             }, 60000);
 
@@ -207,7 +207,7 @@ export default class CoreLocalization extends CustomerLogic {
             let {translation} = req.body;
 
             await LocalizationService.setTranslation(langCode, translationCode, translation);
-            CacheProvider.instance.invalidate(`CORE.LOCALIZATION.GET-TRANSLATION:${langCode}:${translationCode}`);
+            CacheProvider.instance.invalidate(`CORE.LOCALIZATION.GET-TRANSLATION:${String(langCode).toUpperCase()}:${String(translationCode).toUpperCase()}`);
             res.json({success: true});
         }, {
             permissions: ["CORE.LOCALIZATION.SET_TRANSLATION"],

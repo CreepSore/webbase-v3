@@ -114,4 +114,8 @@ export default class LocalizationApi {
 
         return result;
     }
+
+    static async getLanguage() {
+        return "de";
+    }
 }
