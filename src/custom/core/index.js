@@ -142,7 +142,8 @@ export default class Core extends CustomerLogic {
         }));
 
         app.use((req, res, next) => {
-            console.log("WEBINFO", `Request: [${req.method}]@[${req.url}] from [${JSON.stringify(req.ips)}]; SessionData: [${JSON.stringify(req.session)}]; Body: ${JSON.stringify(req.body)}`);
+            let address = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+            console.log("WEBINFO", `[${address}]@[${req.method}]@[${req.url}]; SessionData: [${JSON.stringify(req.session)}]; Body: ${JSON.stringify(req.body)}`);
             next();
         });
 
