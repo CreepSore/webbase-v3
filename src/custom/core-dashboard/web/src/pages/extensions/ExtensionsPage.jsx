@@ -39,7 +39,7 @@ export default function ExtensionsPage() {
                                 <tr key={meta.name} className={`${meta.enabled === false ? "disabled" : ""}`} data-name={meta.name}>
                                     <td>
                                         <div
-                                            className="cursor-pointer"
+                                            className="cursor-help"
                                             onMouseEnter={() => {
                                                 let deps = extensions
                                                     .filter(e => (e.dependencies.additionalDependencies.metadata.dependencies || []).includes(meta.name))
@@ -62,7 +62,7 @@ export default function ExtensionsPage() {
                                                 row = rows[ext] = document.querySelector(`tr[data-name="${ext}"]`);
                                             }
                                             return (<div key={ext}
-                                                className="cursor-pointer"
+                                                className="cursor-help"
                                                 onMouseEnter={() => {
                                                     row = rows[ext];
                                                     if (!row) {
