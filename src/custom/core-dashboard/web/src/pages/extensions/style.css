@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap');
+
+@layer components {
+    .extensions-container {
+        @apply min-h-screen w-full;
+        @apply bg-slate-900;
+
+        .table-container {
+            @apply w-full;
+            @apply overflow-auto;
+        }
+
+        table.extensions-table {
+            @apply w-full;
+
+            td {
+                &:last-child {
+                    @apply text-center;
+                }
+            }
+
+            thead {
+                @apply font-["Roboto_Mono"];
+                @apply bg-blue-500 text-white;
+            }
+
+            tbody {
+                @apply font-["Roboto_Mono"];
+                tr {
+                    &:nth-child(odd) {
+                        @apply bg-blue-400;
+                    }
+
+                    &:nth-child(even) {
+                        @apply bg-blue-300;
+                    }
+
+                    &:hover {
+                        @apply brightness-105;
+                    }
+                    
+                    &.selected {
+                        @apply bg-red-300;
+                    }
+
+                    &.disabled {
+                        @apply bg-slate-400;
+                    }
+                }
+            }
+        }
+    }
+}

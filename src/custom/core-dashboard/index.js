@@ -4,6 +4,7 @@ import path from "path";
 import express from "express";
 
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
+import CustomerLogicHandler from "../../service/customer-logic/CustomerLogicHandler.js";
 import Version from "../../models/Version.js";
 import Utils from "../../service/Utils.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
@@ -51,7 +52,20 @@ export default class CoreDashboard extends CustomerLogic {
 
     /** @param {ExpressParams} params */
     async expressStart(params) {
+        let apiRouter = express.Router();
         let viewRouter = express.Router();
+
+        apiRouter.get("/extensions", (req, res) => {
+            let logic = CustomerLogicHandler.instance.sortedCustomerLogic.map(ext => {
+                return {
+                    name: ext.getMetadata().name,
+                    dependencies: ext.dependencies,
+                    loading: ext.loading,
+                    loaded: ext.loaded
+                };
+            });
+            res.json(logic);
+        });
 
         viewRouter.get("/", ExpressRouteWrapper.create((req, res) => {
             res.send(Utils.renderDefaultReactPage("/compiled/core.dashboard/main.js", {
@@ -69,6 +83,7 @@ export default class CoreDashboard extends CustomerLogic {
         });
 
         params.app.use("/core.dashboard", viewRouter);
+        params.app.use("/api/core.dashboard", apiRouter);
     }
 
     /** @param {ExpressParams} params */

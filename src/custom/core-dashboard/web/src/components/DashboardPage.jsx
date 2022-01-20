@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect } from "react";
-import {HomeIcon, UserIcon, ShieldCheckIcon, LogoutIcon, TranslateIcon} from "@heroicons/react/solid";
+import {HomeIcon, UserIcon, ShieldCheckIcon, LogoutIcon, TranslateIcon, ViewGridAddIcon} from "@heroicons/react/solid";
 
 import DashboardSidebar from "./DashboardSidebar.jsx";
 import UserPage from "../pages/user/UserPage.jsx";
 import PermissionsPage from "../pages/permissions/PermissionsPage.jsx";
 import TranslatePage from "../pages/translate/TranslatePage.jsx";
+import ExtensionsPage from "../pages/extensions/ExtensionsPage.jsx";
 
 import LocalizationApi from "../../../../core-localization/web/src/LocalizationApi.js";
 
@@ -32,6 +33,9 @@ export default function DashboardPage() {
             case "localization":
                 nextPage = <TranslatePage/>;
                 break;
+            case "extensions":
+                nextPage = <ExtensionsPage/>;
+                break;
             case "logout":
                 location.href = "logout";
                 break;
@@ -43,6 +47,11 @@ export default function DashboardPage() {
     }, [active]);
 
     useEffect(() => {
+        // Skip if no translations are set
+        if(Object.keys(t).length === 0) {
+            return;
+        }
+
         setEntries([
             {
                 key: "home",
@@ -65,6 +74,11 @@ export default function DashboardPage() {
                 icon: <TranslateIcon height={24} width={24} />
             },
             {
+                key: "extensions",
+                label: t["CORE.DASHBOARD.SIDEBAR.EXTENSIONS"],
+                icon: <ViewGridAddIcon height={24} width={24} />
+            },
+            {
                 key: "logout",
                 label: t["CORE.DASHBOARD.SIDEBAR.LOGOUT"],
                 icon: <LogoutIcon height={24} width={24} />
@@ -79,6 +93,7 @@ export default function DashboardPage() {
                 "CORE.DASHBOARD.SIDEBAR.USERS",
                 "CORE.DASHBOARD.SIDEBAR.PERMISSIONS",
                 "CORE.DASHBOARD.SIDEBAR.LOCALIZATION",
+                "CORE.DASHBOARD.SIDEBAR.EXTENSIONS",
                 "CORE.DASHBOARD.SIDEBAR.LOGOUT"
             ]).then(setTranslations);
         })();

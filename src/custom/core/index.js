@@ -145,6 +145,10 @@ export default class Core extends CustomerLogic {
             console.log("WEBINFO", `Request: [${req.method}]@[${req.url}] from [${JSON.stringify(req.ips)}]; SessionData: [${JSON.stringify(req.session)}]; Body: ${JSON.stringify(req.body)}`);
             next();
         });
+
+        app.get("/api/ping", (req, res) => {
+            res.json({success: true});
+        });
     }
 
     /** @param {ExpressParams} params */
