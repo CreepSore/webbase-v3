@@ -47,7 +47,7 @@ export default function Profiling() {
                     <SelectorList
                         arrowType={"right"}
                         onSelectionChanged={(key) => {setEntries(profilingData.find(entry => entry.key === key).data);}}
-                        entries={profilingData.map(d => {return {key: d.key, label: d.key};})}></SelectorList>
+                        entries={profilingData.map(d => {return {key: d.key, label: `${d.data.map(e => e.duration).reduce((a, b) => a + b)} ms; ${d.key}`};})}></SelectorList>
                 </div>
 
                 <div className="profiling-container-col">

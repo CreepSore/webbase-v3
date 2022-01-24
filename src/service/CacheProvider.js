@@ -47,15 +47,24 @@ export default class CacheProvider {
     async process(name, callback, ttlMs, reprocessCallback = null) {
         let cacheObject = this.cache[name];
         if(cacheObject) {
-            let doReprocess = reprocessCallback ? await reprocessCallback() : false;
-            if(!doReprocess && Date.now() - cacheObject.lastFetch < ttlMs) return cacheObject.data;
             let profilerId = Profiler.instance.startMeasurement(`CACHE.${name}`, {ttlMs});
+            let doReprocess = reprocessCallback ? await reprocessCallback() : false;
+            if(!doReprocess && Date.now() - cacheObject.lastFetch < ttlMs) {
+                Profiler.instance
+                    .addMeasurementData(profilerId, {
+                        cacheObject,
+                        preprocessed: true
+                    })
+                    .endMeasurement(profilerId);
+                return cacheObject.data;
+            }
             cacheObject.data = await cacheObject.callback();
             cacheObject.lastFetch = Date.now();
 
             Profiler.instance
                 .addMeasurementData(profilerId, {
-                    cacheObject
+                    cacheObject,
+                    preprocessed: false
                 })
                 .endMeasurement(profilerId);
 
@@ -72,7 +81,8 @@ export default class CacheProvider {
         };
         Profiler.instance
             .addMeasurementData(profilerId, {
-                cacheObject
+                cacheObject,
+                preprocessed: false
             })
             .endMeasurement(profilerId);
 
