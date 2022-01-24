@@ -112,4 +112,12 @@ export default class ApiKeyService {
 
         return true;
     }
+
+    static async loginByApiKey(apiKey) {
+        let keyObject = await this.getApiKey(apiKey);
+        // @ts-ignore
+        let user = await keyObject.getUser();
+
+        return user.id;
+    }
 }

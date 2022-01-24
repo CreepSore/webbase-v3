@@ -8,6 +8,8 @@ import User from "../models/User.js";
  * @param {import("express").Response} res
  */
 export default async function(req, res) {
+    if(!res.locals.user?.id) return res.json({success: false, error: new Exception("User not logged in", {code: "CORE.AUTHENTICATION.NOT_LOGGED_IN"})});
+
     let user = await User.findOne({
         where: {
             id: res.locals.user.id
