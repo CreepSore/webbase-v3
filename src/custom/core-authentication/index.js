@@ -33,6 +33,7 @@ import permissions from "./permissions.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import Utils from "../../service/Utils.js";
 import PermissionService from "./service/PermissionService.js";
+import UserService from "./service/UserService.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -79,7 +80,7 @@ export default class CoreUsermgmt extends CustomerLogic {
     }
 
     /**
-     * @param {Object<string, {description: string, anonymous?: boolean, default?: boolean, superadmin?: boolean}>} object
+     * @param {Object<string, {key: string, description: string, anonymous?: boolean, default?: boolean, superadmin?: boolean}>} object
      * @memberof CoreUsermgmt
      */
     async setupPermissionsByObject(object) {
@@ -89,8 +90,8 @@ export default class CoreUsermgmt extends CustomerLogic {
             PermissionService.getSuperAdminPermissionGroup()
         ]);
 
-        return await Promise.all(Object.entries(permissions).map(async([name, data]) => {
-            let perm = await Permission.create({name, data});
+        return Promise.all(Object.entries(object).map(async([name, data]) => {
+            let perm = await Permission.create({name: data.key, data});
             if(data.anonymous) {
                 // @ts-ignore
                 anonymousGroup.addPermission(perm);
@@ -114,7 +115,17 @@ export default class CoreUsermgmt extends CustomerLogic {
         await PermissionGroup.create({name: "Default", description: "Default users"});
         await PermissionGroup.create({name: "Superadmin", description: "Superadmin users"});
 
-        this.setupPermissionsByObject(permissions);
+        await this.setupPermissionsByObject(permissions);
+
+        let userCfg = this.getConfig("defaultSuperuser");
+        if(userCfg?.create) {
+            let user = await UserService.registerUser(userCfg.username, userCfg.password, userCfg.email);
+            // @ts-ignore
+            user.active = true;
+            await user.save();
+            // @ts-ignore
+            await UserService.setPermissionGroup(user.id, "Superadmin");
+        }
 
         await Version.create({
             name: this.extensionInfo.name,
@@ -146,35 +157,35 @@ export default class CoreUsermgmt extends CustomerLogic {
         // eslint-disable-next-line new-cap
         let apiRouter = express.Router();
         apiRouter.post("/login", ExpressRouteWrapper.create(ApiLogin, {
-            permissions: ["CORE.AUTHENTICATION.LOGIN"]
+            permissions: [permissions.core_authentication_login.key]
         }));
         apiRouter.get("/logout", ExpressRouteWrapper.create(ApiLogout));
         apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {
-            permissions: ["CORE.AUTHENTICATION.REGISTER"]
+            permissions: [permissions.core_authentication_register.key]
         }));
         apiRouter.get("/user/me/permissions", ExpressRouteWrapper.create(ApiMyPermissions, {
-            permissions: ["CORE.AUTHENTICATION.USER.ME.PERMISSIONS.GET"]
+            permissions: [permissions.core_authentication_user_me_permissions_get.key]
         }));
         apiRouter.put("/user/:uid", ExpressRouteWrapper.create(ApiUpdateUserdata, {
-            permissions: ["CORE.AUTHENTICATION.EDIT.USER.BASIC"]
+            permissions: [permissions.core_authentication_edit_user_basic.key]
         }));
         apiRouter.delete("/user/:uid", ExpressRouteWrapper.create(ApiDeleteUser, {
-            permissions: ["CORE.AUTHENTICATION.USER.DELETE"]
+            permissions: [permissions.core_authentication_user_delete.key]
         }));
         apiRouter.get("/users", ExpressRouteWrapper.create(ApiGetUsers, {
-            permissions: ["CORE.AUTHENTICATION.USERS.GET"]
+            permissions: [permissions.core_authentication_users_get.key]
         }));
         apiRouter.get("/permGroups", ExpressRouteWrapper.create(ApiGetPermGroups, {
-            permissions: ["CORE.AUTHENTICATION.PERMGROUPS.GET"]
+            permissions: [permissions.core_authentication_permgroups_get.key]
         }));
         apiRouter.post("/permGroup/new", ExpressRouteWrapper.create(ApiNewPermGroup, {
-            permissions: ["CORE.AUTHENTICATION.PERMGROUPS.NEW"]
+            permissions: [permissions.core_authentication_permgroups_new.key]
         }));
         apiRouter.post("/permGroups/:id", ExpressRouteWrapper.create(ApiSetPermGroupPerms, {
-            permissions: ["CORE.AUTHENTICATION.PERMGROUPS.UPDATE"]
+            permissions: [permissions.core_authentication_permgroups_update.key]
         }));
         apiRouter.get("/permissions", ExpressRouteWrapper.create(ApiGetPermissions, {
-            permissions: ["CORE.AUTHENTICATION.PERMISSIONS.GET"]
+            permissions: [permissions.core_authentication_permissions_get.key]
         }));
 
         // eslint-disable-next-line new-cap
@@ -190,7 +201,7 @@ export default class CoreUsermgmt extends CustomerLogic {
                 title: "Login"
             }));
         }, {
-            permissions: ["CORE.AUTHENTICATION.LOGIN"],
+            permissions: [permissions.core_authentication_login.key],
             onInvalidPermissions: (req, res) => {
                 res.redirect("/");
             }
@@ -211,6 +222,16 @@ export default class CoreUsermgmt extends CustomerLogic {
         };
     }
 
+    getConfigModel() {
+        return {
+            defaultSuperuser: {
+                create: false,
+                username: "",
+                password: ""
+            }
+        };
+    }
+
     exposeApi() {
         return {
             constructRedirectUrl: (redirectTo = "") => {
@@ -222,7 +243,8 @@ export default class CoreUsermgmt extends CustomerLogic {
             },
             constructLogoutUrl: () => {
                 return "/api/core.authentication/logout";
-            }
+            },
+            setupPermissionsByObject: this.setupPermissionsByObject
         };
     }
 

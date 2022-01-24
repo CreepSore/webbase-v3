@@ -61,11 +61,11 @@ export default function UserPage() {
     }, [userCreateDialogVisible]);
 
     let hasPermissionsForCreation = () => {
-        if(myPermissions.includes(AuthPermissions["CORE.ALL"].key)) return true;
+        if(myPermissions.includes(AuthPermissions.core_all.key)) return true;
 
-        return myPermissions.includes(AuthPermissions["CORE.AUTHENTICATION.REGISTER"].key)
-            && myPermissions.includes(AuthPermissions["CORE.AUTHENTICATION.EDIT.USER.BASIC"].key)
-            && myPermissions.includes(AuthPermissions["CORE.AUTHENTICATION.EDIT.USER.ADVANCED"].key);
+        return myPermissions.includes(AuthPermissions.core_authentication_register.key)
+            && myPermissions.includes(AuthPermissions.core_authentication_edit_user_basic.key)
+            && myPermissions.includes(AuthPermissions.core_authentication_edit_user_advanced.key);
     };
 
     return (

@@ -226,6 +226,7 @@ export default class CustomerLogicHandler {
 
         if(executed.has(currentNode)) return results;
         executed.add(currentNode);
+
         let deps = upwards ? [...this.customerLogicImplementations].filter(cl => {
             return !executed.has(cl) && currentNode.getMetadata().dependencies.includes(cl.getMetadata().name);
         }) : [...this.customerLogicImplementations].filter(cl => {
@@ -237,6 +238,7 @@ export default class CustomerLogicHandler {
             results.set(currentNode.getMetadata().name, await callback(currentNode));
             calcResult = true;
         }
+
         for(let dependency of deps) {
             await this.traverseTree(callback, dependency, true, executed, results);
             if(!calcResult) {

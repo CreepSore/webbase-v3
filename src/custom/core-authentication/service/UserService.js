@@ -43,6 +43,13 @@ export default class UserService {
         return Boolean(result);
     }
 
+    /**
+     * Sets the PermissionGroup of a certain user
+     * @static
+     * @param {string} uid
+     * @param {string} permissionGroup
+     * @memberof UserService
+     */
     static async setPermissionGroup(uid, permissionGroup) {
         let permGroup = await PermissionGroup.findOne({where: {name: permissionGroup}});
         if(!permGroup) throw new Exception("Invalid Permission Group", {code: "CORE.AUTHENTICATION.INVALID_PERM_GROUP"});

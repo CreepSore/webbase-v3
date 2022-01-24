@@ -10,6 +10,8 @@ import User from "../models/User.js";
 import PermissionService from "./PermissionService.js";
 import UserService from "./UserService.js";
 
+import authPerms from "../../core-authentication/permissions.js";
+
 export default class ApiKeyService {
     static async createUserApiKey(apiKey, username, expiresIn = null) {
         const user = await UserService.getUserByUsername(username);
@@ -80,7 +82,7 @@ export default class ApiKeyService {
                     where: {
                         name: {
                             [Op.or]: [
-                                "CORE.ALL",
+                                authPerms.core_all.key,
                                 permission
                             ]
                         }

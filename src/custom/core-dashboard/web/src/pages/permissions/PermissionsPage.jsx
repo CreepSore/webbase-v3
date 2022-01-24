@@ -58,7 +58,7 @@ export default function PermissionsPage() {
             <div
                 className="add-button bg-blue-400"
                 onClick={() => setAddPermissionGroupDialogShown(true)}
-                hidden={!myPermissions.some(p => [AuthPermissions["CORE.ALL"].key, AuthPermissions["CORE.AUTHENTICATION.PERMGROUPS.NEW"].key].includes(p))}>
+                hidden={!myPermissions.some(p => [AuthPermissions.core_all.key, AuthPermissions.core_authentication_permgroups_new.key].includes(p))}>
                 <PlusIcon height={48} width={48} />
             </div>
             <div className="sidebar">

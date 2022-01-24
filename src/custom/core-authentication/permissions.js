@@ -1,55 +1,55 @@
 let permissions = {
-    "CORE.ALL": {
+    core_all: {
         key: "CORE.ALL",
         description: "Pseudopermission for everything",
         superadmin: true
     },
-    "CORE.AUTHENTICATION.LOGIN": {
+    core_authentication_login: {
         key: "CORE.AUTHENTICATION.LOGIN",
         description: "Enables User Logon",
         anonymous: true
     },
-    "CORE.AUTHENTICATION.REGISTER": {
+    core_authentication_register: {
         key: "CORE.AUTHENTICATION.REGISTER",
         description: "Enables User Registration",
         anonymous: true
     },
-    "CORE.AUTHENTICATION.EDIT.USER.BASIC": {
+    core_authentication_edit_user_basic: {
         key: "CORE.AUTHENTICATION.EDIT.USER.BASIC",
         description: "Enables User Basic Information Editing",
         "default": true
     },
-    "CORE.AUTHENTICATION.EDIT.USER.ADVANCED": {
+    core_authentication_edit_user_advanced: {
         key: "CORE.AUTHENTICATION.EDIT.USER.ADVANCED",
         description: "Enables User Advanced Information Editing"
     },
-    "CORE.AUTHENTICATION.USER.DELETE": {
+    core_authentication_user_delete: {
         key: "CORE.AUTHENTICATION.USER.DELETE",
         description: "Enables User Deletion"
     },
-    "CORE.AUTHENTICATION.USERS.GET": {
+    core_authentication_users_get: {
         key: "CORE.AUTHENTICATION.USERS.GET",
         description: "Enables User List Retrieval"
     },
-    "CORE.AUTHENTICATION.USER.ME.PERMISSIONS.GET": {
+    core_authentication_user_me_permissions_get: {
         key: "CORE.AUTHENTICATION.USER.ME.PERMISSIONS.GET",
         description: "Enables User Permissions Retrieval of currently logged on user",
         anonymous: true,
         "default": true
     },
-    "CORE.AUTHENTICATION.PERMGROUPS.GET": {
+    core_authentication_permgroups_get: {
         key: "CORE.AUTHENTICATION.PERMGROUPS.GET",
         description: "Enables Permission Group List Retrieval"
     },
-    "CORE.AUTHENTICATION.PERMGROUPS.NEW": {
+    core_authentication_permgroups_new: {
         key: "CORE.AUTHENTICATION.PERMGROUPS.NEW",
         description: "Enables Permission Group Creation"
     },
-    "CORE.AUTHENTICATION.PERMGROUPS.UPDATE": {
+    core_authentication_permgroups_update: {
         key: "CORE.AUTHENTICATION.PERMGROUPS.UPDATE",
         description: "Enables Permission Group Update"
     },
-    "CORE.AUTHENTICATION.PERMISSIONS.GET": {
+    core_authentication_permissions_get: {
         key: "CORE.AUTHENTICATION.PERMISSIONS.GET",
         description: "Enables Permission List Retrieval"
     }

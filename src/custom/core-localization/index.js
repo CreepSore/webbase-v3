@@ -13,6 +13,7 @@ import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
 import CacheProvider from "../../service/CacheProvider.js";
 import PermissionService from "../core-authentication/service/PermissionService.js";
 import Utils from "../../service/Utils.js";
+import permissions from "./permissions.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -95,19 +96,7 @@ export default class CoreLocalization extends CustomerLogic {
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
-        // permissions
-        let anonymous = await PermissionService.getAnonymousPermissionGroup();
-        let permGetLanguage = await PermissionService.createPermission("CORE.LOCALIZATION.GET_LANGUAGE", "Permission to get languages");
-        let permCreateLanguage = await PermissionService.createPermission("CORE.LOCALIZATION.CREATE_LANGUAGE", "Permission to create languages");
-        let permGetTranslation = await PermissionService.createPermission("CORE.LOCALIZATION.GET_TRANSLATION", "Permission to get translations");
-        let permGetTranslationFormatted = await PermissionService.createPermission("CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED", "Permission to get translations");
-        let permSetTranslation = await PermissionService.createPermission("CORE.LOCALIZATION.SET_TRANSLATION", "Permission to set translations");
-        let permGetMissing = await PermissionService.createPermission("CORE.LOCALIZATION.GET_MISSING", "Permission to get missing translations");
-        let permGetAll = await PermissionService.createPermission("CORE.LOCALIZATION.GET_ALL", "Permission to get all translations, not including missing");
-        let permEdit = await PermissionService.createPermission("CORE.LOCALIZATION.EDIT", "Permission to edit translations");
-
-        // @ts-ignore
-        await anonymous.addPermissions([permGetLanguage, permGetTranslation, permGetTranslationFormatted]);
+        this.getApi("Core.Authentication").setupPermissionsByObject(permissions);
 
         await Language.create({
             name: "English",
@@ -141,7 +130,7 @@ export default class CoreLocalization extends CustomerLogic {
             }, 60000);
             res.json({success: true, data: languages});
         }, {
-            permissions: ["CORE.LOCALIZATION.GET_LANGUAGE"]
+            permissions: [permissions.core_localization_get_languages.key]
         }));
 
         apiRouter.get("/language/fromId/:id", ExpressRouteWrapper.create(async(req, res) => {
@@ -159,7 +148,7 @@ export default class CoreLocalization extends CustomerLogic {
 
             res.json({success: true, data: language});
         }, {
-            permissions: ["CORE.LOCALIZATION.GET_LANGUAGE"]
+            permissions: [permissions.core_localization_get_languages.key]
         }));
 
         apiRouter.post("/language/create/:id/:name", ExpressRouteWrapper.create(async(req, res) => {
@@ -174,7 +163,7 @@ export default class CoreLocalization extends CustomerLogic {
                 res.json({success: false, error: exception});
             }
         }, {
-            permissions: ["CORE.LOCALIZATION.CREATE_LANGUAGE"],
+            permissions: [permissions.core_localization_create_language.key],
             profilingName: "CORE.LOCALIZATION.CREATE_LANGUAGE"
         }));
 
@@ -186,7 +175,7 @@ export default class CoreLocalization extends CustomerLogic {
 
             res.json({success: true, data: translation});
         }, {
-            permissions: ["CORE.LOCALIZATION.GET_TRANSLATION"]
+            permissions: [permissions.core_localization_get_translation.key]
         }));
 
         apiRouter.post("/translation/:langCode/:translationCode", ExpressRouteWrapper.create(async(req, res) => {
@@ -198,7 +187,7 @@ export default class CoreLocalization extends CustomerLogic {
 
             res.json({success: true, data: LocalizationService.formatTranslationString(translation, replacements)});
         }, {
-            permissions: ["CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED"],
+            permissions: [permissions.core_localization_get_translation_formatted.key],
             profilingName: "CORE.LOCALIZATION.GET_TRANSLATION_FORMATTED"
         }));
 
@@ -210,21 +199,21 @@ export default class CoreLocalization extends CustomerLogic {
             CacheProvider.instance.invalidate(`CORE.LOCALIZATION.GET-TRANSLATION:${String(langCode).toUpperCase()}:${String(translationCode).toUpperCase()}`);
             res.json({success: true});
         }, {
-            permissions: ["CORE.LOCALIZATION.SET_TRANSLATION"],
+            permissions: [permissions.core_localization_set_translation.key],
             profilingName: "CORE.LOCALIZATION.SET_TRANSLATION"
         }));
 
         apiRouter.get("/translation/missing", ExpressRouteWrapper.create(async(req, res) => {
             res.json({success: true, data: [...LocalizationService.missingTranslations]});
         }, {
-            permissions: ["CORE.LOCALIZATION.GET_MISSING"],
+            permissions: [permissions.core_localization_get_missing.key],
             profilingName: "CORE.LOCALIZATION.GET_MISSING"
         }));
 
         apiRouter.get("/translation/all", ExpressRouteWrapper.create(async(req, res) => {
             res.json({success: true, data: await LocalizationService.getAllTranslations()});
         }, {
-            permissions: ["CORE.LOCALIZATION.GET_ALL"],
+            permissions: [permissions.core_localization_get_all_translations.key],
             profilingName: "CORE.LOCALIZATION.GET_ALL"
         }));
 
@@ -233,7 +222,7 @@ export default class CoreLocalization extends CustomerLogic {
                 title: "Localization"
             }));
         }, {
-            permissions: ["CORE.LOCALIZATION.EDIT"],
+            permissions: [permissions.core_localization_edit_translation.key],
             onInvalidPermissions: (req, res) => {
                 res.redirect(this.getApi("Core.Authentication").constructRedirectUrl(req.originalUrl));
             }
