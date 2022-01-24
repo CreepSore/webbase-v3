@@ -29,7 +29,8 @@ const logLevelMapping = {
     WEBINFO: {date: `${linuxTerminalColors.bgblue}${linuxTerminalColors.fgwhite}`, text: `${linuxTerminalColors.reset}${linuxTerminalColors.fgblue}`},
     ERROR: {date: `${linuxTerminalColors.bgred}${linuxTerminalColors.fgwhite}`, text: `${linuxTerminalColors.reset}${linuxTerminalColors.fgred}`},
     WARN: {date: `${linuxTerminalColors.bgyellow}${linuxTerminalColors.fgblack}`, text: `${linuxTerminalColors.reset}${linuxTerminalColors.fgyellow}`},
-    CRITICAL: {date: `${linuxTerminalColors.bgred}${linuxTerminalColors.fgwhite}`, text: `${linuxTerminalColors.reset}${linuxTerminalColors.fgred}`}
+    CRITICAL: {date: `${linuxTerminalColors.bgred}${linuxTerminalColors.fgwhite}`, text: `${linuxTerminalColors.reset}${linuxTerminalColors.fgred}`},
+    SQL: {date: `${linuxTerminalColors.bgyellow}${linuxTerminalColors.fgblack}`, text: `${linuxTerminalColors.reset}${linuxTerminalColors.fgyellow}`}
 };
 
 const logLevelUnicodeMapping = {
@@ -37,7 +38,8 @@ const logLevelUnicodeMapping = {
     WEBINFO: "🌐",
     ERROR: "E",
     WARN: "!",
-    CRITICAL: "🚨"
+    CRITICAL: "🚨",
+    SQL: "🔎"
 };
 
 export default class Logger {

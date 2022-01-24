@@ -10,9 +10,7 @@ export default class InstallerApplication {
     async runDropLogic(loader) {
         console.log("INFO", "Starting drop subfunction ...");
 
-        await loader.sequelize.drop({
-            logging: true
-        });
+        await loader.sequelize.drop();
     }
 
     /**
@@ -22,8 +20,7 @@ export default class InstallerApplication {
         console.log("INFO", "Starting setup subfunction ...");
 
         await loader.doSync({
-            alter: true,
-            logging: true
+            alter: true
         });
 
         console.log("INFO", "Installation finished, checking schema ...");
@@ -48,7 +45,7 @@ export default class InstallerApplication {
         this.#options = options;
 
         console.log("INFO", "Initializing Sequelize ...");
-        let loader = new SequelizeLoader();
+        let loader = new SequelizeLoader(true);
         await loader.start();
 
         if(options.drop){

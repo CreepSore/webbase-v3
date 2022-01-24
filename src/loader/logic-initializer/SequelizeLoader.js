@@ -6,7 +6,8 @@ import KvpStorage from "../../service/KvpStorage.js";
 import Version from "../../models/Version.js";
 
 export default class SequelizeLoader {
-    constructor() {
+    constructor(doLogging = false) {
+        this.doLogging = doLogging;
         this.sequelize = this.instantiateSequelize();
         KvpStorage.instance.setItem(KvpStorage.defaultKeys.sequelize, this.sequelize);
     }
@@ -20,7 +21,7 @@ export default class SequelizeLoader {
             sequelize = new Sequelize({
                 dialect: "sqlite",
                 storage: cfg.db.sqlite.file,
-                logging: cfg.db.logging
+                logging: (cfg.db.logging || this.doLogging) ? e => console.log("SQL", e) : false
             });
         }
         else if(["mariadb", "mysql"].includes(cfg.db.type.toLowerCase())) {
@@ -31,7 +32,7 @@ export default class SequelizeLoader {
                 {
                     // @ts-ignore
                     dialect: cfg.db.type, // Not setting staticly like sqlite because of mariadb and mysql being seperate dialects
-                    logging: cfg.db.logging
+                    logging: (cfg.db.logging || this.doLogging) ? e => console.log("SQL", e) : false
                 });
         }
         else {

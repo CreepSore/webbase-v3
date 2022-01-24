@@ -96,7 +96,7 @@ export default class CoreLocalization extends CustomerLogic {
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
-        this.getApi("Core.Authentication").setupPermissionsByObject(permissions);
+        await this.getApi("Core.Authentication").setupPermissionsByObject(permissions);
 
         await Language.create({
             name: "English",
