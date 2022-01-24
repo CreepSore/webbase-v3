@@ -2,6 +2,8 @@ import Exception from "../../core/Exception.js";
 import UserService from "../service/UserService.js";
 import CacheProvider from "../../../service/CacheProvider.js";
 
+import permissions from "../permissions.js";
+
 /**
  * @export
  * @param {import("express").Request} req
@@ -9,7 +11,7 @@ import CacheProvider from "../../../service/CacheProvider.js";
  */
 export default async function(req, res) {
     // @ts-ignore
-    let isAdvanced = await UserService.hasPermission(req.session.uid, "CORE.AUTHENTICATION.EDIT.USER.BASIC.ADVANCED");
+    let isAdvanced = await UserService.hasPermission(req.session.uid, permissions.core_authentication_edit_user_advanced.key);
     let hasHandled = false;
 
     // @ts-ignore
@@ -20,7 +22,7 @@ export default async function(req, res) {
 
     try {
         // @ts-ignore
-        if(await UserService.hasPermission(req.session.uid, "CORE.AUTHENTICATION.EDIT.USER.BASIC")) {
+        if(await UserService.hasPermission(req.session.uid, permissions.core_authentication_edit_user_basic.key)) {
             await UserService.updateUserInformationBasic(req.params.uid, req.body.email, req.body.password);
             hasHandled = true;
         }
