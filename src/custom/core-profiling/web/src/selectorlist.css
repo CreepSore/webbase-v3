@@ -1,0 +1,51 @@
+@tailwind components;
+
+@layer components {
+    .selector-list {
+        @apply flex flex-col items-center gap-1;
+        @apply w-full h-full;
+        @apply bg-slate-100;
+        @apply py-4;
+
+        .entries {
+            @apply w-full;
+            @apply flex flex-col gap-1;
+            @apply m-0;
+        }
+
+        .selector-search {
+            @apply w-full;
+            @apply flex flex-row items-center;
+            @apply relative;
+            @apply mb-2;
+            input[type=text] {
+                @apply p-1 bg-transparent;
+                @apply w-full;
+                @apply outline-none border-none;
+                @apply border-b border-solid border-b-gray-300 focus:border-b-black;
+                @apply text-center;
+            }
+
+            .clear-icon {
+                @apply absolute;
+                @apply origin-left;
+                @apply mx-2;
+                @apply right-0;
+                @apply text-gray-600 hover:text-gray-500;
+                @apply cursor-pointer;
+            }
+        }
+
+        .selector-child {
+            @apply w-full;
+            @apply py-1 px-2;
+            @apply text-center;
+            @apply cursor-pointer;
+            @apply flex justify-between items-center flex-row;
+
+            &:hover, &.selected {
+                @apply bg-slate-200;
+            }
+        }
+    }
+}

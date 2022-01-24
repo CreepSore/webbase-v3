@@ -5,5 +5,5 @@
     "enabled": true,
     "entrypoint": "index.js",
     "dependencies": ["Core", "Core.Authentication", "Core.Localization"],
-    "npmDependencies": []
+    "npmDependencies": ["react-perfect-scrollbar"]
 }

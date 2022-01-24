@@ -3,5 +3,6 @@
     "dir": "core-profiling",
     "version": "3.0.0",
     "entrypoint": "index.js",
-    "dependencies": ["Core", "Core.Authentication"]
+    "dependencies": ["Core", "Core.Authentication"],
+    "npmDependencies": ["react-perfect-scrollbar"]
 }
