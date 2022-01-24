@@ -15,8 +15,8 @@ export default async function(req, res) {
     let profilerToken = Profiler.instance.startMeasurement("CORE.AUTHENTICATION.LOGIN");
     Profiler.instance.addMeasurementData(profilerToken, {
         username,
-        password: password.replace(/./g, "*"),
-        token: token || "",
+        password: password?.replace?.(/./g, "*"),
+        token,
         apiKey
     });
 
@@ -30,6 +30,9 @@ export default async function(req, res) {
 
             // @ts-ignore
             req.session.uid = userId;
+            Profiler.instance.addMeasurementData(profilerToken, {
+                success: true
+            });
             return res.json({success: true, data: {uid: userId}});
             // @ts-ignore
         }
@@ -37,12 +40,16 @@ export default async function(req, res) {
         let user = await UserService.loginUser(username, password, token);
         // @ts-ignore
         req.session.uid = user.id;
+        Profiler.instance.addMeasurementData(profilerToken, {
+            success: true
+        });
         // @ts-ignore
         return res.json({success: true, data: {uid: user.id}});
     }
     catch (exception) {
         Profiler.instance.addMeasurementData(profilerToken, {
-            exception
+            exception,
+            success: false
         });
         return res.json({success: false, error: exception});
     }

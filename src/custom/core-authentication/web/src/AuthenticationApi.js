@@ -28,6 +28,24 @@ export default class AuthenticationApi {
     /**
      * @throws {Exception}
      */
+    static async loginByApiKey(apiKey) {
+        let result = await fetch("/api/core.authentication/login", {
+            method: "POST",
+            body: JSON.stringify({
+                apiKey
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.data;
+    }
+
+    /**
+     * @throws {Exception}
+     */
     static async logout() {
         await fetch("/api/core.authentication/logout", {
             method: "GET"
