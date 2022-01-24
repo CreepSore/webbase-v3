@@ -10,6 +10,8 @@ import Exception from "../../core/Exception.js";
 import TfaService from "../../../service/TfaService.js";
 import { base32 } from "rfc4648";
 
+import permissions from "../permissions.js";
+
 export default class UserService {
     /**
      * Checks if the user has the specified permission
@@ -30,7 +32,7 @@ export default class UserService {
                     where: {
                         name: {
                             [Op.or]: [
-                                "CORE.ALL",
+                                permissions.core_all.key,
                                 permission
                             ]
                         }
