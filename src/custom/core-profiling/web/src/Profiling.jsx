@@ -60,8 +60,8 @@ export default function Profiling() {
                 <div className="profiling-container-col">
                     <div className="h-full" hidden={!Boolean(selectedEntry)}>
                         <Editor
-                            height={`${JSON.stringify(selectedEntry || {}, null, 2).split("\n").length + 10}rem`}
-                            value={JSON.stringify(selectedEntry || {}, null, 2)}
+                            height={`${JSON.stringify(selectedEntry?.additionalData || {}, null, 2).split("\n").length + 10}rem`}
+                            value={JSON.stringify(selectedEntry?.additionalData || {}, null, 2)}
                             options={{readOnly: true}}
                             language="json"/>
                     </div>
