@@ -39,7 +39,8 @@ export default class ConfigModel {
             };
 
             this.utils = {
-                runProfiling: false
+                runProfiling: false,
+                unicodeLogging: true
             };
 
             this.extensions = {};

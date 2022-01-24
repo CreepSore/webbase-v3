@@ -70,7 +70,8 @@ export default class Logger {
         this.loggedEntries.push(Logger.getFormattedLog(level, ...data));
     }
 
-    static replaceConsoleLog() {
+    static replaceConsoleLog(formatToUnicode = true) {
+        this.formatToUnicode = formatToUnicode;
         this.originalLog = console.log;
         let {originalLog} = this;
         console.log = (level, ...data) => {

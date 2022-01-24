@@ -58,7 +58,7 @@ export default class ApiKeyService {
     static async getApiKey(apiKey) {
         let apiKeyObject = await ApiKey.findOne({where: {key: apiKey}});
 
-        if(apiKeyObject) throw new Exception("Invalid Api Key", {code: "CORE.AUTHENTICATION.INVALID_API_KEY"});
+        if(!apiKeyObject) throw new Exception("Invalid Api Key", {code: "CORE.AUTHENTICATION.INVALID_API_KEY"});
 
         return apiKeyObject;
     }

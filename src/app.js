@@ -10,7 +10,6 @@ import KvpStorage from "./service/KvpStorage.js";
 import ConfigModel from "./service/ConfigModel.js";
 
 async function main() {
-    Logger.replaceConsoleLog();
     /** @type {ConfigModel} */
     let cfg;
     try {
@@ -22,6 +21,8 @@ async function main() {
         console.log("ERROR", `Failed to load config: ${err}`);
         return;
     }
+
+    Logger.replaceConsoleLog(cfg.utils.unicodeLogging);
 
     // Lol
     let cfgCopy = JSON.parse(JSON.stringify(cfg));

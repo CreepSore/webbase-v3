@@ -37,12 +37,18 @@ export default class ExpressRouteWrapper {
         }
         // Api Key Check
         if(this.options.checkApiKey && req.query.apiKey) {
+            let decodedApiKey = decodeURIComponent(String(req.query.apiKey));
+            let apiKey = null;
+            try {
+                apiKey = await ApiKeyService.getApiKey(decodedApiKey);
+            }
+            catch { /** Ignore */}
             if(
-                await ApiKeyService.getApiKey(req.query.apiKey) &&
+                apiKey &&
                 (
-                    !(await ApiKeyService.isValidApiKey(req.query.apiKey))
+                    !(await ApiKeyService.isValidApiKey(decodedApiKey))
                     // @ts-ignore
-                    || !await ApiKeyService.hasPermission(req.query.apiKey, this.options.permissions)
+                    || !await ApiKeyService.hasPermission(decodedApiKey, this.options.permissions)
                 )
             ) {
                 return await this.options.onInvalidPermissions(req, res, next);
