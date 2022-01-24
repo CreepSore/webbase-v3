@@ -2,6 +2,8 @@ import PermissionGroup from "../models/PermissionGroup.js";
 import Permission from "../models/Permission.js";
 import User from "../models/User.js";
 
+import Exception from "../../core/Exception.js";
+
 /**
  * @export
  * @param {import("express").Request} req

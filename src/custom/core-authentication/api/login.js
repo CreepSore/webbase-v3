@@ -27,7 +27,7 @@ export default async function(req, res) {
             if(!userId) {
                 return res.json({success: false, error: new Exception("Invalid API-Key", {code: "CORE.AUTHENTICATION.INVALID_API_KEY"})});
             }
-            
+
             // @ts-ignore
             req.session.uid = userId;
             return res.json({success: true, data: {uid: userId}});
