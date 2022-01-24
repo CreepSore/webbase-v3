@@ -48,21 +48,23 @@ export default class ExpressRouteWrapper {
                 (
                     !(await ApiKeyService.isValidApiKey(decodedApiKey))
                     // @ts-ignore
-                    || !await ApiKeyService.hasPermission(decodedApiKey, this.options.permissions)
+                    || (await Promise.all(this.options.permissions.map(perm => ApiKeyService.hasPermission(decodedApiKey, perm)))).some(p => !Boolean(p))
                 )
             ) {
                 return await this.options.onInvalidPermissions(req, res, next);
             }
         }
-
-        let hasAnonymPerm = !res.locals.user && (await Promise.all(this.options.permissions.map(x => PermissionService.isAnonymousPermission(x)))).some(x => x === false);
-        let hasPerm = res.locals.user && (await Promise.all(this.options.permissions.map(x => UserService.hasPermission(res.locals.user.id, x)))).some(x => x === false);
-        // User check
-        if(
-            this.options.checkUser && (hasAnonymPerm || hasPerm)
-        ) {
-            return await this.options.onInvalidPermissions(req, res, next);
+        else {
+            let hasAnonymPerm = !res.locals.user && (await Promise.all(this.options.permissions.map(x => PermissionService.isAnonymousPermission(x)))).some(x => x === false);
+            let hasPerm = res.locals.user && (await Promise.all(this.options.permissions.map(x => UserService.hasPermission(res.locals.user.id, x)))).some(x => x === false);
+            // User check
+            if(
+                this.options.checkUser && (hasAnonymPerm || hasPerm)
+            ) {
+                return await this.options.onInvalidPermissions(req, res, next);
+            }
         }
+
 
         let result = await this.wrapped(req, res, next);
         Profiler.instance.endMeasurement(profilingToken);
