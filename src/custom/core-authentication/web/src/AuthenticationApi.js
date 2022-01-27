@@ -123,6 +123,15 @@ export default class AuthenticationApi {
         return result.data;
     }
 
+    static async impersonateUser(uid) {
+        let result = await fetch(`/api/core.authentication/user/${uid}/impersonate`, {
+            method: "POST"
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.data;
+    }
+
     static async getPermGroups() {
         let result = await fetch("/api/core.authentication/permGroups", {
             method: "GET"

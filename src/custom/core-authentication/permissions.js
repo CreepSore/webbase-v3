@@ -52,6 +52,10 @@ let permissions = {
     core_authentication_permissions_get: {
         key: "CORE.AUTHENTICATION.PERMISSIONS.GET",
         description: "Enables Permission List Retrieval"
+    },
+    core_authentication_impersonate: {
+        key: "CORE.AUTHENTICATION.IMPERSONATE",
+        description: "Enables User Impersonation"
     }
 };
 

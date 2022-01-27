@@ -49,6 +49,11 @@ export default function UserPage() {
         fetchPermGroups();
     };
 
+    let impersonateUser = async(userdata) => {
+        await AuthenticationApi.impersonateUser(userdata.id);
+        location.reload();
+    };
+
     useEffect(() => {
         fetchUsers();
         fetchPermGroups();
@@ -88,7 +93,8 @@ export default function UserPage() {
                 users={users}
                 permGroups={permGroups}
                 onSaveClicked={(userdata) => updateUser(userdata)}
-                onDeleteClicked={(userdata) => deleteUser(userdata)}/>
+                onDeleteClicked={(userdata) => deleteUser(userdata)}
+                onImpersonateClicked={(userdata) => impersonateUser(userdata)}/>
         </div>
     );
 }

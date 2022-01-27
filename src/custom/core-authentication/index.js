@@ -27,6 +27,7 @@ import ApiNewPermGroup from "./api/createPermgroup.js";
 import ApiMyPermissions from "./api/myPermissions.js";
 import ApiGetPermissions from "./api/getPermissions.js";
 import ApiSetPermGroupPerms from "./api/setPermgroupPerms.js";
+import ApiImpersonateUser from "./api/impersonate.js";
 
 import permissions from "./permissions.js";
 
@@ -171,6 +172,9 @@ export default class CoreUsermgmt extends CustomerLogic {
         }));
         apiRouter.delete("/user/:uid", ExpressRouteWrapper.create(ApiDeleteUser, {
             permissions: [permissions.core_authentication_user_delete.key]
+        }));
+        apiRouter.post("/user/:uid/impersonate", ExpressRouteWrapper.create(ApiImpersonateUser, {
+            permissions: [permissions.core_authentication_impersonate.key]
         }));
         apiRouter.get("/users", ExpressRouteWrapper.create(ApiGetUsers, {
             permissions: [permissions.core_authentication_users_get.key]

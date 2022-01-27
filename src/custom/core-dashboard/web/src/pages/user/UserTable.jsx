@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import "../../style.css";
 
-function UserTableRow({user, onEditClicked, onDeleteClicked}) {
+function UserTableRow({user, onEditClicked, onDeleteClicked, onImpersonateClicked}) {
     let [deleteClickedCount, setDeleteClickedCount] = React.useState(0);
 
     let clickDelete = () => {
@@ -25,8 +25,9 @@ function UserTableRow({user, onEditClicked, onDeleteClicked}) {
         <td>**********</td>
         <td>{user.active ? "Yes" : "No"}</td>
         <td className="flex justify-center gap-2">
-            <button className="btn-pill bg-slate-400" onClick={() => onEditClicked(user)}>Edit</button>
-            <button className="btn-pill bg-red-400" onClick={() => clickDelete()}>{deleteClickedCount === 0 ? "Delete" : 4 - deleteClickedCount}</button>
+            <button className="btn-pill bg-slate-400 border border-white hover:brightness-105" onClick={() => onEditClicked(user)}>Edit</button>
+            <button className="btn-pill bg-red-400 border border-white hover:brightness-105" onClick={() => clickDelete()}>{deleteClickedCount === 0 ? "Delete" : 4 - deleteClickedCount}</button>
+            <button className="btn-pill bg-blue-400 border border-white hover:brightness-105" onClick={() => onImpersonateClicked(user)}>Impersonate</button>
         </td>
     </tr>;
 }
@@ -39,7 +40,8 @@ UserTableRow.propTypes = {
         active: PropTypes.bool.isRequired
     }),
     onEditClicked: PropTypes.func.isRequired,
-    onDeleteClicked: PropTypes.func.isRequired
+    onDeleteClicked: PropTypes.func.isRequired,
+    onImpersonateClicked: PropTypes.func.isRequired
 };
 
 function EditUserTableRow({user, permGroups, onSaveClicked}) {
@@ -89,7 +91,7 @@ EditUserTableRow.propTypes = {
     onSaveClicked: PropTypes.func.isRequired
 };
 
-export default function UserTable({users, permGroups, onSaveClicked, onDeleteClicked}) {
+export default function UserTable({users, permGroups, onSaveClicked, onDeleteClicked, onImpersonateClicked}) {
     let [editingUser, setEditingUser] = React.useState(null);
 
     return (
@@ -124,6 +126,7 @@ export default function UserTable({users, permGroups, onSaveClicked, onDeleteCli
                             user={user}
                             onEditClicked={(u) => setEditingUser(u)}
                             onDeleteClicked={(u) => onDeleteClicked(u)}
+                            onImpersonateClicked={(u) => onImpersonateClicked(u)}
                         />;
                 })}
             </tbody>
@@ -149,5 +152,6 @@ UserTable.propTypes = {
         description: PropTypes.string.isRequired
     })),
     onSaveClicked: PropTypes.func.isRequired,
-    onDeleteClicked: PropTypes.func.isRequired
+    onDeleteClicked: PropTypes.func.isRequired,
+    onImpersonateClicked: PropTypes.func.isRequired
 };
