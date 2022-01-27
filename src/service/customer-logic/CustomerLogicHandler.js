@@ -302,12 +302,14 @@ export default class CustomerLogicHandler {
         }
 
         console.log("INFO", `Extension [${metadata.name} v${metadata.version}] loaded.`);
-        customerLogic.onLoad?.();
-        let api = await customerLogic.exposeApi?.();
-        if(api) {
-            this.sharedObjects.set(`API.${metadata.name}`, api);
+        if(!customerLogic.loaded) {
+            customerLogic.onLoad?.();
+            customerLogic.loaded = true;
+            let api = await customerLogic.exposeApi?.();
+            if(api) {
+                this.sharedObjects.set(`API.${metadata.name}`, api);
+            }
         }
-        customerLogic.loaded = true;
         customerLogic.loading = false;
     }
 

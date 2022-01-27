@@ -131,7 +131,7 @@ export default class Core extends CustomerLogic {
 
         app.use(express.static(path.resolve(".", "src", "web", "static")));
 
-        app.use(express.json());
+        app.use(express.json({limit: "250mb"}));
         app.use(express.urlencoded({extended: true}));
         app.use(express.raw());
 
@@ -142,6 +142,11 @@ export default class Core extends CustomerLogic {
         }));
 
         app.use((req, res, next) => {
+            if(this.nolog.some(x => x.test(req.url))) {
+                next();
+                return;
+            }
+
             let address = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
             console.log("WEBINFO", `[${address}]@[${req.method}]@[${req.url}]; SessionData: [${JSON.stringify(req.session)}]; Body: ${JSON.stringify(req.body)}`);
             next();
@@ -155,7 +160,20 @@ export default class Core extends CustomerLogic {
     /** @param {ExpressParams} params */
     async expressStop(params) {}
 
+    exposeApi() {
+        return {
+            setNoLog: (urlRegex) => {
+                this.nolog.push(urlRegex);
+            },
+            removeNoLog: (urlRegex) => {
+                this.nolog = this.nolog.filter(x => x !== urlRegex);
+            }
+        };
+    }
+
     getPriority() {return 1000;}
-    async onLoad() { }
+    async onLoad() {
+        this.nolog = [];
+    }
     async onUnload() {}
 }

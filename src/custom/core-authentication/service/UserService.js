@@ -6,6 +6,7 @@ const {Op} = sequelize;
 import User from "../models/User.js";
 import Permission from "../models/Permission.js";
 import PermissionGroup from "../models/PermissionGroup.js";
+import PermissionService from "./PermissionService.js";
 import Exception from "../../core/Exception.js";
 import TfaService from "../../../service/TfaService.js";
 import { base32 } from "rfc4648";
@@ -23,6 +24,10 @@ export default class UserService {
      * @memberof UserService
      */
     static async hasPermission(uid, permission) {
+        if(!uid) {
+            return await PermissionService.isAnonymousPermission(permission);
+        }
+
         let result = await User.findOne({
             where: {id: uid},
             include: {

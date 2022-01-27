@@ -90,6 +90,11 @@ export default class PermissionService {
         return await(await this.getAnonymousPermissionGroup()).hasPermission(permission);
     }
 
+    static async getAnonymousPermissions() {
+        // @ts-ignore
+        return await(await this.getAnonymousPermissionGroup()).getPermissions();
+    }
+
     static getPermissionGroupByName(name) {
         return PermissionGroup.findOne({where: {name}});
     }

@@ -2,7 +2,7 @@ import PermissionGroup from "../models/PermissionGroup.js";
 import Permission from "../models/Permission.js";
 import User from "../models/User.js";
 
-import Exception from "../../core/Exception.js";
+import PermissionService from "../service/PermissionService.js";
 
 /**
  * @export
@@ -10,7 +10,11 @@ import Exception from "../../core/Exception.js";
  * @param {import("express").Response} res
  */
 export default async function(req, res) {
-    if(!res.locals.user?.id) return res.json({success: false, error: new Exception("User not logged in", {code: "CORE.AUTHENTICATION.NOT_LOGGED_IN"})});
+    if(!res.locals.user?.id) {
+        let anonymousPermissions = await PermissionService.getAnonymousPermissions();
+        res.json({success: true, data: anonymousPermissions.map(p => p.name)});
+        return;
+    }
 
     let user = await User.findOne({
         where: {
