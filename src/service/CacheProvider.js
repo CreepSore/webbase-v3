@@ -1,5 +1,11 @@
 import Profiler from "./Profiler.js";
 
+/**
+ * @callback ProcessCallback
+ * @returns {T}
+ * @template T
+ */
+
 export default class CacheProvider {
     /** @type {CacheProvider} */
     static #instance;
@@ -39,10 +45,11 @@ export default class CacheProvider {
     /**
      * Processes a cache object and returns its data
      * @param {string} name
-     * @param {Function} callback
+     * @param {ProcessCallback<T>} callback
      * @param {number} ttlMs
-     * @return {Promise<any>}
+     * @return {Promise<T>}
      * @memberof CacheProvider
+     * @template T
      */
     async process(name, callback, ttlMs, reprocessCallback = null) {
         let cacheObject = this.cache[name];

@@ -1,0 +1,50 @@
+.validatable-input-container {
+    @apply flex flex-col;
+
+    .validatable-input {
+        @apply relative;
+        @apply flex flex-row items-center;
+
+        input {
+            @apply w-full;
+            @apply outline-none;
+            @apply bg-inherit;
+            @apply border-b border-gray-600;
+            @apply focus-within:border-black;
+
+            &.red {
+                @apply focus-within:border-red-500;
+            }
+
+            &.green {
+                @apply focus-within:border-green-500;
+            }
+
+            &.blue {
+                @apply focus-within:border-blue-500;
+            }
+
+            &.orange {
+                @apply focus-within:border-orange-500;
+            }
+        }
+
+        .validation-icon {
+            @apply absolute right-0;
+            &.valid {
+                @apply text-green-500;
+            }
+
+            &.invalid {
+                @apply text-red-500;
+            }
+        }
+    }
+
+    .validation-text {
+        @apply select-none;
+        @apply text-xs;
+        @apply text-red-500;
+    }
+}
+

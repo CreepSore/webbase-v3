@@ -1,0 +1,9 @@
+{
+    "name": "Core.ReactComponents",
+    "dir": "core-react-components",
+    "version": "3.0.0",
+    "enabled": true,
+    "entrypoint": "index.js",
+    "dependencies": ["Core"],
+    "npmDependencies": []
+}

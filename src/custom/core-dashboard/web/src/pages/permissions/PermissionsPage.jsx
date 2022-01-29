@@ -27,7 +27,7 @@ export default function PermissionsPage() {
     };
 
     let fetchPermissions = () => {
-        return AuthenticationApi.getPermissions().then(setPermissions).catch(() => {});
+        return AuthenticationApi.getPermissions().then(perms => setPermissions(perms.sort((a, b) => a.name.localeCompare(b.name)))).catch(() => {});
     };
 
     let fetchData = async() => {

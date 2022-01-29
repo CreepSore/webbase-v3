@@ -1,0 +1,26 @@
+.base-dialog-container {
+    @apply fixed top-0 left-0 right-0 bottom-0;
+    @apply flex justify-center items-center;
+    @apply backdrop-blur z-50;
+
+    .base-dialog {
+        @apply bg-white text-black;
+        @apply border border-gray-600;
+        @apply rounded-lg shadow-lg;
+        @apply min-w-[33%];
+        @apply p-2;
+
+        &-controls {
+            @apply flex justify-between;
+            @apply p-1;
+        }
+
+        &-form {
+            input[type=text] {
+                @apply p-1;
+                @apply outline-none border-none;
+                @apply border-b border-solid border-b-gray-300 focus:border-b-black;
+            }
+        }
+    }
+}

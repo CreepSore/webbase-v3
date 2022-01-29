@@ -101,6 +101,10 @@ export default class CoreDashboard extends CustomerLogic {
         return {};
     }
 
+    exposeApi() {
+        return {};
+    }
+
     getPriority() {return 1000;}
     async onLoad() { }
     async onUnload() {}
