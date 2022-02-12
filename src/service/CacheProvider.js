@@ -6,6 +6,16 @@ import Profiler from "./Profiler.js";
  * @template T
  */
 
+/**
+ * @typedef {Object} CacheObject
+ * @property {string} name
+ * @property {ProcessCallback<T>} callback
+ * @property {number} ttlMs
+ * @property {number} lastFetch
+ * @property {T} data
+ * @template T
+ */
+
 export default class CacheProvider {
     /** @type {CacheProvider} */
     static #instance;
@@ -14,7 +24,10 @@ export default class CacheProvider {
     }
 
     constructor() {
+        /** @type {Object<string, CacheObject<any>>} */
         this.cache = {};
+        /** @type {Object<string, Function[]>} */
+        this.listeners = {};
     }
 
     /**
@@ -42,6 +55,11 @@ export default class CacheProvider {
         return this;
     }
 
+    addListener(name, callback) {
+        this.listeners[name] = this.listeners[name] || [];
+        this.listeners[name].push(callback);
+    }
+
     /**
      * Processes a cache object and returns its data
      * @param {string} name
@@ -53,43 +71,45 @@ export default class CacheProvider {
      */
     async process(name, callback, ttlMs, reprocessCallback = null) {
         let cacheObject = this.cache[name];
-        if(cacheObject) {
-            let profilerId = Profiler.instance.startMeasurement(`CACHE.${name}`, {ttlMs});
-            let doReprocess = reprocessCallback ? await reprocessCallback() : false;
-            if(!doReprocess && Date.now() - cacheObject.lastFetch < ttlMs) {
-                let copiedCacheObject = {...cacheObject};
-                Profiler.instance
-                    .addMeasurementData(profilerId, {
-                        cacheObject: copiedCacheObject,
-                        preprocessed: true
-                    })
-                    .endMeasurement(profilerId);
-                return cacheObject.data;
-            }
-            cacheObject.data = await cacheObject.callback();
-            cacheObject.lastFetch = Date.now();
+        let profilerId = Profiler.instance.startMeasurement(`CACHE.${name}`, {ttlMs});
 
+        if(!cacheObject) {
+            cacheObject = this.cache[name] = {
+                name,
+                callback,
+                ttlMs,
+                lastFetch: Date.now(),
+                data: await callback()
+            };
             let copiedCacheObject = {...cacheObject};
+            this.listeners[name]?.forEach?.(listener => listener(this.cache[name].data));
 
             Profiler.instance
                 .addMeasurementData(profilerId, {
                     cacheObject: copiedCacheObject,
                     preprocessed: false
-                })
-                .endMeasurement(profilerId);
+                }).endMeasurement(profilerId);
 
             return cacheObject.data;
         }
 
-        let profilerId = Profiler.instance.startMeasurement(`CACHE.${name}`, {ttlMs});
-        cacheObject = this.cache[name] = {
-            name,
-            callback,
-            ttlMs,
-            lastFetch: Date.now(),
-            data: await callback()
-        };
+        let doReprocess = reprocessCallback ? await reprocessCallback() : false;
+        if(!doReprocess && Date.now() - cacheObject.lastFetch < ttlMs) {
+            let copiedCacheObject = {...cacheObject};
+            Profiler.instance
+                .addMeasurementData(profilerId, {
+                    cacheObject: copiedCacheObject,
+                    preprocessed: true
+                }).endMeasurement(profilerId);
+            return cacheObject.data;
+        }
+        cacheObject.data = await cacheObject.callback();
+        cacheObject.lastFetch = Date.now();
+
         let copiedCacheObject = {...cacheObject};
+
+        this.listeners[name]?.forEach?.(listener => listener(copiedCacheObject.data));
+
         Profiler.instance
             .addMeasurementData(profilerId, {
                 cacheObject: copiedCacheObject,

@@ -1,6 +1,4 @@
-"use strict";
-
-import express from "express";
+import express from "express-ws";
 import { Sequelize } from "sequelize/types";
 import CommandHandler from "../command-handler/CommandHandler.js";
 import KvpStorage from "../KvpStorage.js";

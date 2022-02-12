@@ -7,6 +7,7 @@ import expressWs from "express-ws";
 import * as uuid from "uuid";
 import helmet from "helmet";
 import expressSession from "express-session";
+import expressSessionSequelize from "express-session-sequelize";
 
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import CustomerLogicFactory from "../../service/customer-logic/CustomerLogicFactory.js";
@@ -106,7 +107,12 @@ export default class Core extends CustomerLogic {
     async onStartMainApplication() {}
 
     /** @param {SequelizeParams} params */
-    async sequelizeSetupModels(params) {}
+    async sequelizeSetupModels(params) {
+        let SessionStore = expressSessionSequelize(expressSession.Store);
+        this.sessionStore = new SessionStore({
+            db: params.sequelize
+        });
+    }
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
@@ -137,8 +143,13 @@ export default class Core extends CustomerLogic {
 
         app.use(expressSession({
             secret: cfg.web.sessionSecret || uuid.v4(),
-            saveUninitialized: true,        // This probably isn't EU compliant haha lmao
-            resave: false
+            saveUninitialized: false,
+            resave: false,
+            // @ts-ignore
+            store: this.sessionStore,
+            cookie: {
+                maxAge: 60000 * 60
+            }
         }));
 
         app.use((req, res, next) => {
@@ -155,6 +166,8 @@ export default class Core extends CustomerLogic {
         app.get("/api/ping", (req, res) => {
             res.json({success: true});
         });
+
+        this.nolog.push(/\.websocket$/i);
     }
 
     /** @param {ExpressParams} params */

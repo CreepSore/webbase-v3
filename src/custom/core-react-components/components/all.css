@@ -1,3 +1,4 @@
 @import "./dialogs/BaseDialog.css";
 @import "./selectors/DialogSelector.css";
 @import "./controls/ValidatableInput.css";
+@import "./loaders/loaders.css";
