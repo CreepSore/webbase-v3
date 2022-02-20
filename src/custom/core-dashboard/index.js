@@ -5,6 +5,7 @@ import express from "express";
 
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import CustomerLogicHandler from "../../service/customer-logic/CustomerLogicHandler.js";
+import SettingsService from "../core/service/SettingsService.js";
 import Version from "../../models/Version.js";
 import Utils from "../../service/Utils.js";
 import ExpressRouteWrapper from "../../service/ExpressRouteWrapper.js";
@@ -66,6 +67,13 @@ export default class CoreDashboard extends CustomerLogic {
             });
             res.json(logic);
         });
+
+        apiRouter.get("/settings", ExpressRouteWrapper.create(async(req, res) => {
+            let settings = await SettingsService.getAllSettings();
+            res.json(settings);
+        }, {
+            permissions: ["CORE.DASHBOARD.VIEW"]
+        }));
 
         viewRouter.get("/", ExpressRouteWrapper.create((req, res) => {
             res.send(Utils.renderDefaultReactPage("/compiled/core.dashboard/main.js", {

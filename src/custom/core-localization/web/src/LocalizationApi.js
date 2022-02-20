@@ -116,6 +116,6 @@ export default class LocalizationApi {
     }
 
     static async getLanguage() {
-        return "de";
+        return fetch("/api/core/settings/defaultLanguage").then(res => res.json());
     }
 }

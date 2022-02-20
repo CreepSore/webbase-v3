@@ -14,6 +14,8 @@ import CacheProvider from "../../service/CacheProvider.js";
 import PermissionService from "../core-authentication/service/PermissionService.js";
 import Utils from "../../service/Utils.js";
 import permissions from "./permissions.js";
+import SettingsService from "../core/service/SettingsService.js";
+import settings from "./settings.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -83,7 +85,8 @@ export default class CoreLocalization extends CustomerLogic {
 
     async onStartInstallerApplication() {}
 
-    async onStartMainApplication() {}
+    async onStartMainApplication() {
+    }
 
     /** @param {SequelizeParams} params */
     async sequelizeSetupModels(params) {
@@ -96,6 +99,7 @@ export default class CoreLocalization extends CustomerLogic {
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
+        await SettingsService.createSetting(settings.defaultLanguage.key, settings.defaultLanguage.value);
         await this.getApi("Core.Authentication").setupPermissionsByObject(permissions);
 
         await Language.create({

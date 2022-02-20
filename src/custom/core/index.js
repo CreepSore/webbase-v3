@@ -9,11 +9,14 @@ import helmet from "helmet";
 import expressSession from "express-session";
 import expressSessionSequelize from "express-session-sequelize";
 
+import Setting from "./models/Setting.js";
+
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import CustomerLogicFactory from "../../service/customer-logic/CustomerLogicFactory.js";
 import KvpStorage from "../../service/KvpStorage.js";
 import Version from "../../models/Version.js";
 import MailRegistry from "../../service/mail-logic/MailRegistry.js";
+import SettingsService from "./service/SettingsService.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -112,6 +115,8 @@ export default class Core extends CustomerLogic {
         this.sessionStore = new SessionStore({
             db: params.sequelize
         });
+
+        Setting.initialize(params.sequelize);
     }
 
     /** @param {SequelizeParams} params */
@@ -167,11 +172,21 @@ export default class Core extends CustomerLogic {
             res.json({success: true});
         });
 
+        app.get("/api/ping/:time", (req, res) => {
+            let time = Date.now() - Number(req.params.time);
+            res.json({success: true, delta: time});
+        });
+
+        app.get("/api/core/settings/:name", async(req, res) => {
+            let setting = await SettingsService.getSetting(req.params.name);
+            res.json(setting);
+        });
+
         this.nolog.push(/\.websocket$/i);
     }
 
     /** @param {ExpressParams} params */
-    async expressStop(params) {}
+    async expressStop(params) { }
 
     exposeApi() {
         return {

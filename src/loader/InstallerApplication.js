@@ -57,6 +57,7 @@ export default class InstallerApplication {
             await this.runSetupLogic(loader);
         }
 
+        await loader.stop();
         console.log("INFO", "Installer application process finished.");
     }
 

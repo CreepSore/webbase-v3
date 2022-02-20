@@ -48,27 +48,33 @@ export default class LocalizationService {
     static async getTranslation(language, key, replacements) {
         let upperKey = String(key).toUpperCase();
 
-        let translationObject = await Localization.findOne({
-            where: {
-                key: upperKey
-            },
-            include: [
-                {
-                    model: Language,
-                    where: {
-                        localeIdentifier: language
-                    }
-                }
-            ]
-        });
+        let result = null;
 
-        if(!translationObject) {
-            this.missingTranslations.add(`${String(language).toUpperCase()}::${upperKey}`);
-            return null;
-        }
+        let languages = await this.getAllLanguages();
+        await Promise.all(languages.map(async lang => {
+            let found = await Localization.findOne({
+                where: {
+                    key: upperKey
+                },
+                include: [
+                    {
+                        model: Language,
+                        where: {
+                            localeIdentifier: lang.id
+                        }
+                    }
+                ]
+            });
+            if(!found) {
+                this.missingTranslations.add(`${String(lang.id).toUpperCase()}::${upperKey}`);
+            }
+            else if(lang.id === language) {
+                result = found;
+            }
+        }));
 
         // @ts-ignore
-        return this.formatTranslationString(translationObject.value, replacements);
+        return result ? this.formatTranslationString(result.value, replacements) : null;
     }
 
     static async setTranslation(language, key, value) {
