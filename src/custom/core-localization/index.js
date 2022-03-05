@@ -102,19 +102,25 @@ export default class CoreLocalization extends CustomerLogic {
         await SettingsService.createSetting(settings.defaultLanguage.key, settings.defaultLanguage.value);
         await this.getApi("Core.Authentication").setupPermissionsByObject(permissions);
 
-        await Language.create({
-            name: "English",
-            localeIdentifier: "en"
+        await Language.findOrCreate({
+            where: {
+                name: "English",
+                localeIdentifier: "en"
+            }
         });
 
-        await Language.create({
-            name: "German",
-            localeIdentifier: "de"
+        await Language.findOrCreate({
+            where: {
+                name: "German",
+                localeIdentifier: "de"
+            }
         });
 
-        await Version.create({
-            name: this.extensionInfo.name,
-            version: this.extensionInfo.version
+        await Version.findOrCreate({
+            where: {
+                name: this.extensionInfo.name,
+                version: this.extensionInfo.version
+            }
         });
     }
 

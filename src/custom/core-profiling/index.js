@@ -30,14 +30,18 @@ export default class CoreProfiling extends CustomerLogic {
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
-        await Permission.create({
-            name: "CORE.PROFILING.VIEW",
-            description: "Enabled profiling view"
+        await Permission.findOrCreate({
+            where: {
+                name: "CORE.PROFILING.VIEW",
+                description: "Enabled profiling view"
+            }
         });
 
-        await Version.create({
-            name: this.getMetadata().name,
-            version: this.getMetadata().version
+        await Version.findOrCreate({
+            where: {
+                name: this.getMetadata().name,
+                version: this.getMetadata().version
+            }
         });
     }
 

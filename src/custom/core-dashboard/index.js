@@ -34,12 +34,12 @@ export default class CoreDashboard extends CustomerLogic {
         await Permission.create({
             name: "CORE.DASHBOARD.VIEW",
             description: "View the core dashboard"
-        });
+        }).catch(() => {});
 
         await Version.create({
             name: this.getMetadata().name,
             version: this.getMetadata().version
-        });
+        }).catch(() => {});
     }
 
     /** @param {SequelizeParams} params */

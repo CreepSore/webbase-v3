@@ -124,7 +124,7 @@ export default class Core extends CustomerLogic {
         await Version.create({
             name: this.getMetadata().name,
             version: this.getMetadata().version
-        });
+        }).catch(() => {});
     }
 
     /** @param {SequelizeParams} params */

@@ -1,7 +1,7 @@
 {
-  "name": "webbase",
+  "name": "eorg",
   "version": "3.0.0",
-  "description": "webbase v3",
+  "description": "eorg v3",
   "main": "src/app.js",
   "type": "module",
   "scripts": {
@@ -27,6 +27,7 @@
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "express-session-sequelize": "^2.3.0",
     "express-ws": "^5.0.2",
     "helmet": "^4.6.0",
     "mariadb": "^2.5.5",

@@ -92,46 +92,51 @@ export default class CoreUsermgmt extends CustomerLogic {
         ]);
 
         return Promise.all(Object.entries(object).map(async([name, data]) => {
-            let perm = await Permission.create({name: data.key, data});
-            if(data.anonymous) {
-                // @ts-ignore
-                anonymousGroup.addPermission(perm);
-            }
+            return await Permission.create({name: data.key, data})
+                .then(perm => {
+                    if(data.anonymous) {
+                        // @ts-ignore
+                        anonymousGroup.addPermission(perm);
+                    }
 
-            if(data.default) {
-                // @ts-ignore
-                defaultGroup.addPermission(perm);
-            }
+                    if(data.default) {
+                        // @ts-ignore
+                        defaultGroup.addPermission(perm);
+                    }
 
-            if(data.superadmin) {
-                // @ts-ignore
-                superadminGroup.addPermission(perm);
-            }
+                    if(data.superadmin) {
+                        // @ts-ignore
+                        superadminGroup.addPermission(perm);
+                    }
+                }).catch(() => {});
         }));
     }
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
-        await PermissionGroup.create({name: "Anonymous", description: "Anonymous users"});
-        await PermissionGroup.create({name: "Default", description: "Default users"});
-        await PermissionGroup.create({name: "Superadmin", description: "Superadmin users"});
+        await PermissionGroup.findOrCreate({where: {name: "Anonymous", description: "Anonymous users"}});
+        await PermissionGroup.findOrCreate({where: {name: "Default", description: "Default users"}});
+        await PermissionGroup.findOrCreate({where: {name: "Superadmin", description: "Superadmin users"}});
 
         await this.setupPermissionsByObject(permissions);
 
         let userCfg = this.getConfig("defaultSuperuser");
         if(userCfg?.create) {
-            let user = await UserService.registerUser(userCfg.username, userCfg.password, userCfg.email);
-            // @ts-ignore
-            user.active = true;
-            await user.save();
-            // @ts-ignore
-            await UserService.setPermissionGroup(user.id, "Superadmin");
+            try {
+                let user = await UserService.registerUser(userCfg.username, userCfg.password, userCfg.email);
+                // @ts-ignore
+                user.active = true;
+                await user.save();
+                // @ts-ignore
+                await UserService.setPermissionGroup(user.id, "Superadmin");
+            }
+            catch { /** lol */}
         }
 
         await Version.create({
             name: this.extensionInfo.name,
             version: this.extensionInfo.version
-        });
+        }).catch(() => {});
     }
 
 

@@ -22,9 +22,11 @@ export default class CoreReactComponents extends CustomerLogic {
 
     /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
-        await Version.create({
-            name: this.getMetadata().name,
-            version: this.getMetadata().version
+        await Version.findOrCreate({
+            where: {
+                name: this.getMetadata().name,
+                version: this.getMetadata().version
+            }
         });
     }
 

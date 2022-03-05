@@ -65,6 +65,6 @@ export default class ConfigModel {
 
     static exportDefault(targetPath) {
         let defaultModel = new ConfigModel(true);
-        this.exportModel(defaultModel, targetPath);
+        this.exportModel(targetPath, defaultModel);
     }
 }
