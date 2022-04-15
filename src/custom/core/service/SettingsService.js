@@ -9,6 +9,14 @@ export default class SettingsService {
         return setting.value;
     }
 
+    /**
+     * @static
+     * @template T
+     * @param {string} name
+     * @param {T} [defaultValue=null]
+     * @return {Promise<T>}}
+     * @memberof SettingsService
+     */
     static async getSetting(name, defaultValue = null) {
         let settingValue = await this.getRawSetting(name, defaultValue);
         if(!settingValue) return defaultValue;
@@ -24,9 +32,9 @@ export default class SettingsService {
     static async setSetting(name, value) {
         return await Setting.findByPk(name).then(setting => {
             if(setting) {
-                return setting.update({value: JSON.stringify({value})});
+                return setting.update({value: JSON.stringify(value)});
             }
-            return this.createSetting(name, JSON.stringify({value}));
+            return this.createSetting(name, value);
         });
     }
 

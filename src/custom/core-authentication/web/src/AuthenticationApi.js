@@ -46,6 +46,36 @@ export default class AuthenticationApi {
     /**
      * @throws {Exception}
      */
+    static async isLoggedIn() {
+        let result = await fetch("/api/core.authentication/logonInfo", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.loggedIn;
+    }
+
+    /**
+     * @throws {Exception}
+     */
+    static async getMyUid() {
+        let result = await fetch("/api/core.authentication/logonInfo", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+
+        if(!result.success) throw result.error;
+        return result.uid || null;
+    }
+
+    /**
+     * @throws {Exception}
+     */
     static async logout() {
         await fetch("/api/core.authentication/logout", {
             method: "GET"
