@@ -12,6 +12,10 @@ export default class Exception extends Error {
         this.info = info;
     }
 
+    toString() {
+        return JSON.stringify(this.toApiResponse());
+    }
+
     toApiResponse() {
         return {message: this.message, info: this.info};
     }

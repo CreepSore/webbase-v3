@@ -6,6 +6,7 @@ import Version from "../../models/Version.js";
 
 import containerApi from "./api/container.js";
 import itemApi from "./api/item.js";
+import codeApi from "./api/code.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -40,20 +41,21 @@ export default class EorgApi extends CustomerLogic {
 
 
     /** @param {ExpressParams} params */
-    async beforeExpressStart(params) {
-        let apiRouter = express.Router();
-
-        containerApi(apiRouter, params.app);
-        itemApi(apiRouter, params.app);
-
-        params.app.use("/api/eorg/", apiRouter);
-    }
+    async beforeExpressStart(params) {}
 
     /** @param {ExpressParams} params */
     async afterExpressStart(params) { }
 
     /** @param {ExpressParams} params */
-    async expressStart(params) { }
+    async expressStart(params) {
+        let apiRouter = express.Router();
+
+        containerApi(apiRouter);
+        itemApi(apiRouter);
+        codeApi(apiRouter);
+
+        params.app.use("/api/eorg/", apiRouter);
+    }
 
     /** @param {ExpressParams} params */
     async expressStop(params) {}

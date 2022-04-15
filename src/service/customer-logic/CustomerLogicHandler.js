@@ -173,7 +173,7 @@ export default class CustomerLogicHandler {
      */
     async traverseRunDependencyTree(functionName, args, currentNode, executed = new Set(), results = new Map(), upwards = false) {
         if(executed.has(currentNode)) return;
-        executed.add(currentNode);
+
         let deps = upwards ? [...this.customerLogicImplementations].filter(cl => {
             return !executed.has(cl) && currentNode.getMetadata().dependencies.includes(cl.getMetadata().name);
         }) : [...this.customerLogicImplementations].filter(cl => {
@@ -183,14 +183,16 @@ export default class CustomerLogicHandler {
         let calcResult = false;
         if(!calcResult && !upwards) {
             results.set(currentNode.getMetadata().name, await this.runCustomerLogicFunction(currentNode, functionName, ...args));
+            executed.add(currentNode);
             calcResult = true;
         }
         for(let dependency of deps) {
-            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, upwards);
+            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, false);
             if(!calcResult) {
                 results.set(currentNode.getMetadata().name, await this.runCustomerLogicFunction(currentNode, functionName, ...args));
                 calcResult = true;
             }
+            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, true);
         }
 
         if(!calcResult) {
