@@ -15,8 +15,8 @@ mocha.after(async() => {
     await testApp.stop();
 });
 
-mocha.describe("Eorg Test", () => {
-    mocha.it("should create and delete an item", async() => {
+mocha.describe("Eorg Test", function() {
+    mocha.it("should create and delete an item", async function() {
         await EorgService.deleteItemFromAllContainers({name: "test-item"}).catch(() => {});
         await EorgService.deleteItem({name: "test-item"}).catch(() => {});
         let itemId = await EorgService.createItem({name: "test-item", description: "this is a description"});
@@ -26,7 +26,7 @@ mocha.describe("Eorg Test", () => {
         assert.strictEqual(Boolean(await Item.findByPk(itemId)), false);
     });
 
-    mocha.it("should create a container with items and delete it", async() => {
+    mocha.it("should create a container with items and delete it", async function() {
         await EorgService.deleteContainer({name: "test-container"}).catch(() => {});
         await EorgService.deleteItemFromAllContainers({name: "test-item"}).catch(() => {});
         await EorgService.deleteItem({name: "test-item"}).catch(() => {});
@@ -59,7 +59,7 @@ mocha.describe("Eorg Test", () => {
         assert.strictEqual(Boolean(await Container.findByPk(container.id)), false);
     });
 
-    mocha.it("should create a valid code out of a container", async() => {
+    mocha.it("should create a valid code out of a container", async function() {
         await EorgService.deleteContainer({name: "test-container"}).catch(() => {});
 
         let container = await EorgService.createContainer("test-container").then(id => Container.findByPk(id));
@@ -86,7 +86,7 @@ mocha.describe("Eorg Test", () => {
         await EorgService.deleteContainer({name: "test-container"}).catch(() => {});
     });
 
-    mocha.it("should create a valid code out of an item", async() => {
+    mocha.it("should create a valid code out of an item", async function() {
         await EorgService.deleteItem({name: "test-item"}).catch(() => {});
 
         let item = await EorgService.createItem({name: "test-item", description: "This is a description"}).then(id => Item.findByPk(id));
@@ -113,13 +113,39 @@ mocha.describe("Eorg Test", () => {
         await EorgService.deleteItem({name: "test-item"}).catch(() => {});
     });
 
-    mocha.it("should successfully create and decode a code", async() => {
+    mocha.it("should successfully create and decode a code", async function() {
         let code = EorgService.createCode("testcode", "resolvetype", "value lmao");
         assert.deepStrictEqual(EorgService.decodeCode(code), {
             type: "testcode",
             resolveType: "resolvetype",
             value: "value lmao"
         });
+    });
+
+    mocha.it("should resolve the code and fetch the item accordingly", async function() {
+        await EorgService.deleteItem({name: "test"}).catch(() => {});
+        let item = await EorgService.createItem({name: "test"}).then(id => Item.findByPk(id));
+
+        let code = EorgService.createCodeFromItem(item, "id");
+        let resolved = await EorgService.getItemByCode(code);
+
+        // @ts-ignore
+        assert.strictEqual(resolved.id, item.id);
+
+        await EorgService.deleteItem({name: "test"}).catch(() => {});
+    });
+
+    mocha.it("should resolve the code and fetch the container accordingly", async function() {
+        await EorgService.deleteContainer({name: "test"}).catch(() => {});
+        let container = await EorgService.createContainer("test").then(id => Container.findByPk(id));
+
+        let code = EorgService.createCodeFromContainer(container, "id");
+        let resolved = await EorgService.getContainerByCode(code);
+
+        // @ts-ignore
+        assert.strictEqual(resolved.id, container.id);
+
+        await EorgService.deleteContainer({name: "test"}).catch(() => {});
     });
 });
 

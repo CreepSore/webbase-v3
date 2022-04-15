@@ -58,10 +58,10 @@ export default class EorgService {
 
         switch(decoded.resolveType) {
             case "id":
-                return new ContainerWrapper(Container.findByPk(decoded.value));
+                return await Container.findByPk(decoded.value);
 
             case "name":
-                return new ContainerWrapper(Container.findOne({where: {name: decoded.value}}));
+                return await Container.findOne({where: {name: decoded.value}});
 
             default:
                 throw EorgException.construct(EorgException.invalidCodeResolveType, "Invalid container code");
@@ -76,7 +76,10 @@ export default class EorgService {
 
         switch(decoded.resolveType) {
             case "id":
-                return new ItemWrapper(Item.findByPk(decoded.value));
+                return Item.findByPk(decoded.value);
+
+            case "name":
+                return Item.findByPk(decoded.value);
 
             default:
                 throw EorgException.construct(EorgException.invalidCodeResolveType, "Invalid item code");
