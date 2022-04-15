@@ -1,22 +1,23 @@
 import Setting from "../models/Setting.js";
 
 export default class SettingsService {
-    static async getRawSetting(name, defaultValue = null) {
+    static async getRawSetting(name) {
         let setting = await Setting.findByPk(name);
-        if(!setting) return defaultValue;
+        if(!setting) return null;
 
         // @ts-ignore
         return setting.value;
     }
 
     static async getSetting(name, defaultValue = null) {
-        let settingValue = await this.getRawSetting(name, defaultValue);
+        let settingValue = await this.getRawSetting(name);
         if(!settingValue) return defaultValue;
 
         try {
             return JSON.parse(settingValue);
         }
         catch {
+            // this should not happen in the first place
             return defaultValue;
         }
     }
@@ -24,9 +25,9 @@ export default class SettingsService {
     static async setSetting(name, value) {
         return await Setting.findByPk(name).then(setting => {
             if(setting) {
-                return setting.update({value: JSON.stringify({value})});
+                return setting.update({value: JSON.stringify(value)});
             }
-            return this.createSetting(name, JSON.stringify({value}));
+            return this.createSetting(name, value);
         });
     }
 
@@ -37,5 +38,9 @@ export default class SettingsService {
 
     static async getAllSettings() {
         return await Setting.findAll({raw: true});
+    }
+
+    static async deleteSetting(name) {
+        return await Setting.destroy({where: {name}});
     }
 }
