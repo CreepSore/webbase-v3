@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
+import express from "express";
+
 import CustomerLogic from "../../service/customer-logic/CustomerLogic.js";
 import Version from "../../models/Version.js";
+
+import containerApi from "./api/container.js";
+import itemApi from "./api/item.js";
 
 /**
  * @typedef {import("../../service/customer-logic/types").CustomerLogicDependencies} CustomerLogicDependencies
@@ -9,7 +14,7 @@ import Version from "../../models/Version.js";
  * @typedef {import("../../service/customer-logic/types").StartCliApplicationParams} StartCliApplicationParams
  */
 
-export default class ExtensionTemplate extends CustomerLogic {
+export default class EorgApi extends CustomerLogic {
     /** @param {StartCliApplicationParams} params */
     async onStartCliApplication(params) {}
 
@@ -21,6 +26,9 @@ export default class ExtensionTemplate extends CustomerLogic {
     async sequelizeSetupModels(params) {}
 
     /** @param {SequelizeParams} params */
+    async sequelizeSetupRelation(params) {}
+
+    /** @param {SequelizeParams} params */
     async sequelizeFirstInstall(params) {
         await Version.findOrCreate({
             where: {
@@ -30,11 +38,16 @@ export default class ExtensionTemplate extends CustomerLogic {
         });
     }
 
-    /** @param {SequelizeParams} params */
-    async sequelizeSetupRelation(params) {}
 
     /** @param {ExpressParams} params */
-    async beforeExpressStart(params) { }
+    async beforeExpressStart(params) {
+        let apiRouter = express.Router();
+
+        containerApi(apiRouter, params.app);
+        itemApi(apiRouter, params.app);
+
+        params.app.use("/api/eorg/", apiRouter);
+    }
 
     /** @param {ExpressParams} params */
     async afterExpressStart(params) { }

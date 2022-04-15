@@ -1,0 +1,9 @@
+{
+    "name": "Eorg.Api",
+    "dir": "eorg-api",
+    "version": "3.0.0",
+    "enabled": true,
+    "entrypoint": "index.js",
+    "dependencies": ["Core", "Eorg.Core"],
+    "npmDependencies": []
+}

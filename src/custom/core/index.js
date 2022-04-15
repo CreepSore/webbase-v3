@@ -7,7 +7,6 @@ import expressWs from "express-ws";
 import * as uuid from "uuid";
 import helmet from "helmet";
 import expressSession from "express-session";
-import expressSessionSequelize from "express-session-sequelize";
 
 import Setting from "./models/Setting.js";
 
@@ -111,11 +110,6 @@ export default class Core extends CustomerLogic {
 
     /** @param {SequelizeParams} params */
     async sequelizeSetupModels(params) {
-        let SessionStore = expressSessionSequelize(expressSession.Store);
-        this.sessionStore = new SessionStore({
-            db: params.sequelize
-        });
-
         Setting.initialize(params.sequelize);
     }
 

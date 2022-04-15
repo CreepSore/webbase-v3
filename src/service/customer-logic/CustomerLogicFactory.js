@@ -28,7 +28,8 @@ export default class CustomerLogicFactory {
                         throw new Error(`Entrypoint not found at [${finalPath}]`);
                     }
 
-                    let LogicConstructor = (await import(os.platform() === "win32" ? `file:///${finalPath}` : finalPath)).default;
+                    let imported = await import(os.platform() === "win32" ? `file:///${finalPath}` : finalPath);
+                    let LogicConstructor = imported.default;
                     let logicInstance = new LogicConstructor();
                     await handler.registerCustomerLogic(logicInstance, false, {
                         pluginDir: resolvedPluginDir,
@@ -42,7 +43,7 @@ export default class CustomerLogicFactory {
                 }
             });
 
-        await Promise.all(toAwait);
+        await Promise.all(toAwait).catch(l => l);
 
         autoLoad && await handler.loadAllCustomerImplementations();
         return handler;

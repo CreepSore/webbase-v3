@@ -186,12 +186,11 @@ export default class CustomerLogicHandler {
             calcResult = true;
         }
         for(let dependency of deps) {
-            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, true);
+            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, upwards);
             if(!calcResult) {
                 results.set(currentNode.getMetadata().name, await this.runCustomerLogicFunction(currentNode, functionName, ...args));
                 calcResult = true;
             }
-            await this.traverseRunDependencyTree(functionName, args, dependency, executed, results, false);
         }
 
         if(!calcResult) {
