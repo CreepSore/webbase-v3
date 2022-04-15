@@ -28,6 +28,7 @@ import ApiMyPermissions from "./api/myPermissions.js";
 import ApiGetPermissions from "./api/getPermissions.js";
 import ApiSetPermGroupPerms from "./api/setPermgroupPerms.js";
 import ApiImpersonateUser from "./api/impersonate.js";
+import ApiLogonInfo from "./api/logonInfo.js";
 
 import permissions from "./permissions.js";
 
@@ -166,6 +167,7 @@ export default class CoreUsermgmt extends CustomerLogic {
             permissions: [permissions.core_authentication_login.key]
         }));
         apiRouter.get("/logout", ExpressRouteWrapper.create(ApiLogout));
+        apiRouter.get("/logonInfo", ExpressRouteWrapper.create(ApiLogonInfo, {}));
         apiRouter.post("/register", ExpressRouteWrapper.create(ApiRegister, {
             permissions: [permissions.core_authentication_register.key]
         }));

@@ -9,6 +9,14 @@ export default class SettingsService {
         return setting.value;
     }
 
+    /**
+     * @static
+     * @template T
+     * @param {string} name
+     * @param {T} [defaultValue=null]
+     * @return {Promise<T>}}
+     * @memberof SettingsService
+     */
     static async getSetting(name, defaultValue = null) {
         let settingValue = await this.getRawSetting(name);
         if(!settingValue) return defaultValue;

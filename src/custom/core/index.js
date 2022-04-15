@@ -144,8 +144,6 @@ export default class Core extends CustomerLogic {
             secret: cfg.web.sessionSecret || uuid.v4(),
             saveUninitialized: false,
             resave: false,
-            // @ts-ignore
-            store: this.sessionStore,
             cookie: {
                 maxAge: 60000 * 60
             }
