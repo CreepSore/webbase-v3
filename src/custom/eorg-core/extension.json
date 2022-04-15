@@ -1,9 +1,0 @@
-{
-    "name": "Eorg.Core",
-    "dir": "eorg-core",
-    "version": "3.0.0",
-    "enabled": true,
-    "entrypoint": "index.js",
-    "dependencies": ["Core"],
-    "npmDependencies": []
-}
