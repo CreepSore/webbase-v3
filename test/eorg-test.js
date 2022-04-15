@@ -51,6 +51,12 @@ mocha.describe("Eorg Test", function() {
         // @ts-ignore
         assert.strictEqual(container.Items.find(i => i.id === testItem).name, "test-item");
 
+        // @ts-ignore
+        await EorgService.addItemToContainer(container.id, {itemId: testItem, quantity: -2});
+        await container.reload();
+        // @ts-ignore
+        assert.strictEqual(container.Items.length, 0);
+
         await EorgService.deleteContainer({name: "test-container"}).catch(() => {});
         await EorgService.deleteItemFromAllContainers({name: "test-item"}).catch(() => {});
         await EorgService.deleteItem({name: "test-item"}).catch(() => {});
@@ -131,7 +137,7 @@ mocha.describe("Eorg Test", function() {
         let resolvedId = await EorgService.getItemByCode(idCode);
         let resolvedName = await EorgService.getItemByCode(nameCode);
 
-        assert.rejects(EorgService.getContainerByCode(idCode), "Should get rejected because of invalid code");
+        await assert.rejects(EorgService.getContainerByCode(idCode), "Should get rejected because of invalid code");
 
         // @ts-ignore
         assert.strictEqual(resolvedId.id, item.id);
@@ -150,7 +156,7 @@ mocha.describe("Eorg Test", function() {
         let resolvedId = await EorgService.getContainerByCode(idCode);
         let resolvedName = await EorgService.getContainerByCode(nameCode);
 
-        assert.rejects(EorgService.getItemByCode(idCode), "Should get rejected because of invalid code");
+        await assert.rejects(EorgService.getItemByCode(idCode), "Should get rejected because of invalid code");
 
         // @ts-ignore
         assert.strictEqual(resolvedId.id, container.id);
