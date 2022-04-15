@@ -126,11 +126,17 @@ mocha.describe("Eorg Test", function() {
         await EorgService.deleteItem({name: "test"}).catch(() => {});
         let item = await EorgService.createItem({name: "test"}).then(id => Item.findByPk(id));
 
-        let code = EorgService.createCodeFromItem(item, "id");
-        let resolved = await EorgService.getItemByCode(code);
+        let idCode = EorgService.createCodeFromItem(item, "id");
+        let nameCode = EorgService.createCodeFromItem(item, "name");
+        let resolvedId = await EorgService.getItemByCode(idCode);
+        let resolvedName = await EorgService.getItemByCode(nameCode);
+
+        assert.rejects(EorgService.getContainerByCode(idCode), "Should get rejected because of invalid code");
 
         // @ts-ignore
-        assert.strictEqual(resolved.id, item.id);
+        assert.strictEqual(resolvedId.id, item.id);
+        // @ts-ignore
+        assert.strictEqual(resolvedName.id, item.id);
 
         await EorgService.deleteItem({name: "test"}).catch(() => {});
     });
@@ -139,11 +145,17 @@ mocha.describe("Eorg Test", function() {
         await EorgService.deleteContainer({name: "test"}).catch(() => {});
         let container = await EorgService.createContainer("test").then(id => Container.findByPk(id));
 
-        let code = EorgService.createCodeFromContainer(container, "id");
-        let resolved = await EorgService.getContainerByCode(code);
+        let idCode = EorgService.createCodeFromContainer(container, "id");
+        let nameCode = EorgService.createCodeFromContainer(container, "name");
+        let resolvedId = await EorgService.getContainerByCode(idCode);
+        let resolvedName = await EorgService.getContainerByCode(nameCode);
+
+        assert.rejects(EorgService.getItemByCode(idCode), "Should get rejected because of invalid code");
 
         // @ts-ignore
-        assert.strictEqual(resolved.id, container.id);
+        assert.strictEqual(resolvedId.id, container.id);
+        // @ts-ignore
+        assert.strictEqual(resolvedName.id, container.id);
 
         await EorgService.deleteContainer({name: "test"}).catch(() => {});
     });

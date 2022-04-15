@@ -5,9 +5,6 @@ import Container from "../models/Container.js";
 import Item from "../models/Item.js";
 import ContainerSegment from "../models/ContainerSegment.js";
 
-import ContainerWrapper from "../models/wrappers/ContainerWrapper.js";
-import ItemWrapper from "../models/wrappers/ItemWrapper.js";
-
 export default class EorgService {
     static decodeCode(code) {
         const splittedCode = code.split(".");
@@ -30,7 +27,7 @@ export default class EorgService {
 
     /**
      * @static
-     * @param {Container | ContainerWrapper} container
+     * @param {Container} container
      * @param {string} [type="id"|"name"]
      * @return {string}
      * @memberof EorgService
@@ -41,7 +38,7 @@ export default class EorgService {
 
     /**
      * @static
-     * @param {Item | ItemWrapper} item
+     * @param {Item} item
      * @param {string} [type="id"]
      * @return {string}
      * @memberof EorgService
@@ -79,7 +76,7 @@ export default class EorgService {
                 return Item.findByPk(decoded.value);
 
             case "name":
-                return Item.findByPk(decoded.value);
+                return Item.findOne({where: {name: decoded.value}});
 
             default:
                 throw EorgException.construct(EorgException.invalidCodeResolveType, "Invalid item code");
