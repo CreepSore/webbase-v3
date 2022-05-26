@@ -145,6 +145,20 @@ export default class CoreUsermgmt extends CustomerLogic {
     async expressStart(params) {
         let {app} = params;
         app.use(async(req, res, next) => {
+            const ipAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+            const autologinEntry = (this.getConfig().autologin || []).find(entry => entry.host === ipAddress);
+            // @ts-ignore
+            if(autologinEntry && !req.session?.uid) {
+                const foundUser = await User.findOne({where: {username: autologinEntry.username}});
+                if(!foundUser) {
+                    console.log("WARN", `Failed to Autologin ${ipAddress} for user ${autologinEntry.username}`);
+                }
+
+                // @ts-ignore
+                req.session.uid = foundUser.id;
+                console.log("WARN", `Automatically logged in ${ipAddress} for user ${autologinEntry.username}`);
+            }
+
             // @ts-ignore
             if(!req.session?.uid) return next();
             // @ts-ignore
@@ -239,7 +253,10 @@ export default class CoreUsermgmt extends CustomerLogic {
                 create: false,
                 username: "",
                 password: ""
-            }
+            },
+            autologin: [
+                {enabled: false, host: "127.0.0.1", username: "username"}
+            ]
         };
     }
 
