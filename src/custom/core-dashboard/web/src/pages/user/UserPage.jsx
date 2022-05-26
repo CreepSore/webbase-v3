@@ -82,7 +82,7 @@ export default function UserPage() {
                     permGroups={permGroups}
                 />}
 
-            <div className="flex justify-end px-1 w-full bg-blue-600">
+            <div className="flex justify-end px-1 w-full">
                 <button
                     className="hover:text-green-300 text-white"
                     onClick={() => setUserCreateDialogVisible(true)}

@@ -12,10 +12,10 @@
     "dbreinstall": "node ./src/app.js -isd",
     "lint": "eslint ./src ./test",
     "lintautofix": "eslint --fix ./src ./test",
-    "dev": "npm run lint && NODE_OPTIONS=--openssl-legacy-provider npx webpack -w --progress --mode development --openssl-legacy-provider",
-    "devnolint": "NODE_OPTIONS=--openssl-legacy-provider npx webpack -w --progress --mode development",
+    "dev": "npm run lint && npx webpack -w --progress --mode development --openssl-legacy-provider",
+    "devnolint": "npx webpack -w --progress --mode development",
     "test": "mocha ./test",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider npx webpack --mode production"
+    "build": "npx webpack --mode production"
   },
   "author": "HIER",
   "license": "MIT",

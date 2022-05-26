@@ -25,9 +25,9 @@ function UserTableRow({user, onEditClicked, onDeleteClicked, onImpersonateClicke
         <td>**********</td>
         <td>{user.active ? "Yes" : "No"}</td>
         <td className="flex justify-center gap-2">
-            <button className="btn-pill bg-slate-400 border border-white hover:brightness-105" onClick={() => onEditClicked(user)}>Edit</button>
-            <button className="btn-pill bg-red-400 border border-white hover:brightness-105" onClick={() => clickDelete()}>{deleteClickedCount === 0 ? "Delete" : 4 - deleteClickedCount}</button>
-            <button className="btn-pill bg-blue-400 border border-white hover:brightness-105" onClick={() => onImpersonateClicked(user)}>Impersonate</button>
+            <button className="btn-pill bg-opacity-30 hover:bg-opacity-100 bg-slate-400 border border-white hover:brightness-105" onClick={() => onEditClicked(user)}>Edit</button>
+            <button className="btn-pill bg-opacity-30 hover:bg-opacity-100 bg-red-400 border border-white hover:brightness-105" onClick={() => clickDelete()}>{deleteClickedCount === 0 ? "Delete" : 4 - deleteClickedCount}</button>
+            <button className="btn-pill bg-opacity-30 hover:bg-opacity-100 bg-blue-400 border border-white hover:brightness-105" onClick={() => onImpersonateClicked(user)}>Impersonate</button>
         </td>
     </tr>;
 }
@@ -65,7 +65,7 @@ function EditUserTableRow({user, permGroups, onSaveClicked}) {
         <td><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></td>
         <td><input type="password" value={tfaKey} onChange={(e) => setTfaKey(e.target.value)} /></td>
         <td><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /></td>
-        <td><button className="btn-pill bg-green-400" onClick={() => onSaveClicked({
+        <td><button className="btn-pill bg-opacity-30 hover:bg-opacity-100 bg-green-400 hover:brightness-105 border-white" onClick={() => onSaveClicked({
             id: user.id,
             username,
             email,
@@ -95,42 +95,44 @@ export default function UserTable({users, permGroups, onSaveClicked, onDeleteCli
     let [editingUser, setEditingUser] = React.useState(null);
 
     return (
-        <table className="edit-table">
-            <thead>
-                <tr>
-                    <th scope="col" className="text-left">ID</th>
-                    <th scope="col" className="text-left">Permission Group</th>
-                    <th scope="col" className="text-left">Username</th>
-                    <th scope="col" className="text-left">Email</th>
-                    <th scope="col" className="text-left">Password</th>
-                    <th scope="col" className="text-left">TFA Key</th>
-                    <th scope="col" className="text-left">Active</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {users.map(user => {
-                    return editingUser === user ?
-                        <EditUserTableRow
-                            key={user.id}
-                            user={user}
-                            permGroups={permGroups}
-                            onSaveClicked={(userdata) => {
-                                setEditingUser(null);
-                                onSaveClicked(userdata);
-                            }}
-                        />
-                        :
-                        <UserTableRow
-                            key={user.id}
-                            user={user}
-                            onEditClicked={(u) => setEditingUser(u)}
-                            onDeleteClicked={(u) => onDeleteClicked(u)}
-                            onImpersonateClicked={(u) => onImpersonateClicked(u)}
-                        />;
-                })}
-            </tbody>
-        </table>
+        <div className="table-container">
+            <table className="edit-table">
+                <thead>
+                    <tr>
+                        <th scope="col" className="text-left">ID</th>
+                        <th scope="col" className="text-left">Permission Group</th>
+                        <th scope="col" className="text-left">Username</th>
+                        <th scope="col" className="text-left">Email</th>
+                        <th scope="col" className="text-left">Password</th>
+                        <th scope="col" className="text-left">TFA Key</th>
+                        <th scope="col" className="text-left">Active</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {users.map(user => {
+                        return editingUser === user ?
+                            <EditUserTableRow
+                                key={user.id}
+                                user={user}
+                                permGroups={permGroups}
+                                onSaveClicked={(userdata) => {
+                                    setEditingUser(null);
+                                    onSaveClicked(userdata);
+                                }}
+                            />
+                            :
+                            <UserTableRow
+                                key={user.id}
+                                user={user}
+                                onEditClicked={(u) => setEditingUser(u)}
+                                onDeleteClicked={(u) => onDeleteClicked(u)}
+                                onImpersonateClicked={(u) => onImpersonateClicked(u)}
+                            />;
+                    })}
+                </tbody>
+            </table>
+        </div>
     );
 }
 
