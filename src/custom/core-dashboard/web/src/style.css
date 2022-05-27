@@ -35,6 +35,155 @@
 }
 
 @layer components {
+    .selection-control {
+        @apply flex justify-center items-center flex-col;
+        @apply gap-2;
+    }
+
+    .selection-control-search {
+        @apply w-full;
+        @apply rounded-md;
+        @apply bg-white bg-opacity-40;
+        @apply border-b-2 border-transparent;
+    }
+
+    .selection-control-search:focus-within {
+        @apply border-green-100 border-opacity-40;
+    }
+
+    .selection-control-search>.search-input {
+        @apply border-b border-transparent;
+        @apply outline-none;
+        @apply bg-transparent;
+        @apply p-1;
+    }
+
+    .search-input::placeholder {
+        @apply text-black;
+        text-shadow: 0px 0px 4px white;
+    }
+
+    .selection-control-entries {
+        @apply w-full;
+        @apply text-black;
+        text-shadow: 0px 0px 4px white;
+    }
+
+    .selection-control-entries>.selection-control-entry {
+        @apply bg-white bg-opacity-40;
+        @apply text-center;
+        @apply py-1 px-2;
+        @apply cursor-pointer;
+    }
+
+    .selection-control-entry:first-child {
+        @apply rounded-t-md;
+    }
+
+    .selection-control-entry:last-child {
+        @apply rounded-b-md;
+    }
+
+    .input-group {
+        @apply flex flex-col;
+
+        label {
+            text-shadow: 0px 0px 4px white;
+        }
+    }
+
+    .modal-container {
+        @apply fixed;
+        @apply h-screen w-screen;
+        @apply flex items-center justify-center;
+        @apply z-50;
+        @apply backdrop-blur-md;
+    }
+
+    .glass-modal {
+        @apply bg-white bg-opacity-40;
+        @apply border border-white border-opacity-20;
+        @apply rounded-md p-4;
+        @apply flex flex-col gap-2;
+        @apply shadow-2xl;
+    }
+
+    .glass-modal-header {
+        @apply text-xl;
+    }
+
+    select.glass-input {
+        @apply rounded-md bg-white bg-opacity-40;
+        @apply py-1 px-8;
+        @apply border border-white border-opacity-20;
+        @apply shadow-md;
+    }
+
+    input[type="text"].glass-input {
+        @apply bg-white bg-opacity-40;
+        @apply px-2 py-1 rounded-md;
+        @apply shadow-md;
+    }
+
+    textarea.glass-input {
+        @apply bg-white bg-opacity-40;
+        @apply p-1 rounded-md;
+        @apply resize-none;
+        @apply shadow-md;
+    }
+
+    textarea.glass-input:focus {
+        @apply bg-opacity-80;
+    }
+
+    .glass-button {
+        @apply py-1 px-4 rounded-md;
+        @apply border border-slate-300;
+        @apply shadow-md;
+    }
+
+    .glass-button:not(.outlined) {
+        @apply text-blue-500;
+        @apply bg-slate-200;
+    }
+
+    .glass-button.outlined {
+        @apply border-slate-300;
+        @apply text-slate-700;
+        text-shadow: 0px 0px 6px white;
+    }
+
+    .glass-button:hover {
+        @apply border-slate-100;
+    }
+
+    .selection-control-entry.selected,
+    .selection-control-entry:hover {
+        @apply bg-gray-200 bg-opacity-40;
+    }
+
+    .glass-menu-entry {
+        @apply min-w-[225px];
+        @apply text-center;
+        @apply cursor-pointer;
+        @apply text-blue-600;
+        @apply bg-white bg-opacity-40;
+        @apply py-2 px-10;
+
+        &:hover {
+            @apply brightness-110;
+            @apply bg-gray-300 bg-opacity-40;
+        }
+
+        &:first-child {
+            @apply rounded-t-md;
+        }
+
+        &:last-child {
+            @apply rounded-b-md;
+        }
+    }
+
     .add-button {
         @apply fixed right-0 bottom-0 m-4;
         @apply rounded-full p-2;
@@ -70,8 +219,9 @@
 
     .permgroup-editor-container {
         @apply w-full h-full;
+
         .permgroup-editor {
-            @apply bg-slate-100;
+            @apply bg-white bg-opacity-40 rounded-md;
 
             .permgroup-editor-header {
                 @apply p-3;
@@ -87,7 +237,8 @@
                 @apply flex flex-row gap-4;
                 @apply w-full h-full;
 
-                .assigned, .unassigned {
+                .assigned,
+                .unassigned {
                     @apply w-full;
                 }
             }
@@ -111,6 +262,7 @@
             @apply flex flex-row items-center;
             @apply relative;
             @apply mb-2;
+
             input[type=text] {
                 @apply p-1 bg-transparent;
                 @apply w-full;
@@ -136,7 +288,8 @@
             @apply cursor-pointer;
             @apply flex justify-between items-center flex-row;
 
-            &:hover, &.selected {
+            &:hover,
+            &.selected {
                 @apply bg-slate-200;
             }
         }
@@ -169,14 +322,16 @@
         }
     }
 
-    button, input[type=button] {
+    button,
+    input[type=button] {
         &.btn-pill {
             @apply px-3 text-center rounded-md;
         }
     }
 
     .table-container {
-        @apply w-full rounded-xl bg-[rgb(255,255,255,0.4)] p-2;
+        @apply w-full rounded-xl bg-[rgba(255,255,255,0.4)] p-2;
+
         table.edit-table {
             @apply w-full;
 
@@ -184,13 +339,15 @@
             @apply font-["Roboto"];
 
             thead {
-                input, select {
+
+                input,
+                select {
                     @apply w-full;
                     @apply text-black;
                 }
 
                 tr:last-child {
-                    @apply border-b border-[rgb(255,255,255,0.3)];
+                    @apply border-b border-[rgba(255,255,255,0.3)];
                 }
             }
 
@@ -204,11 +361,11 @@
                 }
 
                 tr:nth-child(odd) {
-                    @apply border-[rgb(255,255,255,0.2)];
+                    @apply border-[rgba(255,255,255,0.2)];
                 }
 
                 tr:nth-child(even) {
-                    @apply border-[rgb(255,255,255,0.3)];
+                    @apply border-[rgba(255,255,255,0.3)];
                 }
 
                 tr:last-child {
@@ -218,6 +375,7 @@
 
             td {
                 @apply py-1;
+
                 &:last-child {
                     @apply text-center;
                 }

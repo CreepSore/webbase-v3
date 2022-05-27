@@ -49,7 +49,7 @@ export default function PermissionsPage() {
     };
 
     return (
-        <div className="permissions-page">
+        <div className="permissions-page gap-1">
             {addPermissionGroupDialogShown &&
                 <AddPermissionGroupDialog
                     onClose={() => setAddPermissionGroupDialogShown(false)}

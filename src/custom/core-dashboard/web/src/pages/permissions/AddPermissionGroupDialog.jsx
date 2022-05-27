@@ -23,49 +23,34 @@ export default function AddPermissionGroupDialog({onClose, onSave}) {
     };
 
     return (
-        <div className="dialog-container">
-            <div className="dialog">
-                <div className="dialog-controls">
-                    <div className="mb-2">
-                        <h1 className="flex flex-row text-2xl"><UserGroupIcon height={32} width={32}/> Add Permission Group</h1>
-                    </div>
-                    <button
-                        className="text-red hover:brightness-95"
-                        onClick={() => onClose()}
-                    >
-                        <XCircleIcon height={24} width={24} />
-                    </button>
+        <div className="modal-container">
+            <div className="glass-modal w-[500px] m-1">
+                <h1 className="glass-modal-header">Create Permission Group</h1>
+
+                <div className="input-group">
+                    <label>Name</label>
+                    <input
+                        className="glass-input"
+                        type="text"
+                        onChange={e => setName(e.target.value)}
+                        value={name}
+                    />
                 </div>
-                <div className="dialog-form">
-                    <div className="flex flex-col gap-2">
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            onChange={e => setName(e.target.value)}
-                            value={name}/>
 
-                        <div className="w-full h-[10em] mb-2">
-                            <p>Description</p>
-                            <textarea
-                                className="w-full h-full border border-gray-400"
-                                value={description}
-                                onChange={e => setDescription(e.target.value)}></textarea>
-                        </div>
+                <div className="input-group">
+                    <label>Description</label>
+                    <textarea
+                        className="glass-input"
+                        cols={30}
+                        rows={10}
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                    ></textarea>
+                </div>
 
-                        {/*
-                        <select onChange={e => setPermGroup(e.target.value)}>
-                            <option value="NONE">NONE</option>
-                            {permGroups.map(pg => <option key={pg.id} value={pg.name}>{pg.name}</option>)}
-                        </select>
-                        */}
-
-                        <div className="mt-2">
-                            <div className="mb-2 text-red-500" hidden={!error}>{error}</div>
-                            <button
-                                className="bg-green-300 text-black px-4 py-1 rounded-full w-full"
-                                onClick={() => runSaveLogic()}>Save</button>
-                        </div>
-                    </div>
+                <div className="input-group gap-[0.2rem]">
+                    <button className="glass-button success" onClick={() => runSaveLogic()}>Save</button>
+                    <button className="glass-button danger outlined" onClick={() => onClose()}>Close</button>
                 </div>
             </div>
         </div>

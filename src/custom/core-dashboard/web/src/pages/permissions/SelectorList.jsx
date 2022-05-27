@@ -23,34 +23,31 @@ export default function SelectorList({entries, onSelectionChanged, arrowType, no
     }, [entries, filterText]);
 
     return (
-        <div className="selector-list">
-            <div className="selector-search">
+        <div className="selection-control">
+            <div className="selection-control-search">
                 <input
+                    className="search-input"
                     type="text"
                     placeholder="Search ..."
                     value={filterText}
                     onChange={e => setFilterText(e.target.value)} />
-                <div
-                    className="clear-icon"
-                    onClick={() => setFilterText("")}
-                    hidden={filterText?.length === 0}>
-                    <XCircleIcon height={16} width={16}/>
-                </div>
             </div>
-            <PerfectScrollbar className="entries">
+            <div className="selection-control-entries overflow-y-auto">
                 {filteredEntries.map(e =>
                     <div
                         key={e.key}
-                        className={`selector-child ${selected === e.key ? "selected" : ""}`}
+                        className={`selection-control-entry ${selected === e.key ? "selected" : ""}`}
                         onClick={() => updateSelected(e.key)}
                         title={e.tooltip || ""}
                     >
-                        {arrowType === "left" && <ArrowLeftIcon height={16} width={16} />}
-                        {e.label}
-                        {arrowType === "right" && <ArrowRightIcon height={16} width={16} />}
+                        <div className="flex justify-between items-center">
+                            {arrowType === "left" && <ArrowLeftIcon height={16} width={16} />}
+                            {e.label}
+                            {arrowType === "right" && <ArrowRightIcon height={16} width={16} />}
+                        </div>
                     </div>
                 )}
-            </PerfectScrollbar>
+            </div>
         </div>
     );
 }
