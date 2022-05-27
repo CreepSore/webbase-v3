@@ -190,6 +190,9 @@
         @apply text-gray-800;
         @apply cursor-pointer;
         @apply hover:brightness-110;
+        @apply bg-white bg-opacity-40;
+        @apply hover:bg-white hover:bg-opacity-80;
+        @apply border-2 border-white border-opacity-80;
     }
 
     .dashboard-sidebar {

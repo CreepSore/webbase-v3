@@ -11,22 +11,22 @@ export default function PermissionGroupEditor({permissionGroup, permissions, onS
     let [unassignedPermissions, setUnassignedPermissions] = React.useState([]);
 
     useEffect(() => {
-        setAssignedPermissions(permissionGroup.Permissions.map(p => {return {key: p.id, label: p.name};}));
+        setAssignedPermissions(permissionGroup.Permissions.map(p => {return {key: p.id, label: p.name};}).sort((a, b) => a.label.localeCompare(b.label)));
     }, [permissions, permissionGroup]);
 
     useEffect(() => {
-        let unassigned = permissions.filter(p => !assignedPermissions.some(pgp => pgp.key === p.key));
+        let unassigned = permissions.filter(p => !assignedPermissions.some(pgp => pgp.key === p.key)).sort((a, b) => a.label.localeCompare(b.label));
 
         setUnassignedPermissions(unassigned);
     }, [assignedPermissions]);
 
     let assignPermission = (key) => {
         let permission = permissions.find(p => p.key === key);
-        setAssignedPermissions(assignedPermissions.concat(permission));
+        setAssignedPermissions(assignedPermissions.concat(permission).sort((a, b) => a.label.localeCompare(b.label)));
     };
 
     let unassignPermission = (key) => {
-        setAssignedPermissions(assignedPermissions.filter(p => p.key !== key));
+        setAssignedPermissions(assignedPermissions.filter(p => p.key !== key).sort((a, b) => a.label.localeCompare(b.label)));
     };
 
     return (

@@ -56,7 +56,7 @@ export default function PermissionsPage() {
                     onSave={() => fetchData().then(() => setAddPermissionGroupDialogShown(false))}
                 />}
             <div
-                className="add-button bg-blue-400"
+                className="add-button"
                 onClick={() => setAddPermissionGroupDialogShown(true)}
                 hidden={!myPermissions.some(p => [AuthPermissions.core_all.key, AuthPermissions.core_authentication_permgroups_new.key].includes(p))}>
                 <PlusIcon height={48} width={48} />
